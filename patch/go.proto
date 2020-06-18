@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+// There is explcitly no package definition.
+// This allows users of this extension to specify an unqualified 'go_name' option on message fields.
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/alta/protopatch/patch";
+
+extend google.protobuf.MessageOptions {
+	optional string go_message_name = 6001 [(go_name) = 'ExtMessageName'];
+}
+
+extend google.protobuf.FieldOptions {
+	optional string go_name = 6001 [(go_name) = 'ExtName'];
+	// optional string go_type = 6002;
+	optional string go_tags = 6003 [(go_name) = 'ExtTags'];
+}
+
+extend google.protobuf.OneofOptions {
+	optional string go_oneof_name = 6001 [(go_name) = 'ExtOneofName'];
+	// optional string go_oneof_type = 6002;
+	optional string go_oneof_tags = 6003 [(go_name) = 'ExtOneofTags'];
+}
+
+extend google.protobuf.EnumOptions {
+	optional string go_enum_name = 6001 [(go_name) = 'ExtEnumName'];
+}
+
+extend google.protobuf.EnumValueOptions {
+	optional string go_value_name = 6001 [(go_name) = 'ExtValueName'];
+}
