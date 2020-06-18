@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+// clang-format off
+package go.enum;
+// clang-format on
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/alta/protopatch/patch/go/enum";
+
+message Options {
+	// name, if specified, renames the generated Go type for this enum.
+	optional string name = 1;
+
+	// stringer_name, if specified, renames the generated String() method
+	// so a custom String() method can be implemented in its place.
+	optional bool stringer_name = 10;
+}
+
+extend google.protobuf.EnumOptions {
+	optional Options options = 7001;
+}
