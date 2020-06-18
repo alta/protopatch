@@ -1,0 +1,104 @@
+{
+	// Editor
+	"editor.detectIndentation": false,
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 8,
+	"files.eol": "\n",
+	//
+	// Files
+	"files.exclude": {
+		"**/.build": true,
+		"**/.git": true,
+	},
+	"files.associations": {
+		"*.yapf": "ini",
+	},
+	"files.insertFinalNewline": true,
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+	},
+	"files.trimTrailingWhitespace": true,
+	//
+	// Go
+	"[go]": {
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": true,
+		},
+		"editor.snippetSuggestions": "none",
+	},
+	"[go.mod]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll": true,
+			"source.organizeImports": true,
+		},
+	},
+	"go.useLanguageServer": true,
+	"gopls": {
+		"usePlaceholders": true,
+	},
+	//
+	// JSON
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features",
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features",
+	},
+	//
+	// Make
+	"[makefile]": {
+		"editor.tabSize": 8
+	},
+	//
+	// Markdown
+	"[markdown]": {
+		"editor.rulers": [
+			80
+		],
+		"editor.codeActionsOnSave": {
+			"source.fixAll.markdownlint": true
+		}
+	},
+	"markdown.preview.breaks": true,
+	"markdownlint.config": {
+		"default": true,
+		"MD010": false,
+		"MD022": false,
+		"MD024": false,
+		"MD032": false
+	},
+	//
+	// Protos
+	"[proto3]": {
+		"editor.defaultFormatter": "xaver.clang-format",
+	},
+	//
+	// Python / Starlark
+	"[python]": {
+		"editor.defaultFormatter": "vscode.python",
+	},
+	"[starlark]": {
+		"editor.defaultFormatter": "phgn.vscode-starlark",
+	},
+	"python.formatting.provider": "yapf",
+	//
+	// Shell
+	"[shellscript]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format",
+	},
+	//
+	// YAML
+	"[yaml]": {
+		"editor.autoIndent": "keep",
+		"editor.detectIndentation": true,
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"editor.quickSuggestions": {
+			"other": true,
+			"comments": false,
+			"strings": true
+		}
+	},
+}
