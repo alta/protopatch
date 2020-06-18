@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -28,6 +29,8 @@ func main() {
 			switch name {
 			case "plugin":
 				plugin = value
+			case "silent":
+				log.SetOutput(ioutil.Discard)
 			}
 			return nil // Ignore unknown params.
 		},
@@ -39,6 +42,7 @@ func main() {
 
 		// Strip our custom param(s).
 		patch.StripParam(gen.Request, "plugin")
+		patch.StripParam(gen.Request, "silent")
 
 		// Run the specified plugin and unmarshal the CodeGeneratorResponse.
 		res, err := patch.RunPlugin(plugin, gen.Request, nil)
