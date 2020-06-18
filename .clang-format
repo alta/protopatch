@@ -1,0 +1,11 @@
+---
+BasedOnStyle: Google
+ColumnLimit: 2048
+IndentWidth: 8
+UseTab: ForIndentation
+SpacesBeforeTrailingComments: 1
+---
+Language: Proto
+Cpp11BracedListStyle: true
+---
+
