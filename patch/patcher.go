@@ -13,9 +13,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/alta/protopatch/patch/go/enum"
-
 	"golang.org/x/tools/go/ast/astutil"
+
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
@@ -94,7 +93,7 @@ func (p *Patcher) scanFile(f *protogen.File) {
 }
 
 func (p *Patcher) scanEnum(e *protogen.Enum) {
-	opts := proto.GetExtension(e.Desc.Options(), enum.E_Options).(*enum.Options)
+	opts := enumOptions(e)
 	newName := opts.GetName()
 	if newName == "" {
 		newName = proto.GetExtension(e.Desc.Options(), ExtEnumName).(string)
@@ -121,7 +120,11 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 }
 
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
-	newName := proto.GetExtension(m.Desc.Options(), ExtMessageName).(string)
+	opts := messageOptions(m)
+	newName := opts.GetName()
+	if newName == "" {
+		newName = proto.GetExtension(m.Desc.Options(), ExtMessageName).(string)
+	}
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
 	}
