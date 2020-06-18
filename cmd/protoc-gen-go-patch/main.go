@@ -21,7 +21,8 @@ func main() {
 		os.Exit(1)
 		return
 	}
-	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") != "1" {
+
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == ""  {
 		log.SetOutput(ioutil.Discard)
 	}
 
