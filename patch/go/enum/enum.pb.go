@@ -28,6 +28,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+// Options represent Go-specific options for an enum.
 type Options struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -37,7 +38,7 @@ type Options struct {
 	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// stringer_name, if specified, renames the generated String() method
 	// so a custom String() method can be implemented in its place.
-	StringerName *string `protobuf:"bytes,10,opt,name=stringer_name,json=stringerName" json:"stringer_name,omitempty"`
+	StringerName *string `protobuf:"bytes,10,opt,name=stringer_name,json=stringerName" json:"stringer_name,omitempty"` // TODO
 }
 
 func (x *Options) Reset() {

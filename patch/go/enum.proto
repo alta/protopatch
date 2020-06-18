@@ -8,13 +8,14 @@ import "google/protobuf/descriptor.proto";
 
 option go_package = "github.com/alta/protopatch/patch/go/enum";
 
+// Options represent Go-specific options for an enum.
 message Options {
 	// name, if specified, renames the generated Go type for this enum.
 	optional string name = 1;
 
 	// stringer_name, if specified, renames the generated String() method
 	// so a custom String() method can be implemented in its place.
-	optional string stringer_name = 10;
+	optional string stringer_name = 10; // TODO
 }
 
 extend google.protobuf.EnumOptions {
