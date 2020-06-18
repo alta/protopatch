@@ -25,6 +25,7 @@ extend google.protobuf.OneofOptions {
 
 extend google.protobuf.EnumOptions {
 	optional string go_enum_name = 6001 [(go_name) = 'ExtEnumName'];
+	optional bool go_custom_stringer = 6002 [(go_name) = 'ExtCustomStringer'];
 }
 
 extend google.protobuf.EnumValueOptions {

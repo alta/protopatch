@@ -101,6 +101,10 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 	for _, v := range e.Values {
 		p.scanEnumValue(v)
 	}
+	customStringer := proto.GetExtension(e.Desc.Options(), ExtCustomStringer).(bool)
+	if customStringer {
+		p.RenameMethod(WithChild(e.GoIdent, "String"), "_String")
+	}
 }
 
 func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
