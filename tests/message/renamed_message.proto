@@ -1,8 +1,6 @@
 syntax = "proto3";
 
-// clang-format off
 package tests.message;
-// clang-format on
 
 import "patch/go/message.proto";
 

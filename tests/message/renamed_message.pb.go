@@ -4,8 +4,6 @@
 // 	protoc        v3.12.3
 // source: tests/message/renamed_message.proto
 
-// clang-format off
-
 package message
 
 import (
