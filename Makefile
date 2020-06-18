@@ -10,7 +10,7 @@ test:
 tools: internal/tools/*.go
 	go generate --tags tools ./internal/tools
 
-protos:
+protos: tools
 	protoc \
 		-I . \
 		-I `go list -m -f {{.Dir}} google.golang.org/protobuf` \
