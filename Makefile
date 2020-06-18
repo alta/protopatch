@@ -3,12 +3,24 @@
 install:
 	go install ./cmd/protoc-gen-go-patch
 
-test:
-	go test -race ./...
-	CGO_ENABLED=0 go test ./...
-
 tools: internal/tools/*.go
 	go generate --tags tools ./internal/tools
+
+generate:
+	go generate ./...
+
+vet:
+	go vet ./...
+
+test: test-go test-cgo-disabled
+
+test-go:
+	go test -i -mod=readonly -race ./...
+        go test -mod=readonly -v -race ./...
+
+test-cgo-disabled:
+	CGO_ENABLED=0 go test -i -mod=readonly ./...
+        CGO_ENABLED=0 go test -mod=readonly -v ./...
 
 protos: tools
 	protoc \
