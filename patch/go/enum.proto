@@ -14,7 +14,7 @@ message Options {
 
 	// stringer_name, if specified, renames the generated String() method
 	// so a custom String() method can be implemented in its place.
-	optional bool stringer_name = 10;
+	optional string stringer_name = 10;
 }
 
 extend google.protobuf.EnumOptions {
