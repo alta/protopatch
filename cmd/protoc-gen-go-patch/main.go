@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,6 +20,10 @@ func main() {
 		log.Printf("%v %v\n", filepath.Base(os.Args[0]), patch.Version)
 		os.Exit(1)
 		return
+	}
+
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == ""  {
+		log.SetOutput(ioutil.Discard)
 	}
 
 	var plugin string
