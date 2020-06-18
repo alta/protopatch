@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package tests.message;
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message Basic {
+	int32 id = 1;
+	string name = 2;
+}
+
+message Outer {
+	message Inner {
+		int32 id = 1;
+		string name = 2;
+	}
+
+	int32 id = 1;
+	string name = 2;
+	Inner inner = 3;
+}
