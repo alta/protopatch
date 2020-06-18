@@ -1,5 +1,7 @@
 .DEFAULT: install
 
+.PHONY: install tools generate vet test test-go test-cgo-disabled protos
+
 install:
 	go install ./cmd/protoc-gen-go-patch
 
