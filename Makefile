@@ -24,6 +24,7 @@ test-cgo-disabled:
 	CGO_ENABLED=0 go test -i -mod=readonly ./...
 	CGO_ENABLED=0 go test -mod=readonly -v ./...
 
+go_module = $(shell go list -m)
 proto_files = $(sort $(shell find . -name '*.proto'))
 
 protos: $(proto_files)
@@ -33,6 +34,6 @@ $(proto_files): tools Makefile
 	protoc \
 		-I . \
 		-I `go list -m -f {{.Dir}} google.golang.org/protobuf` \
-		--go-patch_out=plugin=go,paths=import,module=`go list -m`:. \
-		--go-patch_out=plugin=go-grpc,paths=import,module=`go list -m`:. \
+		--go-patch_out=plugin=go,paths=import,module=$(go_module):. \
+		--go-patch_out=plugin=go-grpc,paths=import,module=$(go_module):. \
 		$@
