@@ -24,7 +24,7 @@ test-cgo-disabled:
 	CGO_ENABLED=0 go test -i -mod=readonly ./...
 	CGO_ENABLED=0 go test -mod=readonly -v ./...
 
-proto_files = $(sort $(shell find patch -name '*.proto'))
+proto_files = $(sort $(shell find . -name '*.proto'))
 
 protos: $(proto_files)
 
