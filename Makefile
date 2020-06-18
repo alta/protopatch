@@ -29,7 +29,7 @@ proto_files = $(sort $(shell find . -name '*.proto'))
 protos: $(proto_files)
 
 .PHONY: $(proto_files)
-$(proto_files): Makefile
+$(proto_files): tools Makefile
 	protoc \
 		-I . \
 		-I `go list -m -f {{.Dir}} google.golang.org/protobuf` \
