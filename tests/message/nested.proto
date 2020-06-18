@@ -4,7 +4,13 @@ package tests.message;
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message Basic {
+message Outer {
+	message Inner {
+		int32 id = 1;
+		string name = 2;
+	}
+
 	int32 id = 1;
 	string name = 2;
+	Inner inner = 3;
 }
