@@ -21,6 +21,9 @@ func main() {
 		os.Exit(1)
 		return
 	}
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") != "1" {
+		log.SetOutput(ioutil.Discard)
+	}
 
 	var plugin string
 
@@ -29,8 +32,6 @@ func main() {
 			switch name {
 			case "plugin":
 				plugin = value
-			case "silent":
-				log.SetOutput(ioutil.Discard)
 			}
 			return nil // Ignore unknown params.
 		},
@@ -42,7 +43,6 @@ func main() {
 
 		// Strip our custom param(s).
 		patch.StripParam(gen.Request, "plugin")
-		patch.StripParam(gen.Request, "silent")
 
 		// Run the specified plugin and unmarshal the CodeGeneratorResponse.
 		res, err := patch.RunPlugin(plugin, gen.Request, nil)
