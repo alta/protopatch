@@ -14,6 +14,6 @@ func TestNested(t *testing.T) {
 	tests.ValidateEnum(t, Outer_Inner(0), Outer_Inner_name, Outer_Inner_value)
 }
 
-func TestRename(t *testing.T) {
+func TestRenamed(t *testing.T) {
 	tests.ValidateEnum(t, NewName(0), NewName_name, NewName_value)
 }

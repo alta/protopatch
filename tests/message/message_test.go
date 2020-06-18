@@ -15,6 +15,6 @@ func TestNested(t *testing.T) {
 	tests.ValidateMessage(t, &Outer_Inner{})
 }
 
-func TestRename(t *testing.T) {
-	tests.ValidateMessage(t, &NewName{})
+func TestRenamed(t *testing.T) {
+	tests.ValidateMessage(t, &Renamed{})
 }

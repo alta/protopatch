@@ -2,9 +2,14 @@ syntax = "proto3";
 
 package tests.message;
 
+import "patch/go/message.proto";
+
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message Outer {
+message OriginalOuter {
+	option (go.message.options) = {
+		name: 'RenamedOuter'
+	};
 	message Inner {}
 	Inner inner = 1;
 }

@@ -1,17 +1,15 @@
 syntax = "proto3";
 
 // clang-format off
-package tests.enum;
+package tests.message;
 // clang-format on
 
 import "patch/go/message.proto";
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message OldName {
+message Original {
 	option (go.message.options) = {
-		name: 'NewName'
+		name: 'Renamed'
 	};
-	int32 id = 1;
-	string name = 2;
 }
