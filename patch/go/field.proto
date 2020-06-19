@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package go.field;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/alta/protopatch/patch/go/field";
+
+// Options represent Go-specific options for a message field.
+message Options {
+	// name, if specified, renames the generated Go struct field.
+	optional string name = 1;
+
+	// getter_name, if specified, renames the generated getter method (default: Get<Field>)
+	// so a custom getter can be implemented in its place.
+	optional string getter_name = 10; // TODO
+
+	// tags, if specified, appends additional struct tags to the generated Go struct field.
+	// The value should omit the enclosing backticks.
+	optional string tags = 20;
+}
+
+extend google.protobuf.FieldOptions {
+	optional Options options = 7001;
+}
