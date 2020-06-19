@@ -6,10 +6,10 @@ import "patch/go/message.proto";
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message OriginalOuter {
+message OriginalOuterMessage {
 	option (go.message.options) = {
-		name: 'RenamedOuter'
+		name: 'RenamedOuterMessage'
 	};
-	message Inner {}
-	Inner inner = 1;
+	message InnerMessage {}
+	InnerMessage inner = 1;
 }

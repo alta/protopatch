@@ -19,6 +19,11 @@ func TestRenamedMessage(t *testing.T) {
 	tests.ValidateMessage(t, &RenamedMessage{})
 }
 
+func TestRenamedNestedMessage(t *testing.T) {
+	tests.ValidateMessage(t, &RenamedOuterMessage{})
+	tests.ValidateMessage(t, &RenamedOuterMessage_InnerMessage{})
+}
+
 func TestRenamedField(t *testing.T) {
 	m := &MessageWithRenamedField{}
 	tests.ValidateMessage(t, m)
