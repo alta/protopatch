@@ -6,14 +6,14 @@ import (
 	"github.com/alta/protopatch/tests"
 )
 
-func TestBasic(t *testing.T) {
-	tests.ValidateEnum(t, Basic(0), Basic_name, Basic_value)
+func TestBasicEnum(t *testing.T) {
+	tests.ValidateEnum(t, BasicEnum(0), BasicEnum_name, BasicEnum_value)
 }
 
-func TestNested(t *testing.T) {
-	tests.ValidateEnum(t, Outer_Inner(0), Outer_Inner_name, Outer_Inner_value)
+func TestNestedEnum(t *testing.T) {
+	tests.ValidateEnum(t, OuterMessage_InnerEnum(0), OuterMessage_InnerEnum_name, OuterMessage_InnerEnum_value)
 }
 
-func TestRenamed(t *testing.T) {
-	tests.ValidateEnum(t, Renamed(0), Renamed_name, Renamed_value)
+func TestRenamedEnum(t *testing.T) {
+	tests.ValidateEnum(t, RenamedEnum(0), RenamedEnum_name, RenamedEnum_value)
 }

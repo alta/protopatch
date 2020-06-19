@@ -6,7 +6,7 @@ package tests.enum;
 
 option go_package = "github.com/alta/protopatch/tests/enum";
 
-enum Basic {
+enum BasicEnum {
 	INVALID = 0;
 	A = 1;
 	B = 2;

@@ -6,15 +6,20 @@ import (
 	"github.com/alta/protopatch/tests"
 )
 
-func TestBasic(t *testing.T) {
-	tests.ValidateMessage(t, &Basic{})
+func TestBasicMessage(t *testing.T) {
+	tests.ValidateMessage(t, &BasicMessage{})
 }
 
-func TestNested(t *testing.T) {
-	tests.ValidateMessage(t, &Outer{})
-	tests.ValidateMessage(t, &Outer_Inner{})
+func TestNestedMessage(t *testing.T) {
+	tests.ValidateMessage(t, &OuterMessage{})
+	tests.ValidateMessage(t, &OuterMessage_InnerMessage{})
 }
 
-func TestRenamed(t *testing.T) {
-	tests.ValidateMessage(t, &Renamed{})
+func TestRenamedMessage(t *testing.T) {
+	tests.ValidateMessage(t, &RenamedMessage{})
+}
+
+func TestRenamedField(t *testing.T) {
+	tests.ValidateMessage(t, &MessageWithRenamedField{})
+	// TODO: validate renamed field
 }

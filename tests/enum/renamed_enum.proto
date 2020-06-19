@@ -8,9 +8,9 @@ import "patch/go/enum.proto";
 
 option go_package = "github.com/alta/protopatch/tests/enum";
 
-enum Original {
+enum OriginalEnum {
 	option (go.enum.options) = {
-		name: 'Renamed'
+		name: 'RenamedEnum'
 	};
 	INVALID = 0;
 	A = 1;

@@ -6,8 +6,8 @@ import "patch/go/message.proto";
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message Original {
+message OriginalMessage {
 	option (go.message.options) = {
-		name: 'Renamed'
+		name: 'RenamedMessage'
 	};
 }

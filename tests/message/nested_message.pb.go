@@ -25,16 +25,16 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Outer struct {
+type OuterMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Inner *Outer_Inner `protobuf:"bytes,1,opt,name=inner,proto3" json:"inner,omitempty"`
+	Inner *OuterMessage_InnerMessage `protobuf:"bytes,1,opt,name=inner,proto3" json:"inner,omitempty"`
 }
 
-func (x *Outer) Reset() {
-	*x = Outer{}
+func (x *OuterMessage) Reset() {
+	*x = OuterMessage{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_tests_message_nested_message_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -42,13 +42,13 @@ func (x *Outer) Reset() {
 	}
 }
 
-func (x *Outer) String() string {
+func (x *OuterMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Outer) ProtoMessage() {}
+func (*OuterMessage) ProtoMessage() {}
 
-func (x *Outer) ProtoReflect() protoreflect.Message {
+func (x *OuterMessage) ProtoReflect() protoreflect.Message {
 	mi := &file_tests_message_nested_message_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,26 +60,26 @@ func (x *Outer) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Outer.ProtoReflect.Descriptor instead.
-func (*Outer) Descriptor() ([]byte, []int) {
+// Deprecated: Use OuterMessage.ProtoReflect.Descriptor instead.
+func (*OuterMessage) Descriptor() ([]byte, []int) {
 	return file_tests_message_nested_message_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Outer) GetInner() *Outer_Inner {
+func (x *OuterMessage) GetInner() *OuterMessage_InnerMessage {
 	if x != nil {
 		return x.Inner
 	}
 	return nil
 }
 
-type Outer_Inner struct {
+type OuterMessage_InnerMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *Outer_Inner) Reset() {
-	*x = Outer_Inner{}
+func (x *OuterMessage_InnerMessage) Reset() {
+	*x = OuterMessage_InnerMessage{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_tests_message_nested_message_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -87,13 +87,13 @@ func (x *Outer_Inner) Reset() {
 	}
 }
 
-func (x *Outer_Inner) String() string {
+func (x *OuterMessage_InnerMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Outer_Inner) ProtoMessage() {}
+func (*OuterMessage_InnerMessage) ProtoMessage() {}
 
-func (x *Outer_Inner) ProtoReflect() protoreflect.Message {
+func (x *OuterMessage_InnerMessage) ProtoReflect() protoreflect.Message {
 	mi := &file_tests_message_nested_message_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -105,8 +105,8 @@ func (x *Outer_Inner) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Outer_Inner.ProtoReflect.Descriptor instead.
-func (*Outer_Inner) Descriptor() ([]byte, []int) {
+// Deprecated: Use OuterMessage_InnerMessage.ProtoReflect.Descriptor instead.
+func (*OuterMessage_InnerMessage) Descriptor() ([]byte, []int) {
 	return file_tests_message_nested_message_proto_rawDescGZIP(), []int{0, 0}
 }
 
@@ -116,14 +116,16 @@ var file_tests_message_nested_message_proto_rawDesc = []byte{
 	0x0a, 0x22, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2f,
 	0x6e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0d, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x6d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x22, 0x42, 0x0a, 0x05, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x12, 0x30, 0x0a, 0x05,
-	0x69, 0x6e, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x74, 0x65,
-	0x73, 0x74, 0x73, 0x2e, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e, 0x4f, 0x75, 0x74, 0x65,
-	0x72, 0x2e, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x52, 0x05, 0x69, 0x6e, 0x6e, 0x65, 0x72, 0x1a, 0x07,
-	0x0a, 0x05, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x42, 0x2a, 0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6c, 0x74, 0x61, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x70, 0x61, 0x74, 0x63, 0x68, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x6d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x67, 0x65, 0x22, 0x5e, 0x0a, 0x0c, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x12, 0x3e, 0x0a, 0x05, 0x69, 0x6e, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x28, 0x2e, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x6d, 0x65, 0x73, 0x73, 0x61,
+	0x67, 0x65, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e,
+	0x49, 0x6e, 0x6e, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x05, 0x69, 0x6e,
+	0x6e, 0x65, 0x72, 0x1a, 0x0e, 0x0a, 0x0c, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x42, 0x2a, 0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
+	0x6d, 0x2f, 0x61, 0x6c, 0x74, 0x61, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x70, 0x61, 0x74, 0x63,
+	0x68, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -140,11 +142,11 @@ func file_tests_message_nested_message_proto_rawDescGZIP() []byte {
 
 var file_tests_message_nested_message_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_tests_message_nested_message_proto_goTypes = []interface{}{
-	(*Outer)(nil),       // 0: tests.message.Outer
-	(*Outer_Inner)(nil), // 1: tests.message.Outer.Inner
+	(*OuterMessage)(nil),              // 0: tests.message.OuterMessage
+	(*OuterMessage_InnerMessage)(nil), // 1: tests.message.OuterMessage.InnerMessage
 }
 var file_tests_message_nested_message_proto_depIdxs = []int32{
-	1, // 0: tests.message.Outer.inner:type_name -> tests.message.Outer.Inner
+	1, // 0: tests.message.OuterMessage.inner:type_name -> tests.message.OuterMessage.InnerMessage
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -159,7 +161,7 @@ func file_tests_message_nested_message_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_tests_message_nested_message_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Outer); i {
+			switch v := v.(*OuterMessage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -171,7 +173,7 @@ func file_tests_message_nested_message_proto_init() {
 			}
 		}
 		file_tests_message_nested_message_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Outer_Inner); i {
+			switch v := v.(*OuterMessage_InnerMessage); i {
 			case 0:
 				return &v.state
 			case 1:

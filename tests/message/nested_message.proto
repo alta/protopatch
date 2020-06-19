@@ -4,7 +4,7 @@ package tests.message;
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message Outer {
-	message Inner {}
-	Inner inner = 1;
+message OuterMessage {
+	message InnerMessage {}
+	InnerMessage inner = 1;
 }

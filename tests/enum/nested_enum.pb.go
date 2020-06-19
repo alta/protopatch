@@ -27,24 +27,24 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Outer_Inner int32
+type OuterMessage_InnerEnum int32
 
 const (
-	Outer_INVALID Outer_Inner = 0
-	Outer_A       Outer_Inner = 1
-	Outer_B       Outer_Inner = 2
-	Outer_C       Outer_Inner = 3
+	OuterMessage_INVALID OuterMessage_InnerEnum = 0
+	OuterMessage_A       OuterMessage_InnerEnum = 1
+	OuterMessage_B       OuterMessage_InnerEnum = 2
+	OuterMessage_C       OuterMessage_InnerEnum = 3
 )
 
-// Enum value maps for Outer_Inner.
+// Enum value maps for OuterMessage_InnerEnum.
 var (
-	Outer_Inner_name = map[int32]string{
+	OuterMessage_InnerEnum_name = map[int32]string{
 		0: "INVALID",
 		1: "A",
 		2: "B",
 		3: "C",
 	}
-	Outer_Inner_value = map[string]int32{
+	OuterMessage_InnerEnum_value = map[string]int32{
 		"INVALID": 0,
 		"A":       1,
 		"B":       2,
@@ -52,41 +52,41 @@ var (
 	}
 )
 
-func (x Outer_Inner) Enum() *Outer_Inner {
-	p := new(Outer_Inner)
+func (x OuterMessage_InnerEnum) Enum() *OuterMessage_InnerEnum {
+	p := new(OuterMessage_InnerEnum)
 	*p = x
 	return p
 }
 
-func (x Outer_Inner) String() string {
+func (x OuterMessage_InnerEnum) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (Outer_Inner) Descriptor() protoreflect.EnumDescriptor {
+func (OuterMessage_InnerEnum) Descriptor() protoreflect.EnumDescriptor {
 	return file_tests_enum_nested_enum_proto_enumTypes[0].Descriptor()
 }
 
-func (Outer_Inner) Type() protoreflect.EnumType {
+func (OuterMessage_InnerEnum) Type() protoreflect.EnumType {
 	return &file_tests_enum_nested_enum_proto_enumTypes[0]
 }
 
-func (x Outer_Inner) Number() protoreflect.EnumNumber {
+func (x OuterMessage_InnerEnum) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use Outer_Inner.Descriptor instead.
-func (Outer_Inner) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use OuterMessage_InnerEnum.Descriptor instead.
+func (OuterMessage_InnerEnum) EnumDescriptor() ([]byte, []int) {
 	return file_tests_enum_nested_enum_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type Outer struct {
+type OuterMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *Outer) Reset() {
-	*x = Outer{}
+func (x *OuterMessage) Reset() {
+	*x = OuterMessage{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_tests_enum_nested_enum_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -94,13 +94,13 @@ func (x *Outer) Reset() {
 	}
 }
 
-func (x *Outer) String() string {
+func (x *OuterMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Outer) ProtoMessage() {}
+func (*OuterMessage) ProtoMessage() {}
 
-func (x *Outer) ProtoReflect() protoreflect.Message {
+func (x *OuterMessage) ProtoReflect() protoreflect.Message {
 	mi := &file_tests_enum_nested_enum_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -112,8 +112,8 @@ func (x *Outer) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Outer.ProtoReflect.Descriptor instead.
-func (*Outer) Descriptor() ([]byte, []int) {
+// Deprecated: Use OuterMessage.ProtoReflect.Descriptor instead.
+func (*OuterMessage) Descriptor() ([]byte, []int) {
 	return file_tests_enum_nested_enum_proto_rawDescGZIP(), []int{0}
 }
 
@@ -122,13 +122,14 @@ var File_tests_enum_nested_enum_proto protoreflect.FileDescriptor
 var file_tests_enum_nested_enum_proto_rawDesc = []byte{
 	0x0a, 0x1c, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x65, 0x6e, 0x75, 0x6d, 0x2f, 0x6e, 0x65, 0x73,
 	0x74, 0x65, 0x64, 0x5f, 0x65, 0x6e, 0x75, 0x6d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a,
-	0x74, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x65, 0x6e, 0x75, 0x6d, 0x22, 0x32, 0x0a, 0x05, 0x4f, 0x75,
-	0x74, 0x65, 0x72, 0x22, 0x29, 0x0a, 0x05, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x12, 0x0b, 0x0a, 0x07,
-	0x49, 0x4e, 0x56, 0x41, 0x4c, 0x49, 0x44, 0x10, 0x00, 0x12, 0x05, 0x0a, 0x01, 0x41, 0x10, 0x01,
-	0x12, 0x05, 0x0a, 0x01, 0x42, 0x10, 0x02, 0x12, 0x05, 0x0a, 0x01, 0x43, 0x10, 0x03, 0x42, 0x27,
-	0x5a, 0x25, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6c, 0x74,
-	0x61, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2f, 0x74, 0x65, 0x73,
-	0x74, 0x73, 0x2f, 0x65, 0x6e, 0x75, 0x6d, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x65, 0x6e, 0x75, 0x6d, 0x22, 0x3d, 0x0a, 0x0c, 0x4f, 0x75,
+	0x74, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x2d, 0x0a, 0x09, 0x49, 0x6e,
+	0x6e, 0x65, 0x72, 0x45, 0x6e, 0x75, 0x6d, 0x12, 0x0b, 0x0a, 0x07, 0x49, 0x4e, 0x56, 0x41, 0x4c,
+	0x49, 0x44, 0x10, 0x00, 0x12, 0x05, 0x0a, 0x01, 0x41, 0x10, 0x01, 0x12, 0x05, 0x0a, 0x01, 0x42,
+	0x10, 0x02, 0x12, 0x05, 0x0a, 0x01, 0x43, 0x10, 0x03, 0x42, 0x27, 0x5a, 0x25, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6c, 0x74, 0x61, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x65, 0x6e,
+	0x75, 0x6d, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -146,8 +147,8 @@ func file_tests_enum_nested_enum_proto_rawDescGZIP() []byte {
 var file_tests_enum_nested_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_tests_enum_nested_enum_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_tests_enum_nested_enum_proto_goTypes = []interface{}{
-	(Outer_Inner)(0), // 0: tests.enum.Outer.Inner
-	(*Outer)(nil),    // 1: tests.enum.Outer
+	(OuterMessage_InnerEnum)(0), // 0: tests.enum.OuterMessage.InnerEnum
+	(*OuterMessage)(nil),        // 1: tests.enum.OuterMessage
 }
 var file_tests_enum_nested_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -164,7 +165,7 @@ func file_tests_enum_nested_enum_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_tests_enum_nested_enum_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Outer); i {
+			switch v := v.(*OuterMessage); i {
 			case 0:
 				return &v.state
 			case 1:

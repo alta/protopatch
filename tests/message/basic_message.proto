@@ -4,7 +4,7 @@ package tests.message;
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message Basic {
+message BasicMessage {
 	int32 id = 1;
 	string name = 2;
 }
