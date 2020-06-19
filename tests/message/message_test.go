@@ -42,8 +42,15 @@ func TestRenamedNestedMessage(t *testing.T) {
 	tests.ValidateMessage(t, &RenamedOuterMessage_InnerMessage{})
 }
 
-func TestRenamedField(t *testing.T) {
+func TestMessageWithRenamedField(t *testing.T) {
 	m := &MessageWithRenamedField{}
+	tests.ValidateMessage(t, m)
+	var _ int32 = m.ID
+	var _ int32 = m.GetID()
+}
+
+func TestAltMessageWithRenamedField(t *testing.T) {
+	m := &AltMessageWithRenamedField{}
 	tests.ValidateMessage(t, m)
 	var _ int32 = m.ID
 	var _ int32 = m.GetID()
