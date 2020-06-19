@@ -19,9 +19,9 @@ func TestRenamedEnum(t *testing.T) {
 	tests.ValidateEnum(t, RenamedEnum(0), RenamedEnum_name, RenamedEnum_value)
 }
 
-func TestStringerName(t *testing.T) {
+func TestCustomStringerEnum(t *testing.T) {
 	tests := []struct {
-		enum     CustomStringer
+		enum     CustomStringerEnum
 		original string
 		patched  string
 	}{
