@@ -63,9 +63,9 @@ func (pkg *Package) Check(importer types.Importer, fset *token.FileSet, info *ty
 	return nil // TODO: return an actual error?
 }
 
-// Find finds ident in Package pkg, and any ancestor(s), or nil if the ident is not found in pkg.
-func (pkg *Package) Find(ident protogen.GoIdent) (obj types.Object, ancestors []types.Object) {
-	for _, name := range strings.Split(ident.GoName, ".") {
+// Find finds id in Package pkg, and any ancestor(s), or nil if the id is not found in pkg.
+func (pkg *Package) Find(id protogen.GoIdent) (obj types.Object, ancestors []types.Object) {
+	for _, name := range strings.Split(id.GoName, ".") {
 		if obj == nil {
 			obj = pkg.pkg.Scope().Lookup(name)
 		} else {
@@ -77,7 +77,7 @@ func (pkg *Package) Find(ident protogen.GoIdent) (obj types.Object, ancestors []
 		}
 	}
 	if obj == nil {
-		log.Printf("Warning: unable to find declaration %s.%s", ident.GoImportPath, ident.GoName)
+		log.Printf("Warning: unable to find declaration %s.%s", id.GoImportPath, id.GoName)
 	}
 	return
 }

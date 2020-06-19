@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package go.oneof;
+
+import "google/protobuf/descriptor.proto";
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/patch/go/oneof";
+
+extend google.protobuf.OneofOptions {
+	optional go.Options options = 7001;
+}

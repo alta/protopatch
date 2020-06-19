@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tests.message;
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message BasicMessage {
+	int32 id = 1;
+	string name = 2;
+}
+
+message OneofMessage {
+	oneof contents {
+		int32 id = 1;
+		string name = 2;
+	};
+}
+
+message OuterMessage {
+	message InnerMessage {}
+	InnerMessage inner = 1;
+}
