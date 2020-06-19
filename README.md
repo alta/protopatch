@@ -15,8 +15,10 @@ Patches are defined via an `Options` extension on messages, fields, `oneof` fiel
 ### Custom Names
 
 ```proto
+import "patch/go.proto";
 import "patch/go/message.proto";
 import "patch/go/field.proto";
+import "patch/go/oneof.proto";
 import "patch/go/enum.proto";
 import "patch/go/value.proto";
 
