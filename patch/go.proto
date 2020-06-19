@@ -1,32 +1,31 @@
 syntax = "proto2";
 
-// There is explcitly no package definition.
-// This allows users of this extension to specify an unqualified 'go_name' option on message fields.
+package go;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/alta/protopatch/patch";
+option go_package = "github.com/alta/protopatch/patch/go;patch_go";
 
-extend google.protobuf.MessageOptions {
-	optional string go_message_name = 6001 [(go_name) = 'ExtMessageName'];
-}
+// Options represent Go-specific options for Protobuf messages, fields, oneofs, enums, or enum values.
+message Options {
+	// The name option renames the generated Go identifier and related identifiers.
+	// For a message, this renames the generated Go struct and nested messages or enums, if any.
+	// For a message field, this renames the generated Go struct field and getter method.
+	// For a oneof field, this renames the generated Go struct field, getter method, interface type, and wrapper types.
+	// For an enum, this renames the generated Go type.
+	// For an enum value, this renames the generated Go const.
+	optional string name = 1;
 
-extend google.protobuf.FieldOptions {
-	optional string go_name = 6001 [(go_name) = 'ExtName'];
-	// optional string go_type = 6002;
-	optional string go_tags = 6003 [(go_name) = 'ExtTags'];
-}
+	// The getter_name option renames the generated getter method (default: Get<Field>)
+	// so a custom getter can be implemented in its place.
+	optional string getter_name = 10; // TODO: implement this
 
-extend google.protobuf.OneofOptions {
-	optional string go_oneof_name = 6001 [(go_name) = 'ExtOneofName'];
-	// optional string go_oneof_type = 6002;
-	optional string go_oneof_tags = 6003 [(go_name) = 'ExtOneofTags'];
-}
+	// The tags option specifies additional struct tags which are appended a generated Go struct field.
+	// This option may be specified on a message field or a oneof field.
+	// The value should omit the enclosing backticks.
+	optional string tags = 20;
 
-extend google.protobuf.EnumOptions {
-	optional string go_enum_name = 6001 [(go_name) = 'ExtEnumName'];
-}
-
-extend google.protobuf.EnumValueOptions {
-	optional string go_value_name = 6001 [(go_name) = 'ExtValueName'];
+	// The stringer_name option renames a generated String() method (if any)
+	// so a custom String() method can be implemented in its place.
+	optional string stringer_name = 30; // TODO: implement for messages
 }

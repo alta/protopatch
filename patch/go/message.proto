@@ -3,19 +3,10 @@ syntax = "proto2";
 package go.message;
 
 import "google/protobuf/descriptor.proto";
+import "patch/go.proto";
 
 option go_package = "github.com/alta/protopatch/patch/go/message";
 
-// Options represent Go-specific options for a message.
-message Options {
-	// name, if specified, renames the generated Go type for this message.
-	optional string name = 1;
-
-	// stringer_name, if specified, renames the generated String() method
-	// so a custom String() method can be implemented in its place.
-	optional string stringer_name = 10; // TODO
-}
-
 extend google.protobuf.MessageOptions {
-	optional Options options = 7001;
+	optional go.Options options = 7001;
 }

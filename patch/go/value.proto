@@ -3,15 +3,10 @@ syntax = "proto2";
 package go.value;
 
 import "google/protobuf/descriptor.proto";
+import "patch/go.proto";
 
 option go_package = "github.com/alta/protopatch/patch/go/value";
 
-// Options represent Go-specific options for an enum value.
-message Options {
-	// name, if specified, renames the generated Go const for this enum value.
-	optional string name = 1;
-}
-
 extend google.protobuf.EnumValueOptions {
-	optional Options options = 7001;
+	optional go.Options options = 7001;
 }
