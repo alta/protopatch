@@ -13,6 +13,16 @@ message OriginalMessage {
 	};
 }
 
+message OriginalOneofMessage {
+	option (go.message.options) = {
+		name: 'RenamedOneofMessage'
+	};
+	oneof contents {
+		int32 id = 1;
+		string name = 2;
+	};
+}
+
 message OriginalOuterMessage {
 	option (go.message.options) = {
 		name: 'RenamedOuterMessage'

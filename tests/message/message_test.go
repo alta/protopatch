@@ -11,7 +11,12 @@ func TestBasicMessage(t *testing.T) {
 }
 
 func TestOneofMessage(t *testing.T) {
-	tests.ValidateMessage(t, &OneofMessage{})
+	m := &OneofMessage{}
+	tests.ValidateMessage(t, m)
+	var _ isOneofMessage_Contents = &OneofMessage_Id{}
+	var _ isOneofMessage_Contents = &OneofMessage_Name{}
+	var _ int32 = m.GetId()
+	var _ string = m.GetName()
 }
 
 func TestNestedMessage(t *testing.T) {
@@ -21,6 +26,15 @@ func TestNestedMessage(t *testing.T) {
 
 func TestRenamedMessage(t *testing.T) {
 	tests.ValidateMessage(t, &RenamedMessage{})
+}
+
+func TestRenamedOneofMessage(t *testing.T) {
+	m := &RenamedOneofMessage{}
+	tests.ValidateMessage(t, m)
+	var _ isRenamedOneofMessage_Contents = &RenamedOneofMessage_Id{}
+	var _ isRenamedOneofMessage_Contents = &RenamedOneofMessage_Name{}
+	var _ int32 = m.GetId()
+	var _ string = m.GetName()
 }
 
 func TestRenamedNestedMessage(t *testing.T) {
