@@ -20,6 +20,8 @@ func TestRenamedMessage(t *testing.T) {
 }
 
 func TestRenamedField(t *testing.T) {
-	tests.ValidateMessage(t, &MessageWithRenamedField{})
-	// TODO: validate renamed field
+	m := &MessageWithRenamedField{}
+	tests.ValidateMessage(t, m)
+	var _ int32 = m.ID
+	var _ int32 = m.GetID()
 }
