@@ -115,7 +115,11 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 
 func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	e := v.Parent
-	newName := proto.GetExtension(v.Desc.Options(), ExtValueName).(string)
+	opts := valueOptions(v)
+	newName := opts.GetName()
+	if newName == "" {
+		newName = proto.GetExtension(v.Desc.Options(), ExtValueName).(string)
+	}
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 	}
