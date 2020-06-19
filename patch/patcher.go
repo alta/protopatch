@@ -17,7 +17,6 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
@@ -96,9 +95,6 @@ func (p *Patcher) scanFile(f *protogen.File) {
 func (p *Patcher) scanEnum(e *protogen.Enum) {
 	opts := enumOptions(e)
 	newName := opts.GetName()
-	if newName == "" {
-		newName = proto.GetExtension(e.Desc.Options(), ExtEnumName).(string)
-	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
@@ -117,9 +113,6 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	e := v.Parent
 	opts := valueOptions(v)
 	newName := opts.GetName()
-	if newName == "" {
-		newName = proto.GetExtension(v.Desc.Options(), ExtValueName).(string)
-	}
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 	}
@@ -131,9 +124,6 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	opts := messageOptions(m)
 	newName := opts.GetName()
-	if newName == "" {
-		newName = proto.GetExtension(m.Desc.Options(), ExtMessageName).(string)
-	}
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
 	}
@@ -157,7 +147,8 @@ func replacePrefix(s, prefix, with string) string {
 
 func (p *Patcher) scanOneof(o *protogen.Oneof) {
 	m := o.Parent
-	newName := proto.GetExtension(o.Desc.Options(), ExtOneofName).(string)
+	opts := oneofOptions(o)
+	newName := opts.GetName()
 	if newName == "" && p.isRenamed(m.GoIdent) {
 		// Implicitly rename this oneof field because its parent message was renamed.
 		newName = o.GoName
@@ -170,7 +161,7 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		p.RenameType(ifName, newIfName)                                   // Interface type (e.g. isExample_Person)
 		p.RenameMethod(ident.WithChild(ifName, ifName.GoName), newIfName) // Interface method
 	}
-	tags := proto.GetExtension(o.Desc.Options(), ExtOneofTags).(string)
+	tags := opts.GetTags()
 	if tags != "" {
 		p.Tag(ident.WithChild(m.GoIdent, o.GoName), tags)
 	}
@@ -181,9 +172,6 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	o := f.Oneof
 	opts := fieldOptions(f)
 	newName := opts.GetName()
-	if newName == "" {
-		newName = proto.GetExtension(f.Desc.Options(), ExtName).(string)
-	}
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
@@ -199,7 +187,7 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		}
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
-	tags := proto.GetExtension(f.Desc.Options(), ExtTags).(string)
+	tags := opts.GetTags()
 	if tags != "" {
 		if o != nil {
 			p.Tag(ident.WithChild(f.GoIdent, f.GoName), tags) // Oneof wrapper field tags
@@ -210,7 +198,8 @@ func (p *Patcher) scanField(f *protogen.Field) {
 }
 
 func (p *Patcher) scanExtension(f *protogen.Field) {
-	newName := proto.GetExtension(f.Desc.Options(), ExtName).(string)
+	opts := fieldOptions(f)
+	newName := opts.GetName()
 	if newName != "" {
 		id := f.GoIdent
 		id.GoName = f.GoName
