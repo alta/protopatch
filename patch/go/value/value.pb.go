@@ -26,7 +26,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// Options represent Go-specific options for an enu value.
+// Options represent Go-specific options for an enum value.
 type Options struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
