@@ -170,7 +170,11 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
-	newName := proto.GetExtension(f.Desc.Options(), ExtName).(string)
+	opts := fieldOptions(f)
+	newName := opts.GetName()
+	if newName == "" {
+		newName = proto.GetExtension(f.Desc.Options(), ExtName).(string)
+	}
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
