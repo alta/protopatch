@@ -29,3 +29,9 @@ message Options {
 	// so a custom String() method can be implemented in its place.
 	optional string stringer_name = 30; // TODO: implement for messages
 }
+
+// Extend FieldOptions here because field options are the most commonly used.
+// Example: int id = 1 [(go.options) = {name: 'ID'}];
+extend google.protobuf.FieldOptions {
+	optional go.Options options = 7001;
+}

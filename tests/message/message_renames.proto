@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package tests.message;
 
-import "patch/go/field.proto";
+import "patch/go.proto";
 import "patch/go/message.proto";
 
 option go_package = "github.com/alta/protopatch/tests/message";
@@ -32,5 +32,5 @@ message OriginalOuterMessage {
 }
 
 message MessageWithRenamedField {
-	int32 id = 1 [(go.field.options) = {name: 'ID'}];
+	int32 id = 1 [(go.options) = {name: 'ID'}];
 }
