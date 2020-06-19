@@ -4,6 +4,7 @@ import (
 	"github.com/alta/protopatch/patch/go/enum"
 	"github.com/alta/protopatch/patch/go/field"
 	"github.com/alta/protopatch/patch/go/message"
+	"github.com/alta/protopatch/patch/go/oneof"
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -19,4 +20,8 @@ func messageOptions(m *protogen.Message) *message.Options {
 
 func fieldOptions(f *protogen.Field) *field.Options {
 	return proto.GetExtension(f.Desc.Options(), field.E_Options).(*field.Options)
+}
+
+func oneofOptions(o *protogen.Oneof) *oneof.Options {
+	return proto.GetExtension(o.Desc.Options(), oneof.E_Options).(*oneof.Options)
 }
