@@ -10,6 +10,10 @@ func TestBasicMessage(t *testing.T) {
 	tests.ValidateMessage(t, &BasicMessage{})
 }
 
+func TestOneofMessage(t *testing.T) {
+	tests.ValidateMessage(t, &OneofMessage{})
+}
+
 func TestNestedMessage(t *testing.T) {
 	tests.ValidateMessage(t, &OuterMessage{})
 	tests.ValidateMessage(t, &OuterMessage_InnerMessage{})
