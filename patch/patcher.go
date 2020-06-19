@@ -207,72 +207,72 @@ func (p *Patcher) scanField(f *protogen.Field) {
 func (p *Patcher) scanExtension(f *protogen.Field) {
 	newName := proto.GetExtension(f.Desc.Options(), ExtName).(string)
 	if newName != "" {
-		ident := f.GoIdent
-		ident.GoName = f.GoName
-		p.RenameValue(WithPrefix(ident, "E_"), newName)
+		id := f.GoIdent
+		id.GoName = f.GoName
+		p.RenameValue(WithPrefix(id, "E_"), newName)
 	}
 }
 
-// RenameType renames the Go type specified by ident to newName.
-// The ident selects a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage
+// RenameType renames the Go type specified by id to newName.
+// The id argument specifies a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage
 // To rename a package-level identifier such as a type, var, or const, specify just the name, e.g. "Message" or "Enum_VALUE".
 // newName should be the unqualified name.
-// The value of ident.GoName should be the original generated type name, not a renamed type.
-func (p *Patcher) RenameType(ident protogen.GoIdent, newName string) {
-	p.renames[ident] = newName
-	p.typeRenames[ident] = newName
-	log.Printf("Rename type:\t%s.%s → %s", ident.GoImportPath, ident.GoName, newName)
+// The value of id.GoName should be the original generated type name, not a renamed type.
+func (p *Patcher) RenameType(id protogen.GoIdent, newName string) {
+	p.renames[id] = newName
+	p.typeRenames[id] = newName
+	log.Printf("Rename type:\t%s.%s → %s", id.GoImportPath, id.GoName, newName)
 }
 
-// RenameValue renames the Go value (const or var) specified by ident to newName.
-// The ident selects a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooValue
+// RenameValue renames the Go value (const or var) specified by id to newName.
+// The id argument specifies a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooValue
 // newName should be the unqualified name.
-// The value of ident.GoName should be the original generated type name, not a renamed type.
-func (p *Patcher) RenameValue(ident protogen.GoIdent, newName string) {
-	p.renames[ident] = newName
-	p.valueRenames[ident] = newName
-	log.Printf("Rename value:\t%s.%s → %s", ident.GoImportPath, ident.GoName, newName)
+// The value of id.GoName should be the original generated type name, not a renamed type.
+func (p *Patcher) RenameValue(id protogen.GoIdent, newName string) {
+	p.renames[id] = newName
+	p.valueRenames[id] = newName
+	log.Printf("Rename value:\t%s.%s → %s", id.GoImportPath, id.GoName, newName)
 }
 
-// RenameField renames the Go struct field specified by ident to newName.
-// The ident selects a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage.BarField
+// RenameField renames the Go struct field specified by id to newName.
+// The id argument specifies a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage.BarField
 // newName should be the unqualified name (after the dot).
-// The value of ident.GoName should be the original generated identifier name, not a renamed identifier.
-func (p *Patcher) RenameField(ident protogen.GoIdent, newName string) {
-	p.renames[ident] = newName
-	p.fieldRenames[ident] = newName
-	log.Printf("Rename field:\t%s.%s → %s", ident.GoImportPath, ident.GoName, newName)
+// The value of id.GoName should be the original generated identifier name, not a renamed identifier.
+func (p *Patcher) RenameField(id protogen.GoIdent, newName string) {
+	p.renames[id] = newName
+	p.fieldRenames[id] = newName
+	log.Printf("Rename field:\t%s.%s → %s", id.GoImportPath, id.GoName, newName)
 }
 
-// RenameMethod renames the Go struct or interface method specified by ident to newName.
-// The ident selects a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage.GetBarField
+// RenameMethod renames the Go struct or interface method specified by id to newName.
+// The id argument specifies a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage.GetBarField
 // The new name should be the unqualified name (after the dot).
-// The value of ident.GoName should be the original generated identifier name, not a renamed identifier.
-func (p *Patcher) RenameMethod(ident protogen.GoIdent, newName string) {
-	p.renames[ident] = newName
-	p.methodRenames[ident] = newName
-	log.Printf("Rename method:\t%s.%s → %s", ident.GoImportPath, ident.GoName, newName)
+// The value of id.GoName should be the original generated identifier name, not a renamed identifier.
+func (p *Patcher) RenameMethod(id protogen.GoIdent, newName string) {
+	p.renames[id] = newName
+	p.methodRenames[id] = newName
+	log.Printf("Rename method:\t%s.%s → %s", id.GoImportPath, id.GoName, newName)
 }
 
-func (p *Patcher) isRenamed(ident protogen.GoIdent) bool {
-	_, ok := p.renames[ident]
+func (p *Patcher) isRenamed(id protogen.GoIdent) bool {
+	_, ok := p.renames[id]
 	return ok
 }
 
-func (p *Patcher) nameFor(ident protogen.GoIdent) string {
-	if name, ok := p.renames[ident]; ok {
+func (p *Patcher) nameFor(id protogen.GoIdent) string {
+	if name, ok := p.renames[id]; ok {
 		return name
 	}
-	return LeafName(ident)
+	return LeafName(id)
 }
 
 // Tag adds the specified struct tags to the field specified by selector,
 // in the form of "Message.Field". The tags argument should omit outer backticks (`).
-// The value of ident.GoName should be the original generated identifier name, not a renamed identifier.
+// The value of id.GoName should be the original generated identifier name, not a renamed identifier.
 // The struct tags will be applied when Patch is called.
-func (p *Patcher) Tag(ident protogen.GoIdent, tags string) {
-	p.tags[ident] = tags
-	log.Printf("Tags:\t%s.%s `%s`", ident.GoImportPath, ident.GoName, tags)
+func (p *Patcher) Tag(id protogen.GoIdent, tags string) {
+	p.tags[id] = tags
+	log.Printf("Tags:\t%s.%s `%s`", id.GoImportPath, id.GoName, tags)
 }
 
 // Patch applies the patch(es) in p the Go files in res.
@@ -333,22 +333,22 @@ func (p *Patcher) checkGoFiles() error {
 	var recheck bool
 
 	// Find missing type declarations.
-	for ident := range p.typeRenames {
-		if obj, _ := p.find(ident); obj != nil {
+	for id := range p.typeRenames {
+		if obj, _ := p.find(id); obj != nil {
 			continue
 		}
-		if err := p.synthesize(ident); err != nil {
+		if err := p.synthesize(id); err != nil {
 			return err
 		}
 		recheck = true
 	}
 
 	// Find missing value declarations.
-	for ident := range p.valueRenames {
-		if obj, _ := p.find(ident); obj != nil {
+	for id := range p.valueRenames {
+		if obj, _ := p.find(id); obj != nil {
 			continue
 		}
-		if err := p.synthesize(ident); err != nil {
+		if err := p.synthesize(id); err != nil {
 			return err
 		}
 		recheck = true
@@ -362,8 +362,8 @@ func (p *Patcher) checkGoFiles() error {
 	}
 
 	// Map renames.
-	for ident, name := range p.renames {
-		obj, _ := p.find(ident)
+	for id, name := range p.renames {
+		obj, _ := p.find(id)
 		if obj == nil {
 			continue
 		}
@@ -371,8 +371,8 @@ func (p *Patcher) checkGoFiles() error {
 	}
 
 	// Map struct tags.
-	for ident, tags := range p.tags {
-		obj, _ := p.find(ident)
+	for id, tags := range p.tags {
+		obj, _ := p.find(id)
 		if obj == nil {
 			continue
 		}
@@ -411,11 +411,11 @@ func (p *Patcher) checkPackages() error {
 	return nil
 }
 
-func (p *Patcher) synthesize(ident protogen.GoIdent) error {
-	pkg := p.getPackage(string(ident.GoImportPath), ident.GoName, true)
+func (p *Patcher) synthesize(id protogen.GoIdent) error {
+	pkg := p.getPackage(string(id.GoImportPath), id.GoName, true)
 
 	// Already synthesized?
-	filename := pkg.pkg.Name() + "/" + ident.GoName + ".synthetic.go"
+	filename := pkg.pkg.Name() + "/" + id.GoName + ".synthetic.go"
 	if f := pkg.File(filename); f != nil {
 		return nil
 	}
@@ -423,7 +423,7 @@ func (p *Patcher) synthesize(ident protogen.GoIdent) error {
 	// Synthesize a Go file for this identifier.
 	b := &bytes.Buffer{}
 	fmt.Fprintf(b, "package %s\n\n", pkg.pkg.Name())
-	names := strings.Split(ident.GoName, ".")
+	names := strings.Split(id.GoName, ".")
 	if len(names) == 1 {
 		// Type or value.
 		// Synthesize a Go type as a map so subscript access works, e.g.: foo[key]
@@ -443,14 +443,14 @@ func (p *Patcher) synthesize(ident protogen.GoIdent) error {
 	return pkg.AddFile(filename, f)
 }
 
-// find finds ident in all parsed Go packages, along with any ancestor(s),
-// or nil if the ident is not found.
-func (p *Patcher) find(ident protogen.GoIdent) (obj types.Object, ancestors []types.Object) {
-	pkg := p.getPackage(string(ident.GoImportPath), "", false)
+// find finds id in all parsed Go packages, along with any ancestor(s),
+// or nil if the id is not found.
+func (p *Patcher) find(id protogen.GoIdent) (obj types.Object, ancestors []types.Object) {
+	pkg := p.getPackage(string(id.GoImportPath), "", false)
 	if pkg == nil {
 		return
 	}
-	return pkg.Find(ident)
+	return pkg.Find(id)
 }
 
 // getPackage finds a getPackage with path, or creates it if it doesn’t exist.
@@ -499,38 +499,38 @@ func (p *Patcher) serializeGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 
 func (p *Patcher) patchGoFiles() error {
 	log.Printf("\nDefs")
-	for ident, obj := range p.info.Defs {
-		p.patchIdent(ident, obj)
+	for id, obj := range p.info.Defs {
+		p.patchIdent(id, obj)
 	}
 
 	log.Printf("\nUses\n")
-	for ident, obj := range p.info.Uses {
-		p.patchIdent(ident, obj)
+	for id, obj := range p.info.Uses {
+		p.patchIdent(id, obj)
 	}
 
 	log.Printf("\nUnresolved\n")
 	for _, f := range p.files {
-		for _, ident := range f.Unresolved {
-			p.patchIdent(ident, nil)
+		for _, id := range f.Unresolved {
+			p.patchIdent(id, nil)
 		}
 	}
 
 	return nil
 }
 
-func (p *Patcher) patchIdent(ident *ast.Ident, obj types.Object) {
+func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 	// Renames
 	name := p.objectRenames[obj]
 	if name != "" {
-		log.Printf("Rename %s:\t%q.%s → %s", typeString(obj), obj.Pkg().Path(), ident.Name, name)
-		p.patchComments(ident, name)
-		ident.Name = name
+		log.Printf("Rename %s:\t%q.%s → %s", typeString(obj), obj.Pkg().Path(), id.Name, name)
+		p.patchComments(id, name)
+		id.Name = name
 	}
 
 	// Struct tags
 	tags := p.fieldTags[obj]
-	if tags != "" && ident.Obj != nil {
-		v, ok := ident.Obj.Decl.(*ast.Field)
+	if tags != "" && id.Obj != nil {
+		v, ok := id.Obj.Decl.(*ast.Field)
 		if !ok {
 			log.Printf("Warning: struct tags declared for non-field object: %v `%s`", obj, tags)
 		} else {
@@ -538,17 +538,17 @@ func (p *Patcher) patchIdent(ident *ast.Ident, obj types.Object) {
 				v.Tag = &ast.BasicLit{}
 			}
 			v.Tag.Value = "`" + strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")+" "+tags) + "`"
-			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), ident.Name, v.Tag.Value)
+			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
 		}
 	}
 }
 
-func (p *Patcher) patchComments(ident *ast.Ident, repl string) {
-	doc, comment := p.findCommentGroups(ident)
+func (p *Patcher) patchComments(id *ast.Ident, repl string) {
+	doc, comment := p.findCommentGroups(id)
 	if doc == nil && comment == nil {
 		return
 	}
-	x, err := regexp.Compile(`\b` + regexp.QuoteMeta(ident.Name) + `\b`)
+	x, err := regexp.Compile(`\b` + regexp.QuoteMeta(id.Name) + `\b`)
 	if err != nil {
 		return
 	}
@@ -558,8 +558,8 @@ func (p *Patcher) patchComments(ident *ast.Ident, repl string) {
 }
 
 // Borrowed from https://github.com/golang/tools/blob/HEAD/refactor/rename/rename.go#L543
-func (p *Patcher) findCommentGroups(ident *ast.Ident) (doc *ast.CommentGroup, comment *ast.CommentGroup) {
-	tf := p.fset.File(ident.Pos())
+func (p *Patcher) findCommentGroups(id *ast.Ident) (doc *ast.CommentGroup, comment *ast.CommentGroup) {
+	tf := p.fset.File(id.Pos())
 	if tf == nil {
 		return
 	}
@@ -567,7 +567,7 @@ func (p *Patcher) findCommentGroups(ident *ast.Ident) (doc *ast.CommentGroup, co
 	if f == nil {
 		return
 	}
-	nodes, _ := astutil.PathEnclosingInterval(f, ident.Pos(), ident.End())
+	nodes, _ := astutil.PathEnclosingInterval(f, id.Pos(), id.End())
 	for _, node := range nodes {
 		switch decl := node.(type) {
 		case *ast.FuncDecl:
