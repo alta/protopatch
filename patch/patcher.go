@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alta/protopatch/patch/ident"
 	"golang.org/x/tools/go/ast/astutil"
 
 	"google.golang.org/protobuf/compiler/protogen"
@@ -99,13 +100,13 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 		newName = proto.GetExtension(e.Desc.Options(), ExtEnumName).(string)
 	}
 	if newName != "" {
-		p.RenameType(e.GoIdent, newName)                                 // Enum type
-		p.RenameValue(WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
-		p.RenameValue(WithSuffix(e.GoIdent, "_value"), newName+"_value") // Enum value map
+		p.RenameType(e.GoIdent, newName)                                       // Enum type
+		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
+		p.RenameValue(ident.WithSuffix(e.GoIdent, "_value"), newName+"_value") // Enum value map
 	}
 	stringerName := opts.GetStringerName()
 	if stringerName != "" {
-		p.RenameMethod(WithChild(e.GoIdent, "String"), stringerName)
+		p.RenameMethod(ident.WithChild(e.GoIdent, "String"), stringerName)
 	}
 	for _, v := range e.Values {
 		p.scanEnumValue(v)
@@ -158,16 +159,16 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		newName = o.GoName
 	}
 	if newName != "" {
-		p.RenameField(WithChild(m.GoIdent, o.GoName), newName)              // Oneof
-		p.RenameMethod(WithChild(m.GoIdent, "Get"+o.GoName), "Get"+newName) // Getter
-		ifName := WithPrefix(o.GoIdent, "is")
+		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
+		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+o.GoName), "Get"+newName) // Getter
+		ifName := ident.WithPrefix(o.GoIdent, "is")
 		newIfName := "is" + p.nameFor(m.GoIdent) + "_" + newName
-		p.RenameType(ifName, newIfName)                             // Interface type (e.g. isExample_Person)
-		p.RenameMethod(WithChild(ifName, ifName.GoName), newIfName) // Interface method
+		p.RenameType(ifName, newIfName)                                   // Interface type (e.g. isExample_Person)
+		p.RenameMethod(ident.WithChild(ifName, ifName.GoName), newIfName) // Interface method
 	}
 	tags := proto.GetExtension(o.Desc.Options(), ExtOneofTags).(string)
 	if tags != "" {
-		p.Tag(WithChild(m.GoIdent, o.GoName), tags)
+		p.Tag(ident.WithChild(m.GoIdent, o.GoName), tags)
 	}
 }
 
@@ -185,21 +186,21 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	}
 	if newName != "" {
 		if o != nil {
-			p.RenameType(f.GoIdent, p.nameFor(m.GoIdent)+"_"+newName) // Oneof wrapper struct
-			p.RenameField(WithChild(f.GoIdent, f.GoName), newName)    // Oneof wrapper field
-			ifName := WithPrefix(o.GoIdent, "is")
-			p.RenameMethod(WithChild(f.GoIdent, ifName.GoName), p.nameFor(ifName)) // Oneof interface method
+			p.RenameType(f.GoIdent, p.nameFor(m.GoIdent)+"_"+newName)    // Oneof wrapper struct
+			p.RenameField(ident.WithChild(f.GoIdent, f.GoName), newName) // Oneof wrapper field
+			ifName := ident.WithPrefix(o.GoIdent, "is")
+			p.RenameMethod(ident.WithChild(f.GoIdent, ifName.GoName), p.nameFor(ifName)) // Oneof interface method
 		} else {
-			p.RenameField(WithChild(m.GoIdent, f.GoName), newName) // Field
+			p.RenameField(ident.WithChild(m.GoIdent, f.GoName), newName) // Field
 		}
-		p.RenameMethod(WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
+		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
 	tags := proto.GetExtension(f.Desc.Options(), ExtTags).(string)
 	if tags != "" {
 		if o != nil {
-			p.Tag(WithChild(f.GoIdent, f.GoName), tags) // Oneof wrapper field tags
+			p.Tag(ident.WithChild(f.GoIdent, f.GoName), tags) // Oneof wrapper field tags
 		} else {
-			p.Tag(WithChild(m.GoIdent, f.GoName), tags) // Field tags
+			p.Tag(ident.WithChild(m.GoIdent, f.GoName), tags) // Field tags
 		}
 	}
 }
@@ -209,7 +210,7 @@ func (p *Patcher) scanExtension(f *protogen.Field) {
 	if newName != "" {
 		id := f.GoIdent
 		id.GoName = f.GoName
-		p.RenameValue(WithPrefix(id, "E_"), newName)
+		p.RenameValue(ident.WithPrefix(id, "E_"), newName)
 	}
 }
 
@@ -263,7 +264,7 @@ func (p *Patcher) nameFor(id protogen.GoIdent) string {
 	if name, ok := p.renames[id]; ok {
 		return name
 	}
-	return LeafName(id)
+	return ident.LeafName(id)
 }
 
 // Tag adds the specified struct tags to the field specified by selector,
