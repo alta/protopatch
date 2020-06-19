@@ -17,3 +17,8 @@ enum CustomStringerEnum {
 	B = 2;
 	C = 3;
 }
+
+enum DefaultStringerEnum {
+	UNSET = 0;
+	EXAMPLE = 1;
+}

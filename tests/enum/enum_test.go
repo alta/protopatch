@@ -42,3 +42,10 @@ func TestCustomStringerEnum(t *testing.T) {
 		})
 	}
 }
+
+func TestDefaultStringerEnum(t *testing.T) {
+	e := DefaultStringerEnum(0)
+	if s := e.String(); s != "UNSET" {
+		t.Errorf("%T(%d) incorrect original string %q != %q", e, e, s, "UNSET")
+	}
+}
