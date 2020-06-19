@@ -103,6 +103,10 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 		p.RenameValue(WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
 		p.RenameValue(WithSuffix(e.GoIdent, "_value"), newName+"_value") // Enum value map
 	}
+	stringerName := opts.GetStringerName()
+	if stringerName != "" {
+		p.RenameMethod(WithChild(e.GoIdent, "String"), stringerName)
+	}
 	for _, v := range e.Values {
 		p.scanEnumValue(v)
 	}
