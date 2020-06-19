@@ -31,7 +31,7 @@ message Options {
 }
 
 // Extend FieldOptions here because field options are the most commonly used.
-// Example: int id = 1 [(go.options) = {name: 'ID'}];
 extend google.protobuf.FieldOptions {
-	optional go.Options options = 7001;
+	// Example: int id = 1 [(go.options) = {name: 'ID'}];
+	optional Options options = 7002;
 }
