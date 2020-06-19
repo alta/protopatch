@@ -15,6 +15,11 @@ Patches are defined via an `Options` extension on messages, fields, `oneof` fiel
 ### Custom Names
 
 ```proto
+import "patch/go/message.proto";
+import "patch/go/field.proto";
+import "patch/go/enum.proto";
+import "patch/go/value.proto";
+
 message OldName {
 	option (go.message.options) = {name: 'NewName'};
 	int id = 1 [(go.field.options) = {name: 'ID'}];
@@ -25,6 +30,15 @@ enum Errors {
 	INVALID = 1 [(go.value.options) = {name: 'ErrInvalid'}];
 	NOT_FOUND = 2 [(go.value.options) = {name: 'ErrNotFound'}];
 	TOO_FUN = 3 [(go.value.options) = {name: 'ErrTooFun'}];
+}
+```
+
+### Struct Tags
+
+```proto
+message ToDo {
+	int32 id = 1 (go.field.options) = {name: 'ID', tags: '`xml:"id,attr"`'}]
+	string description = 2 (go.field.options) = {tags: '`xml:"desc"`'}]
 }
 ```
 
