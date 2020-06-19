@@ -19,6 +19,13 @@ func TestRenamedEnum(t *testing.T) {
 	tests.ValidateEnum(t, RenamedEnum(0), RenamedEnum_name, RenamedEnum_value)
 }
 
+func TestRenamedEnumValue(t *testing.T) {
+	tests.ValidateEnum(t, EnumWithRenamedValue(0), EnumWithRenamedValue_name, EnumWithRenamedValue_value)
+	if got, want := RenamedValue, EnumWithRenamedValue(0); got != want {
+		t.Errorf("%T(%d) != %v", got, got, want)
+	}
+}
+
 func TestCustomStringerEnum(t *testing.T) {
 	tests := []struct {
 		enum     CustomStringerEnum
