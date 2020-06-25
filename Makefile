@@ -35,3 +35,16 @@ $(proto_files): tools Makefile
 		--go-patch_out=plugin=go,paths=import,module=$(go_module):. \
 		--go-patch_out=plugin=go-grpc,paths=import,module=$(go_module):. \
 		$@
+
+.PHONY: shims
+shims: shims/gogoproto
+
+gogo_dir = $(shell go list -m -f {{.Dir}} github.com/gogo/protobuf)
+
+.PHONY: shims/gogoproto
+shims/gogoproto: tools Makefile
+	protoc \
+		-I . \
+		-I $(gogo_dir) \
+		--go_out=paths=source_relative:shims \
+		$(gogo_dir)/gogoproto/gogo.proto
