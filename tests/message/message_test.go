@@ -37,9 +37,14 @@ func TestRenamedOneofMessage(t *testing.T) {
 	var _ string = m.GetName()
 }
 
-func TestRenamedNestedMessage(t *testing.T) {
+func TestRenamedOuterMessage(t *testing.T) {
 	tests.ValidateMessage(t, &RenamedOuterMessage{})
 	tests.ValidateMessage(t, &RenamedOuterMessage_InnerMessage{})
+}
+
+func TestRenamedInnerMessage(t *testing.T) {
+	tests.ValidateMessage(t, &OuterMessageWithRenamedInnerMessage{})
+	tests.ValidateMessage(t, &RenamedInnerMessage{})
 }
 
 func TestMessageWithRenamedField(t *testing.T) {
