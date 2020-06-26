@@ -60,3 +60,13 @@ func TestAltMessageWithRenamedField(t *testing.T) {
 	var _ int32 = m.ID
 	var _ int32 = m.GetID()
 }
+
+func TestMessageWithStructTags(t *testing.T) {
+	m := &MessageWithTags{}
+	tests.ValidateTag(t, m, "Value", "test", "value")
+}
+
+func TestNestedMessageWithStructTags(t *testing.T) {
+	m := &OuterMessageWithTags_InnerMessage{}
+	tests.ValidateTag(t, m, "Value", "test", "value")
+}
