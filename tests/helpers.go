@@ -27,3 +27,15 @@ func ValidateEnum(t *testing.T, e protoreflect.Enum, names EnumNames, values Enu
 func ValidateMessage(t *testing.T, m proto.Message) {
 	// TODO: add some validation
 }
+
+// ValidateTag performs basic validation of a struct tag.
+func ValidateTag(t *testing.T, m proto.Message, field, tag, value string) {
+	f, ok := reflect.TypeOf(m).Elem().FieldByName(field)
+	if !ok {
+		t.Errorf("%T: expected struct tag, but none found", m)
+		return
+	}
+	if got := f.Tag.Get(tag); got != value {
+		t.Errorf("%T.%s tag `%s` = %q, expected %q", m, field, tag, got, value)
+	}
+}

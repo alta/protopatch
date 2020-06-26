@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package tests.message;
+
+import "patch/go.proto";
+import "patch/go/message.proto";
+import "patch/go/field.proto";
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message MessageWithTags {
+	string value = 1 [(go.field.options) = {tags: 'test:"value"'}];
+}
+
+message OuterMessageWithTags {
+	message InnerMessage {
+		string value = 1 [(go.field.options) = {tags: 'test:"value"'}];
+	}
+}
+
+// Alt* test data use alternate options syntax:
+// (go.options) instead of (go.field.options)
+message AltMessageWithTags {
+	string value = 1 [(go.options) = {tags: 'test:"value"'}];
+}
+
+message AltOuterMessageWithTags {
+	message InnerMessage {
+		string value = 1 [(go.options) = {tags: 'test:"value"'}];
+	}
+}

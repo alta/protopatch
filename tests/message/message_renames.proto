@@ -32,6 +32,15 @@ message OriginalOuterMessage {
 	InnerMessage inner = 1;
 }
 
+message OuterMessageWithRenamedInnerMessage {
+	message InnerMessage {
+		option (go.message.options) = {
+			name: 'RenamedInnerMessage'
+		};
+	}
+	InnerMessage inner = 1;
+}
+
 message MessageWithRenamedField {
 	int32 id = 1 [(go.field.options) = {name: 'ID'}];
 }
