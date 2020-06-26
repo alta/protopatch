@@ -93,7 +93,7 @@ func (p *Patcher) scanFile(f *protogen.File) {
 }
 
 func (p *Patcher) scanEnum(e *protogen.Enum) {
-	opts := enumOptions(e)
+	opts := EnumOptions(e)
 	newName := opts.GetName()
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
@@ -111,7 +111,7 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 
 func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	e := v.Parent
-	opts := valueOptions(v)
+	opts := ValueOptions(v)
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
@@ -122,7 +122,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 }
 
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
-	opts := messageOptions(m)
+	opts := MessageOptions(m)
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
@@ -147,7 +147,7 @@ func replacePrefix(s, prefix, with string) string {
 
 func (p *Patcher) scanOneof(o *protogen.Oneof) {
 	m := o.Parent
-	opts := oneofOptions(o)
+	opts := OneofOptions(o)
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(m.GoIdent) {
 		// Implicitly rename this oneof field because its parent message was renamed.
@@ -170,7 +170,7 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
-	opts := fieldOptions(f)
+	opts := FieldOptions(f)
 	newName := opts.GetName()
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
@@ -198,7 +198,7 @@ func (p *Patcher) scanField(f *protogen.Field) {
 }
 
 func (p *Patcher) scanExtension(f *protogen.Field) {
-	opts := fieldOptions(f)
+	opts := FieldOptions(f)
 	newName := opts.GetName()
 	if newName != "" {
 		id := f.GoIdent
