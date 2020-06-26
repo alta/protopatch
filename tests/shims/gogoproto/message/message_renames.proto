@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package tests.shims.gogoproto.message;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/alta/protopatch/tests/shims/gogoproto/message";
+
+message MessageWithRenamedField {
+	int32 id = 1 [(.gogoproto.customname) = 'ID'];
+}
