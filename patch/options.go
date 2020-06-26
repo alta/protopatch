@@ -7,50 +7,43 @@ import (
 	"github.com/alta/protopatch/patch/go/message"
 	"github.com/alta/protopatch/patch/go/oneof"
 	"github.com/alta/protopatch/patch/go/value"
+	"github.com/alta/protopatch/patch/options"
 
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
+// Ensure Patcher implements options.Provider.
+var _ options.Provider = &Patcher{}
+
 // EnumOptions returns patch_go.Options if present, otherwise nil.
-func EnumOptions(e *protogen.Enum) *patch_go.Options {
-	return Options(e.Desc, enum.E_Options)
+func (p *Patcher) EnumOptions(e *protogen.Enum) *patch_go.Options {
+	return options.Get(e.Desc, enum.E_Options)
 }
 
 // ValueOptions returns patch_go.Options if present, otherwise nil.
-func ValueOptions(v *protogen.EnumValue) *patch_go.Options {
-	return Options(v.Desc, value.E_Options)
+func (p *Patcher) ValueOptions(v *protogen.EnumValue) *patch_go.Options {
+	return options.Get(v.Desc, value.E_Options)
 }
 
 // MessageOptions returns patch_go.Options if present, otherwise nil.
-func MessageOptions(m *protogen.Message) *patch_go.Options {
-	return Options(m.Desc, message.E_Options)
+func (p *Patcher) MessageOptions(m *protogen.Message) *patch_go.Options {
+	return options.Get(m.Desc, message.E_Options)
 }
 
 // FieldOptions returns patch_go.Options if present on e, otherwise nil.
-func FieldOptions(f *protogen.Field) *patch_go.Options {
+func (p *Patcher) FieldOptions(f *protogen.Field) *patch_go.Options {
 	// First try (go.field.options)
-	if opts := Options(f.Desc, field.E_Options); opts != nil {
+	if opts := options.Get(f.Desc, field.E_Options); opts != nil {
 		return opts
 	}
 	// Then try (go.field.options)
-	if opts := Options(f.Desc, patch_go.E_Options); opts != nil {
+	if opts := options.Get(f.Desc, patch_go.E_Options); opts != nil {
 		return opts
 	}
 	return nil
 }
 
 // OneofOptions returns patch_go.Options if present on e, otherwise nil.
-func OneofOptions(o *protogen.Oneof) *patch_go.Options {
-	return Options(o.Desc, oneof.E_Options)
-}
-
-// Options returns patch_go.Options if present on desc, otherwise nil.
-func Options(desc protoreflect.Descriptor, xt protoreflect.ExtensionType) *patch_go.Options {
-	o := desc.Options()
-	if proto.HasExtension(o, xt) {
-		return proto.GetExtension(o, xt).(*patch_go.Options)
-	}
-	return nil
+func (p *Patcher) OneofOptions(o *protogen.Oneof) *patch_go.Options {
+	return options.Get(o.Desc, oneof.E_Options)
 }
