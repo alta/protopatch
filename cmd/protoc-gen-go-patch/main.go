@@ -57,7 +57,7 @@ func main() {
 		}
 
 		// Initialize a Patcher and scan source proto files.
-		patcher, err := patch.NewPatcher(gen)
+		patcher, err := patch.NewPatcher(gen, shims...)
 		if err != nil {
 			return err
 		}

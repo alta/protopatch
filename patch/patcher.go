@@ -37,6 +37,7 @@ import (
 // - go_value_name (EnumValue option) overrides the name of an enum const.
 type Patcher struct {
 	gen            *protogen.Plugin
+	shims          []options.Provider
 	fset           *token.FileSet
 	files          []*ast.File
 	filesByName    map[string]*ast.File
@@ -55,7 +56,7 @@ type Patcher struct {
 }
 
 // NewPatcher returns an initialized Patcher for gen.
-func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
+func NewPatcher(gen *protogen.Plugin, shims ...string) (*Patcher, error) {
 	p := &Patcher{
 		gen:            gen,
 		packagesByPath: make(map[string]*Package),
@@ -68,6 +69,13 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		objectRenames:  make(map[types.Object]string),
 		tags:           make(map[protogen.GoIdent]string),
 		fieldTags:      make(map[types.Object]string),
+	}
+	for _, name := range shims {
+		shim := options.NewProvider(name)
+		if shim == nil {
+			return nil, fmt.Errorf("unknown shim: %s", name)
+		}
+		p.shims = append(p.shims, shim)
 	}
 	return p, p.scan()
 }
@@ -215,15 +223,45 @@ func (p *Patcher) scanExtension(f *protogen.Field) {
 }
 
 func (p *Patcher) enumOptions(e *protogen.Enum) *patch_go.Options {
-	return options.Get(e.Desc, enum.E_Options)
+	// First try (go.enum.options)
+	if opts := options.Get(e.Desc, enum.E_Options); opts != nil {
+		return opts
+	}
+	// Then try shims
+	for _, shim := range p.shims {
+		if opts := shim.EnumOptions(e); opts != nil {
+			return opts
+		}
+	}
+	return nil
 }
 
 func (p *Patcher) valueOptions(v *protogen.EnumValue) *patch_go.Options {
-	return options.Get(v.Desc, value.E_Options)
+	// First try (go.value.options)
+	if opts := options.Get(v.Desc, value.E_Options); opts != nil {
+		return opts
+	}
+	// Then try shims
+	for _, shim := range p.shims {
+		if opts := shim.ValueOptions(v); opts != nil {
+			return opts
+		}
+	}
+	return nil
 }
 
 func (p *Patcher) messageOptions(m *protogen.Message) *patch_go.Options {
-	return options.Get(m.Desc, message.E_Options)
+	// First try (go.message.options)
+	if opts := options.Get(m.Desc, message.E_Options); opts != nil {
+		return opts
+	}
+	// Then try shims
+	for _, shim := range p.shims {
+		if opts := shim.MessageOptions(m); opts != nil {
+			return opts
+		}
+	}
+	return nil
 }
 
 func (p *Patcher) fieldOptions(f *protogen.Field) *patch_go.Options {
@@ -235,11 +273,27 @@ func (p *Patcher) fieldOptions(f *protogen.Field) *patch_go.Options {
 	if opts := options.Get(f.Desc, patch_go.E_Options); opts != nil {
 		return opts
 	}
+	// Then try shims
+	for _, shim := range p.shims {
+		if opts := shim.FieldOptions(f); opts != nil {
+			return opts
+		}
+	}
 	return nil
 }
 
 func (p *Patcher) oneofOptions(o *protogen.Oneof) *patch_go.Options {
-	return options.Get(o.Desc, oneof.E_Options)
+	// First try (go.oneof.options)
+	if opts := options.Get(o.Desc, oneof.E_Options); opts != nil {
+		return opts
+	}
+	// Then try shims
+	for _, shim := range p.shims {
+		if opts := shim.OneofOptions(o); opts != nil {
+			return opts
+		}
+	}
+	return nil
 }
 
 // RenameType renames the Go type specified by id to newName.
