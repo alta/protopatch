@@ -13,7 +13,14 @@ import (
 	"regexp"
 	"strings"
 
+	patch_go "github.com/alta/protopatch/patch/go"
+	"github.com/alta/protopatch/patch/go/enum"
+	"github.com/alta/protopatch/patch/go/field"
+	"github.com/alta/protopatch/patch/go/message"
+	"github.com/alta/protopatch/patch/go/oneof"
+	"github.com/alta/protopatch/patch/go/value"
 	"github.com/alta/protopatch/patch/ident"
+	"github.com/alta/protopatch/patch/options"
 	"golang.org/x/tools/go/ast/astutil"
 
 	"google.golang.org/protobuf/compiler/protogen"
@@ -93,7 +100,7 @@ func (p *Patcher) scanFile(f *protogen.File) {
 }
 
 func (p *Patcher) scanEnum(e *protogen.Enum) {
-	opts := p.EnumOptions(e)
+	opts := p.enumOptions(e)
 	newName := opts.GetName()
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
@@ -111,7 +118,7 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 
 func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	e := v.Parent
-	opts := p.ValueOptions(v)
+	opts := p.valueOptions(v)
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
@@ -122,7 +129,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 }
 
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
-	opts := p.MessageOptions(m)
+	opts := p.messageOptions(m)
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
@@ -147,7 +154,7 @@ func replacePrefix(s, prefix, with string) string {
 
 func (p *Patcher) scanOneof(o *protogen.Oneof) {
 	m := o.Parent
-	opts := p.OneofOptions(o)
+	opts := p.oneofOptions(o)
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(m.GoIdent) {
 		// Implicitly rename this oneof field because its parent message was renamed.
@@ -170,7 +177,7 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
-	opts := p.FieldOptions(f)
+	opts := p.fieldOptions(f)
 	newName := opts.GetName()
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
@@ -198,13 +205,41 @@ func (p *Patcher) scanField(f *protogen.Field) {
 }
 
 func (p *Patcher) scanExtension(f *protogen.Field) {
-	opts := p.FieldOptions(f)
+	opts := p.fieldOptions(f)
 	newName := opts.GetName()
 	if newName != "" {
 		id := f.GoIdent
 		id.GoName = f.GoName
 		p.RenameValue(ident.WithPrefix(id, "E_"), newName)
 	}
+}
+
+func (p *Patcher) enumOptions(e *protogen.Enum) *patch_go.Options {
+	return options.Get(e.Desc, enum.E_Options)
+}
+
+func (p *Patcher) valueOptions(v *protogen.EnumValue) *patch_go.Options {
+	return options.Get(v.Desc, value.E_Options)
+}
+
+func (p *Patcher) messageOptions(m *protogen.Message) *patch_go.Options {
+	return options.Get(m.Desc, message.E_Options)
+}
+
+func (p *Patcher) fieldOptions(f *protogen.Field) *patch_go.Options {
+	// First try (go.field.options)
+	if opts := options.Get(f.Desc, field.E_Options); opts != nil {
+		return opts
+	}
+	// Then try (go.field.options)
+	if opts := options.Get(f.Desc, patch_go.E_Options); opts != nil {
+		return opts
+	}
+	return nil
+}
+
+func (p *Patcher) oneofOptions(o *protogen.Oneof) *patch_go.Options {
+	return options.Get(o.Desc, oneof.E_Options)
 }
 
 // RenameType renames the Go type specified by id to newName.
