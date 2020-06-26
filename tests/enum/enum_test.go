@@ -32,10 +32,10 @@ func TestCustomStringerEnum(t *testing.T) {
 		original string
 		patched  string
 	}{
-		{0, "INVALID", "invalid"},
-		{1, "A", "a"},
-		{2, "B", "b"},
-		{3, "C", "c"},
+		{0, "CUSTOM_STRINGER_INVALID", "custom_stringer_invalid"},
+		{1, "CUSTOM_STRINGER_A", "custom_stringer_a"},
+		{2, "CUSTOM_STRINGER_B", "custom_stringer_b"},
+		{3, "CUSTOM_STRINGER_C", "custom_stringer_c"},
 	}
 	for _, tt := range tests {
 		name := fmt.Sprintf("enum(%d)/%s/%s", int32(tt.enum), tt.original, tt.patched)
@@ -52,7 +52,7 @@ func TestCustomStringerEnum(t *testing.T) {
 
 func TestDefaultStringerEnum(t *testing.T) {
 	e := DefaultStringerEnum(0)
-	if s := e.String(); s != "UNSET" {
-		t.Errorf("%T(%d) incorrect original string %q != %q", e, e, s, "UNSET")
+	if got, want := e.String(), "DEFAULT_STRINGER_UNSET"; got != want {
+		t.Errorf("%T(%d) incorrect original string %q != %q", e, e, got, want)
 	}
 }

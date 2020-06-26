@@ -12,13 +12,13 @@ enum CustomStringerEnum {
 	option (go.enum.options) = {
 		stringer_name: 'OrigString'
 	};
-	INVALID = 0;
-	A = 1;
-	B = 2;
-	C = 3;
+	CUSTOM_STRINGER_INVALID = 0;
+	CUSTOM_STRINGER_A = 1;
+	CUSTOM_STRINGER_B = 2;
+	CUSTOM_STRINGER_C = 3;
 }
 
 enum DefaultStringerEnum {
-	UNSET = 0;
-	EXAMPLE = 1;
+	DEFAULT_STRINGER_UNSET = 0;
+	DEFAULT_STRINGER_EXAMPLE = 1;
 }
