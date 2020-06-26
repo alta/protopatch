@@ -13,28 +13,19 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-// Options returns patch_go.Options if present on desc, otherwise nil.
-func Options(desc protoreflect.Descriptor, xt protoreflect.ExtensionType) *patch_go.Options {
-	o := desc.Options()
-	if proto.HasExtension(o, xt) {
-		return proto.GetExtension(o, xt).(*patch_go.Options)
-	}
-	return nil
-}
-
 // EnumOptions returns patch_go.Options if present, otherwise nil.
 func EnumOptions(e *protogen.Enum) *patch_go.Options {
-	return proto.GetExtension(e.Desc.Options(), enum.E_Options).(*patch_go.Options)
+	return Options(e.Desc, enum.E_Options)
 }
 
 // ValueOptions returns patch_go.Options if present, otherwise nil.
 func ValueOptions(v *protogen.EnumValue) *patch_go.Options {
-	return proto.GetExtension(v.Desc.Options(), value.E_Options).(*patch_go.Options)
+	return Options(v.Desc, value.E_Options)
 }
 
 // MessageOptions returns patch_go.Options if present, otherwise nil.
 func MessageOptions(m *protogen.Message) *patch_go.Options {
-	return proto.GetExtension(m.Desc.Options(), message.E_Options).(*patch_go.Options)
+	return Options(m.Desc, message.E_Options)
 }
 
 // FieldOptions returns patch_go.Options if present on e, otherwise nil.
@@ -52,5 +43,14 @@ func FieldOptions(f *protogen.Field) *patch_go.Options {
 
 // OneofOptions returns patch_go.Options if present on e, otherwise nil.
 func OneofOptions(o *protogen.Oneof) *patch_go.Options {
-	return proto.GetExtension(o.Desc.Options(), oneof.E_Options).(*patch_go.Options)
+	return Options(o.Desc, oneof.E_Options)
+}
+
+// Options returns patch_go.Options if present on desc, otherwise nil.
+func Options(desc protoreflect.Descriptor, xt protoreflect.ExtensionType) *patch_go.Options {
+	o := desc.Options()
+	if proto.HasExtension(o, xt) {
+		return proto.GetExtension(o, xt).(*patch_go.Options)
+	}
+	return nil
 }
