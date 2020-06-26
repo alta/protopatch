@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package tests.shims.gogoproto.message;
+
+import "patch/go.proto";
+import "patch/go/message.proto";
+import "patch/go/field.proto";
+
+option go_package = "github.com/alta/protopatch/tests/shims/gogoproto/message";
+
+message OriginalMessage {
+	option (go.message.options) = {
+		name: 'RenamedMessage'
+	};
+}
+
+message OriginalOneofMessage {
+	option (go.message.options) = {
+		name: 'RenamedOneofMessage'
+	};
+	oneof contents {
+		int32 id = 1;
+		string name = 2;
+	};
+}
+
+message OriginalOuterMessage {
+	option (go.message.options) = {
+		name: 'RenamedOuterMessage'
+	};
+	message InnerMessage {}
+	InnerMessage inner = 1;
+}
+
+message MessageWithRenamedField {
+	int32 id = 1 [(go.field.options) = {name: 'ID'}];
+}
+
+// Alt* test data use alternate options syntax:
+// (go.options) instead of (go.field.options)
+message AltMessageWithRenamedField {
+	int32 id = 1 [(go.options) = {name: 'ID'}];
+}

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/alta/protopatch/patch"
+	_ "github.com/alta/protopatch/shims/gogoproto"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
@@ -22,17 +23,20 @@ func main() {
 		return
 	}
 
-	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == ""  {
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
 		log.SetOutput(ioutil.Discard)
 	}
 
 	var plugin string
+	var shims []string
 
 	protogen.Options{
 		ParamFunc: func(name, value string) error {
 			switch name {
 			case "plugin":
 				plugin = value
+			case "shim":
+				shims = append(shims, value)
 			}
 			return nil // Ignore unknown params.
 		},
@@ -44,6 +48,7 @@ func main() {
 
 		// Strip our custom param(s).
 		patch.StripParam(gen.Request, "plugin")
+		patch.StripParam(gen.Request, "shim")
 
 		// Run the specified plugin and unmarshal the CodeGeneratorResponse.
 		res, err := patch.RunPlugin(plugin, gen.Request, nil)
