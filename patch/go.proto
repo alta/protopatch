@@ -23,7 +23,7 @@ message Options {
 	// The tags option specifies additional struct tags which are appended a generated Go struct field.
 	// This option may be specified on a message field or a oneof field.
 	// The value should omit the enclosing backticks.
-	optional string tags = 20;
+	map<string, string> tags = 20;
 
 	// The stringer_name option renames a generated String() method (if any)
 	// so a custom String() method can be implemented in its place.

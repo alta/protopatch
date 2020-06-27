@@ -43,8 +43,8 @@ type Patcher struct {
 	fieldRenames   map[protogen.GoIdent]string
 	methodRenames  map[protogen.GoIdent]string
 	objectRenames  map[types.Object]string
-	tags           map[protogen.GoIdent]string
-	fieldTags      map[types.Object]string
+	tags           map[protogen.GoIdent]Tags
+	fieldTags      map[types.Object]Tags
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -59,8 +59,8 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		fieldRenames:   make(map[protogen.GoIdent]string),
 		methodRenames:  make(map[protogen.GoIdent]string),
 		objectRenames:  make(map[types.Object]string),
-		tags:           make(map[protogen.GoIdent]string),
-		fieldTags:      make(map[types.Object]string),
+		tags:           make(map[protogen.GoIdent]Tags),
+		fieldTags:      make(map[types.Object]Tags),
 	}
 	return p, p.scan()
 }
@@ -161,8 +161,8 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		p.RenameType(ifName, newIfName)                                   // Interface type (e.g. isExample_Person)
 		p.RenameMethod(ident.WithChild(ifName, ifName.GoName), newIfName) // Interface method
 	}
-	tags := opts.GetTags()
-	if tags != "" {
+	tags := Tags(opts.GetTags())
+	if len(tags) > 0 {
 		p.Tag(ident.WithChild(m.GoIdent, o.GoName), tags)
 	}
 }
@@ -187,8 +187,8 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		}
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
-	tags := opts.GetTags()
-	if tags != "" {
+	tags := Tags(opts.GetTags())
+	if len(tags) > 0 {
 		if o != nil {
 			p.Tag(ident.WithChild(f.GoIdent, f.GoName), tags) // Oneof wrapper field tags
 		} else {
@@ -264,7 +264,7 @@ func (p *Patcher) nameFor(id protogen.GoIdent) string {
 // in the form of "Message.Field". The tags argument should omit outer backticks (`).
 // The value of id.GoName should be the original generated identifier name, not a renamed identifier.
 // The struct tags will be applied when Patch is called.
-func (p *Patcher) Tag(id protogen.GoIdent, tags string) {
+func (p *Patcher) Tag(id protogen.GoIdent, tags Tags) {
 	p.tags[id] = tags
 	log.Printf("Tags:\t%s.%s `%s`", id.GoImportPath, id.GoName, tags)
 }
@@ -523,7 +523,7 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 
 	// Struct tags
 	tags := p.fieldTags[obj]
-	if tags != "" && id.Obj != nil {
+	if len(tags) > 0 && id.Obj != nil {
 		v, ok := id.Obj.Decl.(*ast.Field)
 		if !ok {
 			log.Printf("Warning: struct tags declared for non-field object: %v `%s`", obj, tags)
@@ -531,7 +531,7 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 			if v.Tag == nil {
 				v.Tag = &ast.BasicLit{}
 			}
-			v.Tag.Value = "`" + strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")+" "+tags) + "`"
+			v.Tag.Value = "`" + strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")+" "+tags.String()) + "`"
 			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
 		}
 	}
