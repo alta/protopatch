@@ -54,13 +54,6 @@ func TestMessageWithRenamedField(t *testing.T) {
 	var _ int32 = m.GetID()
 }
 
-func TestAltMessageWithRenamedField(t *testing.T) {
-	m := &AltMessageWithRenamedField{}
-	tests.ValidateMessage(t, m)
-	var _ int32 = m.ID
-	var _ int32 = m.GetID()
-}
-
 func TestMessageWithStructTags(t *testing.T) {
 	m := &MessageWithTags{}
 	tests.ValidateTag(t, m, "Value", "test", "value")
