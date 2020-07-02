@@ -3,19 +3,17 @@ syntax = "proto3";
 package tests.message;
 
 import "patch/go.proto";
-import "patch/go/message.proto";
-import "patch/go/field.proto";
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
 message OriginalMessage {
-	option (go.message.options) = {
+	option (go.message) = {
 		name: 'RenamedMessage'
 	};
 }
 
 message OriginalOneofMessage {
-	option (go.message.options) = {
+	option (go.message) = {
 		name: 'RenamedOneofMessage'
 	};
 	oneof contents {
@@ -25,7 +23,7 @@ message OriginalOneofMessage {
 }
 
 message OriginalOuterMessage {
-	option (go.message.options) = {
+	option (go.message) = {
 		name: 'RenamedOuterMessage'
 	};
 	message InnerMessage {}
@@ -34,7 +32,7 @@ message OriginalOuterMessage {
 
 message OuterMessageWithRenamedInnerMessage {
 	message InnerMessage {
-		option (go.message.options) = {
+		option (go.message) = {
 			name: 'RenamedInnerMessage'
 		};
 	}
@@ -42,11 +40,5 @@ message OuterMessageWithRenamedInnerMessage {
 }
 
 message MessageWithRenamedField {
-	int32 id = 1 [(go.field.options) = {name: 'ID'}];
-}
-
-// Alt* test data use alternate options syntax:
-// (go.options) instead of (go.field.options)
-message AltMessageWithRenamedField {
-	int32 id = 1 [(go.options) = {name: 'ID'}];
+	int32 id = 1 [(go.field) = {name: 'ID'}];
 }

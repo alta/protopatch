@@ -4,13 +4,12 @@ syntax = "proto3";
 package tests.enum;
 // clang-format on
 
-import "patch/go/enum.proto";
-import "patch/go/value.proto";
+import "patch/go.proto";
 
 option go_package = "github.com/alta/protopatch/tests/enum";
 
 enum OriginalEnum {
-	option (go.enum.options) = {
+	option (go.enum) = {
 		name: 'RenamedEnum'
 	};
 	INVALID = 0;
@@ -20,6 +19,6 @@ enum OriginalEnum {
 }
 
 enum EnumWithRenamedValue {
-	ORIGINAL_VALUE = 0 [(go.value.options) = {name: 'RenamedValue'}];
+	ORIGINAL_VALUE = 0 [(go.value) = {name: 'RenamedValue'}];
 	ONE = 1;
 }

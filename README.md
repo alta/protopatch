@@ -6,32 +6,27 @@ Patch `protoc` plugin output with Go-specific features. The `protoc-gen-go-patch
 
 Patches are defined via an `Options` extension on messages, fields, `oneof` fields, enums, and enum values.
 
-- `go.message.options` — message options, which modify the generated Go struct for a message.
-- `go.field.options` (also aliased to `go.options`) — message field options, which modify Go struct fields and getter methods.
-- `go.oneof.options` — `oneof` field options, which modify struct fields, interface types, and wrapper types.
-- `go.enum.options` — `enum` options, which modify Go enum types and values.
-- `go.value.options` — `enum` value options, which modify Go `const` values.
+- `go.message` — message options, which modify the generated Go struct for a message.
+- `go.field` — message field options, which modify Go struct fields and getter methods.
+- `go.oneof` — `oneof` field options, which modify struct fields, interface types, and wrapper types.
+- `go.enum` — `enum` options, which modify Go enum types and values.
+- `go.value` — `enum` value options, which modify Go `const` values.
 
 ### Custom Names
 
 ```proto
 import "patch/go.proto";
-import "patch/go/message.proto";
-import "patch/go/field.proto";
-import "patch/go/oneof.proto";
-import "patch/go/enum.proto";
-import "patch/go/value.proto";
 
 message OldName {
-	option (go.message.options) = {name: 'NewName'};
-	int id = 1 [(go.field.options) = {name: 'ID'}];
+	option (go.message) = {name: 'NewName'};
+	int id = 1 [(go.field) = {name: 'ID'}];
 }
 
 enum Errors {
-	option (go.enum.options) = {name: 'ProtocolErrors'};
-	INVALID = 1 [(go.value.options) = {name: 'ErrInvalid'}];
-	NOT_FOUND = 2 [(go.value.options) = {name: 'ErrNotFound'}];
-	TOO_FUN = 3 [(go.value.options) = {name: 'ErrTooFun'}];
+	option (go.enum) = {name: 'ProtocolErrors'};
+	INVALID = 1 [(go.value) = {name: 'ErrInvalid'}];
+	NOT_FOUND = 2 [(go.value) = {name: 'ErrNotFound'}];
+	TOO_FUN = 3 [(go.value) = {name: 'ErrTooFun'}];
 }
 ```
 
@@ -39,8 +34,8 @@ enum Errors {
 
 ```proto
 message ToDo {
-	int32 id = 1 [(go.field.options) = {name: 'ID', tags: '`xml:"id,attr"`'}];
-	string description = 2 [(go.field.options) = {tags: '`xml:"desc"`'}];
+	int32 id = 1 [(go.field) = {name: 'ID', tags: '`xml:"id,attr"`'}];
+	string description = 2 [(go.field) = {tags: '`xml:"desc"`'}];
 }
 ```
 
