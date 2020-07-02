@@ -7,7 +7,7 @@
 package message
 
 import (
-	_ "github.com/alta/protopatch/patch"
+	_ "github.com/alta/protopatch/patch/gopb"
 	proto "github.com/golang/protobuf/proto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
