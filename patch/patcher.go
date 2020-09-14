@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"log"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -531,7 +532,20 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 			if v.Tag == nil {
 				v.Tag = &ast.BasicLit{}
 			}
-			v.Tag.Value = "`" + strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")+" "+tags) + "`"
+
+			//tag override
+			oldTags := strings.Split(strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")), " ")
+			var newTags []string
+			for _, tag := range oldTags {
+				var key string
+				if kv := strings.Split(tag, ":"); len(kv) > 0 {
+					key = kv[0]
+				}
+				if _, exist := reflect.StructTag(tags).Lookup(key); !exist {
+					newTags = append(newTags, tag)
+				}
+			}
+			v.Tag.Value = "`" + strings.Join(append(oldTags[:len(oldTags)-1], tags), " ") + "`"
 			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
 		}
 	}
