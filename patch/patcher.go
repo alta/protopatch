@@ -533,22 +533,26 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 				v.Tag = &ast.BasicLit{}
 			}
 
-			//tag override
-			oldTags := strings.Split(strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")), " ")
-			var newTags []string
-			for _, tag := range oldTags {
-				var key string
-				if kv := strings.Split(tag, ":"); len(kv) > 0 {
-					key = kv[0]
-				}
-				if _, exist := reflect.StructTag(tags).Lookup(key); !exist {
-					newTags = append(newTags, tag)
-				}
-			}
-			v.Tag.Value = "`" + strings.Join(append(oldTags[:len(oldTags)-1], tags), " ") + "`"
+			v.Tag.Value = "`" + mergeTags(v.Tag.Value, tags) + "`"
 			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
 		}
 	}
+}
+
+// Override tags
+func mergeTags(oldTag, newTag string) string {
+	oldTags := strings.Split(strings.TrimSpace(strings.Trim(oldTag, "` ")), " ")
+	var newTags []string
+	for _, tag := range oldTags {
+		var key string
+		if kv := strings.Split(tag, ":"); len(kv) > 0 {
+			key = kv[0]
+		}
+		if value, exist := reflect.StructTag(newTag).Lookup(key); !exist || value == "" {
+			newTags = append(newTags, tag)
+		}
+	}
+	return strings.Join(append(newTags, newTag), " ")
 }
 
 func (p *Patcher) patchComments(id *ast.Ident, repl string) {
