@@ -10,26 +10,29 @@ func TestMergeTags(t *testing.T) {
 		in   [2]string
 		want string
 	}{
-		{	name:"NotOverrideTag",
+		{
+			name: "NotOverrideTag",
 			in: [2]string{
-				`json:"code;omitempty"`,
-				`test:"test"`,
+				"`json:\"code;omitempty\"`",
+				"`test:\"test\"`",
 			},
-			want: `json:"code;omitempty" test:"test"`,
+			want: "`json:\"code;omitempty\" test:\"test\"`",
 		},
-		{  name:"OverrideSingleTag",
+		{
+			name: "OverrideSingleTag",
 			in: [2]string{
-			`json:"code;omitempty"`,
-			`json:"-" test:"test"`,
+				"`json:\"code;omitempty\"`",
+				"`json:\"-\" test:\"test\"`",
+			},
+			want: "`json:\"-\" test:\"test\"`",
 		},
-			want: `json:"-" test:"test"`,
-		},
-		{	name:"OverrideMultiTag",
+		{
+			name: "OverrideMultiTag",
 			in: [2]string{
-			`json:"code;omitempty" test1:"test""`,
-			`test1:"test1" test2:"test2"`,
-		},
-			want: `json:"code;omitempty" test1:"test1" test2:"test2"`,
+				"`json:\"code;omitempty\" test1:\"test\"`",
+				"`test1:\"test1\" test2:\"test2\"`",
+			},
+			want: "`json:\"code;omitempty\" test1:\"test1\" test2:\"test2\"`",
 		},
 	}
 

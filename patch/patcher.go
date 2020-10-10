@@ -10,7 +10,6 @@ import (
 	"go/types"
 	"log"
 	"path/filepath"
-	"reflect"
 	"regexp"
 	"strings"
 
@@ -533,7 +532,7 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 				v.Tag = &ast.BasicLit{}
 			}
 
-			v.Tag.Value = "`" + mergeTags(v.Tag.Value, tags) + "`"
+			v.Tag.Value = mergeTags(v.Tag.Value, tags)
 			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
 		}
 	}
@@ -541,18 +540,39 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 
 // Override tags
 func mergeTags(oldTag, newTag string) string {
-	oldTags := strings.Split(strings.TrimSpace(strings.Trim(oldTag, "` ")), " ")
-	var newTags []string
+	oldTags := strings.Split(strings.TrimSpace(strings.Trim(oldTag, "`")), " ")
+	var tagKeys []string
+	var kvMap = make(map[string]string)
 	for _, tag := range oldTags {
-		var key string
 		if kv := strings.Split(tag, ":"); len(kv) > 0 {
-			key = kv[0]
-		}
-		if value, exist := reflect.StructTag(newTag).Lookup(key); !exist || value == "" {
-			newTags = append(newTags, tag)
+			tagKeys = append(tagKeys, kv[0])
+			if len(kv) > 1 {
+				kvMap[kv[0]] = kv[1]
+			}
 		}
 	}
-	return strings.Join(append(newTags, newTag), " ")
+	newTags := strings.Split(strings.TrimSpace(strings.Trim(newTag, "`")), " ")
+	for _, tag := range newTags {
+		if kv := strings.Split(tag, ":"); len(kv) > 0 {
+			if _, ok := kvMap[kv[0]]; !ok {
+				tagKeys = append(tagKeys, kv[0])
+			}
+			if len(kv) > 1 && kv[1] != "" {
+				kvMap[kv[0]] = kv[1]
+			}
+		}
+	}
+	var builder strings.Builder
+	for i, tag := range tagKeys {
+		builder.WriteString(tag)
+		builder.WriteRune(':')
+		builder.WriteString(kvMap[tag])
+		if i < len(tagKeys)-1 {
+			builder.WriteRune(' ')
+		}
+	}
+
+	return "`" + builder.String() + "`"
 }
 
 func (p *Patcher) patchComments(id *ast.Ident, repl string) {
