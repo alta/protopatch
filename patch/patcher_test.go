@@ -6,39 +6,33 @@ import (
 
 func TestMergeTags(t *testing.T) {
 	tests := []struct {
-		name string
-		in   [2]string
-		want string
+		name           string
+		oldTag, newTag string
+		want           string
 	}{
 		{
-			name: "NotOverrideTag",
-			in: [2]string{
-				"`json:\"code;omitempty\"`",
-				"`test:\"test\"`",
-			},
-			want: "`json:\"code;omitempty\" test:\"test\"`",
+			name:   "NotOverrideTag",
+			oldTag: `json:"code;omitempty"`,
+			newTag: `test:"test"`,
+			want:   `json:"code;omitempty" test:"test"`,
 		},
 		{
-			name: "OverrideSingleTag",
-			in: [2]string{
-				"`json:\"code;omitempty\"`",
-				"`json:\"-\" test:\"test\"`",
-			},
-			want: "`json:\"-\" test:\"test\"`",
+			name:   "OverrideSingleTag",
+			oldTag: `json:"code;omitempty"`,
+			newTag: `json:"-" test:"test"`,
+			want:   `json:"-" test:"test"`,
 		},
 		{
-			name: "OverrideMultiTag",
-			in: [2]string{
-				"`json:\"code;omitempty\" test1:\"test\"`",
-				"`test1:\"test1\" test2:\"test2\"`",
-			},
-			want: "`json:\"code;omitempty\" test1:\"test1\" test2:\"test2\"`",
+			name:   "OverrideMultiTag",
+			oldTag: `json:"code;omitempty" test1:"test"`,
+			newTag: `test1:"test1" test2:"test2"`,
+			want:   `json:"code;omitempty" test1:"test1" test2:"test2"`,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			if got := mergeTags(test.in[0], test.in[1]); got != test.want {
+			if got := mergeTags("`"+test.oldTag+"`", "`"+test.newTag+"`"); got != "`"+test.want+"`" {
 				t.Fatalf(" got: %s\nwant: %s\n", got, test.want)
 			}
 		})
