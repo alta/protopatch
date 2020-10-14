@@ -548,6 +548,8 @@ func mergeTags(oldTag, newTag string) string {
 			tagKeys = append(tagKeys, kv[0])
 			if len(kv) > 1 {
 				kvMap[kv[0]] = kv[1]
+			} else {
+				kvMap[kv[0]] = `""`
 			}
 		}
 	}

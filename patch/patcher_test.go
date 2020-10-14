@@ -28,6 +28,12 @@ func TestMergeTags(t *testing.T) {
 			newTag: `test1:"test1" test2:"test2"`,
 			want:   `json:"code;omitempty" test1:"test1" test2:"test2"`,
 		},
+		{
+			name:   "EmptyValueTag",
+			oldTag: `json:"code;omitempty" test1 test2:"test2"`,
+			newTag: `test2`,
+			want:   `json:"code;omitempty" test1:"" test2:"test2"`,
+		},
 	}
 
 	for _, test := range tests {
