@@ -32,7 +32,19 @@ func TestMergeTags(t *testing.T) {
 			name:   "EmptyValueTag",
 			oldTag: `json:"code;omitempty" test1 test2:"test2"`,
 			newTag: `test2`,
-			want:   `json:"code;omitempty" test1:"" test2:"test2"`,
+			want:   `json:"code;omitempty" test2:"test2"`,
+		},
+		{
+			name:   "WithColonTag",
+			oldTag: `json:"code;omitempty"`,
+			newTag: `test1:"a:b" test2:"test2"`,
+			want:   `json:"code;omitempty" test1:"a:b" test2:"test2"`,
+		},
+		{
+			name:   "WithSpacesTag",
+			oldTag: `json:"code;omitempty"`,
+			newTag: `test1:"a b" test2:"test2"`,
+			want:   `json:"code;omitempty" test1:"a b" test2:"test2"`,
 		},
 	}
 

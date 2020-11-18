@@ -538,32 +538,16 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 	}
 }
 
-// Override tags
+// mergeTags overrides tags
 func mergeTags(oldTag, newTag string) string {
-	oldTags := strings.Split(strings.TrimSpace(strings.Trim(oldTag, "`")), " ")
 	var tagKeys []string
 	var kvMap = make(map[string]string)
-	for _, tag := range oldTags {
-		if kv := strings.Split(tag, ":"); len(kv) > 0 {
-			tagKeys = append(tagKeys, kv[0])
-			if len(kv) > 1 {
-				kvMap[kv[0]] = kv[1]
-			} else {
-				kvMap[kv[0]] = `""`
-			}
-		}
-	}
-	newTags := strings.Split(strings.TrimSpace(strings.Trim(newTag, "`")), " ")
-	for _, tag := range newTags {
-		if kv := strings.Split(tag, ":"); len(kv) > 0 {
-			if _, ok := kvMap[kv[0]]; !ok {
-				tagKeys = append(tagKeys, kv[0])
-			}
-			if len(kv) > 1 && kv[1] != "" {
-				kvMap[kv[0]] = kv[1]
-			}
-		}
-	}
+
+	oldTag = strings.TrimSpace(strings.Trim(oldTag, "`"))
+	tagKeys = findTags(oldTag, tagKeys, kvMap)
+	newTag = strings.TrimSpace(strings.Trim(newTag, "`"))
+	tagKeys = findTags(newTag, tagKeys, kvMap)
+
 	var builder strings.Builder
 	for i, tag := range tagKeys {
 		builder.WriteString(tag)
@@ -575,6 +559,57 @@ func mergeTags(oldTag, newTag string) string {
 	}
 
 	return "`" + builder.String() + "`"
+}
+
+// findTags generate key-value map and record key sequence
+func findTags(tag string, tagKeys []string, kvMap map[string]string) []string {
+	for tag != "" {
+		// Skip leading space.
+		i := 0
+		for i < len(tag) && tag[i] == ' ' {
+			i++
+		}
+		tag = tag[i:]
+		if tag == "" {
+			break
+		}
+
+		// Scan to colon. A space, a quote or a control character is a syntax error.
+		// Strictly speaking, control chars include the range [0x7f, 0x9f], not just
+		// [0x00, 0x1f], but in practice, we ignore the multi-byte control characters
+		// as it is simpler to inspect the tag's bytes than the tag's runes.
+		i = 0
+		for i < len(tag) && tag[i] > ' ' && tag[i] != ':' && tag[i] != '"' && tag[i] != 0x7f {
+			i++
+		}
+		if i == 0 || i+1 >= len(tag) || tag[i] != ':' || tag[i+1] != '"' {
+			tag = tag[i:]
+			continue
+		}
+		key := tag[:i]
+		tag = tag[i+1:]
+
+		// Scan quoted string to find value.
+		i = 1
+		for i < len(tag) && tag[i] != '"' {
+			if tag[i] == '\\' {
+				i++
+			}
+			i++
+		}
+		if i >= len(tag) {
+			break
+		}
+		value := tag[:i+1]
+		tag = tag[i+1:]
+
+		if _, ok := kvMap[key]; !ok {
+			tagKeys = append(tagKeys, key)
+		}
+		kvMap[key] = value
+
+	}
+	return tagKeys
 }
 
 func (p *Patcher) patchComments(id *ast.Ident, repl string) {
