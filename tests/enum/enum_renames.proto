@@ -22,3 +22,16 @@ enum EnumWithRenamedValue {
 	ORIGINAL_VALUE = 0 [(go.value) = {name: 'RenamedValue'}];
 	ONE = 1;
 }
+
+message MessageWithRenamedEnum {
+	enum InnerEnum {
+		option (go.enum) = {
+			name: 'RenamedNestedEnum'
+		};
+		INVALID = 0 [(go.value) = {name: 'RenamedValueInvalid'}];
+		A = 1 [(go.value) = {name: 'RenamedValueA'}];
+		B = 2 [(go.value) = {name: 'RenamedValueB'}];
+		C = 3 [(go.value) = {name: 'RenamedValueC'}];
+	}
+	InnerEnum inner = 1;
+}
