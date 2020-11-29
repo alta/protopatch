@@ -51,6 +51,20 @@ func main() {
 			return err
 		}
 
+		// Create a cache
+		cache := patch.NewCache()
+		switch plugin {
+		// Cache the protoc-gen-go generated base definitions for later use
+		case "go":
+			if err := cache.Save(res); err != nil {
+				return err
+			}
+		// Other plugins needs the base definitions in order to apply the renaming
+		default:
+			if err := cache.Load(res); err != nil {
+				return err
+			}
+		}
 		// Initialize a Patcher and scan source proto files.
 		patcher, err := patch.NewPatcher(gen)
 		if err != nil {
@@ -63,7 +77,16 @@ func main() {
 			return err
 		}
 
+		// Remove added cached files
+		switch plugin {
+		case "go":
+		default:
+			cache.CleanResFiles(res)
+		}
 		// Write the patched CodeGeneratorResponse to stdout.
-		return patch.Write(res, os.Stdout)
+		if err := patch.Write(res, os.Stdout); err != nil {
+			return err
+		}
+		return nil
 	})
 }

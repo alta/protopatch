@@ -49,7 +49,11 @@ message ToDo {
 
 ## Usage
 
+In order to generate renaming without error it is necessary to apply the `protoc-gen-go` plugin first to populate type definitions
+cache needed by other plugins.
+
 After installing `protoc-gen-go-patch`, use it by specifying it with a `--go-patch_out=...` argument to `protoc`:
+
 
 ```shell
 protoc \
