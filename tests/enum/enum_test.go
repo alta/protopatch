@@ -26,6 +26,21 @@ func TestRenamedEnumValue(t *testing.T) {
 	}
 }
 
+func TestRenamedNestedEnumValue(t *testing.T) {
+	tests.ValidateEnum(t, RenamedNestedEnum(0), EnumWithRenamedValue_name, EnumWithRenamedValue_value)
+	enums := []RenamedNestedEnum {
+		RenamedValueInvalid,
+		RenamedValueA,
+		RenamedValueB,
+		RenamedValueC,
+	}
+	for index, enum := range enums {
+		if got, want := enum, RenamedNestedEnum(index); got != want {
+			t.Errorf("%T(%d) != %v", got, got, want)
+		}
+	}
+}
+
 func TestCustomStringerEnum(t *testing.T) {
 	tests := []struct {
 		enum     CustomStringerEnum

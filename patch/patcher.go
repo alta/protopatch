@@ -136,6 +136,9 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	for _, f := range m.Fields {
 		p.scanField(f)
 	}
+	for _, e := range m.Enums {
+		p.scanEnum(e)
+	}
 	for _, mm := range m.Messages {
 		p.scanMessage(mm, m)
 	}
