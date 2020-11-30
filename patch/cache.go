@@ -35,16 +35,16 @@ func (c *cache) Save(res *pluginpb.CodeGeneratorResponse) error {
 		fpath := path.Join(c.tmp, *v.Name)
 		dir := path.Dir(fpath)
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			log.Printf("WARN failed to create dir %s: %v\n", dir, err)
+			log.Printf("ERROR failed to create dir %s: %v\n", dir, err)
 			return err
 		}
 		f, err := os.Create(fpath)
 		if err != nil {
-			log.Printf("WARN failed to create file %s: %v\n", *v.Name, err)
+			log.Printf("ERROR failed to create file %s: %v\n", *v.Name, err)
 			return err
 		}
 		if _, err := f.Write([]byte(*v.Content)); err != nil {
-			log.Printf("WARN failed to write file %s: %v\n", *v.Name, err)
+			log.Printf("ERROR failed to write file %s: %v\n", *v.Name, err)
 			return err
 		}
 	}
@@ -52,11 +52,11 @@ func (c *cache) Save(res *pluginpb.CodeGeneratorResponse) error {
 }
 
 func (c *cache) Load(res *pluginpb.CodeGeneratorResponse) error {
-	for _, v := range res.File {
-		c.originals = append(c.originals, *v.Name)
-	}
 	if len(res.File) == 0 {
 		return nil
+	}
+	for _, v := range res.File {
+		c.originals = append(c.originals, *v.Name)
 	}
 	if err := filepath.Walk(filepath.Join(c.tmp, path.Dir(*res.File[0].Name)), func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -72,7 +72,7 @@ func (c *cache) Load(res *pluginpb.CodeGeneratorResponse) error {
 		})
 		return nil
 	}); err != nil {
-		log.Printf("WARN failed to add cached files: %v\n", err)
+		log.Printf("ERROR failed to add cached files: %v\n", err)
 		return err
 	}
 	return nil
