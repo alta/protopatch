@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == ""  {
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
 		log.SetOutput(ioutil.Discard)
 	}
 
@@ -45,14 +45,18 @@ func main() {
 		// Strip our custom param(s).
 		patch.StripParam(gen.Request, "plugin")
 
+		// Create a cache
+		cache := patch.NewCache(gen.Request)
+		// Ensure we have a go types definition cache
+		if err := cache.Ensure(plugin); err != nil {
+			return fmt.Errorf("ensure cache: %v", err)
+		}
 		// Run the specified plugin and unmarshal the CodeGeneratorResponse.
 		res, err := patch.RunPlugin(plugin, gen.Request, nil)
 		if err != nil {
 			return err
 		}
 
-		// Create a cache
-		cache := patch.NewCache()
 		switch plugin {
 		// Cache the protoc-gen-go generated base definitions for later use
 		case "go":
