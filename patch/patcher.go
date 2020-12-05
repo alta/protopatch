@@ -29,22 +29,24 @@ import (
 // - go_enum_name (Enum option) overrides the name of an enum type.
 // - go_value_name (EnumValue option) overrides the name of an enum const.
 type Patcher struct {
-	gen            *protogen.Plugin
-	fset           *token.FileSet
-	files          []*ast.File
-	filesByName    map[string]*ast.File
-	info           *types.Info
-	packages       []*Package
-	packagesByPath map[string]*Package
-	packagesByName map[string]*Package
-	renames        map[protogen.GoIdent]string
-	typeRenames    map[protogen.GoIdent]string
-	valueRenames   map[protogen.GoIdent]string
-	fieldRenames   map[protogen.GoIdent]string
-	methodRenames  map[protogen.GoIdent]string
-	objectRenames  map[types.Object]string
-	tags           map[protogen.GoIdent]string
-	fieldTags      map[types.Object]string
+	gen                 *protogen.Plugin
+	fset                *token.FileSet
+	files               []*ast.File
+	filesByName         map[string]*ast.File
+	info                *types.Info
+	packages            []*Package
+	packagesByPath      map[string]*Package
+	packagesByName      map[string]*Package
+	renames             map[protogen.GoIdent]string
+	typeRenames         map[protogen.GoIdent]string
+	valueRenames        map[protogen.GoIdent]string
+	fieldRenames        map[protogen.GoIdent]string
+	methodRenames       map[protogen.GoIdent]string
+	objectRenames       map[types.Object]string
+	tags                map[protogen.GoIdent]string
+	fieldTags           map[types.Object]string
+	fileEnumPrefixAll   bool
+	fileFixIDFieldNames bool
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -76,6 +78,10 @@ func (p *Patcher) scanFile(f *protogen.File) {
 	log.Printf("\nScan proto:\t%s", f.Desc.Path())
 
 	_ = p.getPackage(string(f.GoImportPath), string(f.GoPackageName), true)
+
+	// save options for the file
+	p.fileEnumPrefixAll = fileEnumPrefixAllOption(f)
+	p.fileFixIDFieldNames = fileFixIDFieldNamesOption(f)
 
 	for _, e := range f.Enums {
 		p.scanEnum(e)
@@ -115,6 +121,10 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
+	} else {
+		if p.fileEnumPrefixAll {
+			newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName+"_", "")
+		}
 	}
 	if newName != "" {
 		p.RenameValue(v.GoIdent, newName) // Value const
@@ -178,7 +188,12 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
+	} else {
+		if p.fileFixIDFieldNames {
+			newName = newIDFieldName(f.GoName)
+		}
 	}
+
 	if newName != "" {
 		if o != nil {
 			p.RenameType(f.GoIdent, p.nameFor(m.GoIdent)+"_"+newName)    // Oneof wrapper struct
@@ -621,4 +636,20 @@ func typeString(obj types.Object) string {
 		return "(nil)"
 	}
 	return obj.Type().String()
+}
+
+func newIDFieldName(fieldName string) string {
+	switch {
+	case fieldName == "Id":
+		return "ID"
+	case strings.HasPrefix(fieldName, "Id"):
+		if len(fieldName) > 2 && fieldName[2] >= 'A' && fieldName[2] <= 'Z' {
+			return "ID" + fieldName[2:]
+		}
+	case strings.HasSuffix(fieldName, "Id"):
+		return fieldName[:len(fieldName)-2] + "ID"
+	case strings.HasSuffix(fieldName, "Ids"):
+		return fieldName[:len(fieldName)-3] + "IDs"
+	}
+	return ""
 }

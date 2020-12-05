@@ -49,3 +49,9 @@ extend google.protobuf.EnumOptions {
 extend google.protobuf.EnumValueOptions {
 	optional Options value = 7001;
 }
+
+extend google.protobuf.FileOptions {
+	optional bool enum_prefix_all = 7001;
+
+	optional bool fix_id_field_names = 7002;
+}
