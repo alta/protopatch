@@ -58,33 +58,28 @@ extend google.protobuf.EnumValueOptions {
 	optional Options value = 7001;
 }
 
-// FileOptions represent Go-specific options for Protobuf files.
-message FileOptions {
+extend google.protobuf.FileOptions {
 	// Options for all messages in the file.
 	// Can be overridden by options on a specific message.
-	optional Options messages = 1;
+	optional Options messages = 7001;
 
 	// Options for all message fields in the file.
 	// Can be overridden by options on a specific field.
-	optional Options fields = 2;
+	optional Options fields = 7002;
 
 	// Options for all oneof fields in the file.
 	// Can be overridden by options on a specific oneof.
-	optional Options oneofs = 3;
+	optional Options oneofs = 7003;
 
 	// Options for all enums in the file.
 	// Can be overridden by options on a specific enum.
-	optional Options enums = 4;
+	optional Options enums = 7004;
 
 	// Options for all enum values in the file.
 	// Can be overridden by options on a specific value.
-	optional Options values = 5;
+	optional Options values = 7005;
 
 	// The initialisms option lets you specify strings that should not be generated as mixed-case,
 	// Examples: ID, URL, HTTP, etc.
-	repeated string initialisms = 10;
-}
-
-extend google.protobuf.FileOptions {
-	optional FileOptions all = 7001;
+	repeated string initialisms = 7010;
 }
