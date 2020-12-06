@@ -16,6 +16,10 @@ message Options {
 	// For an enum value, this renames the generated Go const.
 	optional string name = 1;
 
+	// The prefix option overrides the default prefix for a generated Go name.
+	// Set to "" to omit the default generated prefix (if any).
+	optional string prefix = 2;
+
 	// The getter option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
 	optional string getter = 10; // TODO: implement this
@@ -52,4 +56,35 @@ extend google.protobuf.EnumOptions {
 
 extend google.protobuf.EnumValueOptions {
 	optional Options value = 7001;
+}
+
+// FileOptions represent Go-specific options for Protobuf files.
+message FileOptions {
+	// Options for all messages in the file.
+	// Can be overridden by options on a specific message.
+	optional Options messages = 1;
+
+	// Options for all message fields in the file.
+	// Can be overridden by options on a specific field.
+	optional Options fields = 2;
+
+	// Options for all oneof fields in the file.
+	// Can be overridden by options on a specific oneof.
+	optional Options oneofs = 3;
+
+	// Options for all enums in the file.
+	// Can be overridden by options on a specific enum.
+	optional Options enums = 4;
+
+	// Options for all enum values in the file.
+	// Can be overridden by options on a specific value.
+	optional Options values = 5;
+
+	// The initialisms option lets you specify strings that should not be generated as mixed-case,
+	// Examples: ID, URL, HTTP, etc.
+	repeated string initialisms = 10;
+}
+
+extend google.protobuf.FileOptions {
+	optional FileOptions all = 7001;
 }
