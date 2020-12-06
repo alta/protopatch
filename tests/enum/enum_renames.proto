@@ -8,26 +8,38 @@ import "patch/go.proto";
 
 option go_package = "github.com/alta/protopatch/tests/enum";
 
-enum OriginalEnum {
-	option (go.enum).name = 'RenamedEnum';
+enum Flavor {
+	option (go.enum).name = 'Flavour';
 	INVALID = 0;
-	A = 1;
-	B = 2;
-	C = 3;
+	SWEET = 1;
+	SALTY = 2;
+	SOUR = 3;
+	BITTER = 4;
 }
 
-enum EnumWithRenamedValue {
-	ORIGINAL_VALUE = 0 [(go.value).name = 'RenamedValue'];
-	ONE = 1;
+enum Level {
+	SIMPLE = 0 [(go.value).name = 'LevelSimple'];
+	COMPLEX = 1;
 }
 
-message MessageWithRenamedEnum {
-	enum InnerEnum {
-		option (go.enum).name = 'RenamedNestedEnum';
+message Wrapper {
+	enum Original {
+		option (go.enum).name = 'RenamedNested';
 		INVALID = 0 [(go.value).name = 'RenamedValueInvalid'];
 		A = 1 [(go.value).name = 'RenamedValueA'];
 		B = 2 [(go.value).name = 'RenamedValueB'];
 		C = 3 [(go.value).name = 'RenamedValueC'];
 	}
-	InnerEnum inner = 1;
+	Original inner = 1;
+}
+
+message Vacation {
+	option (go.message).name = 'Holiday';
+	enum Route {
+		INVALID = 0;
+		FAST = 1;
+		SLOW = 2;
+		SCENIC = 3;
+	}
+	Route inner = 1;
 }

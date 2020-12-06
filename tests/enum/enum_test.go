@@ -7,35 +7,83 @@ import (
 	"github.com/alta/protopatch/tests"
 )
 
-func TestBasicEnum(t *testing.T) {
-	tests.ValidateEnum(t, BasicEnum(0), BasicEnum_name, BasicEnum_value)
+func TestKind(t *testing.T) {
+	tests.ValidateEnum(t, Kind(0), Kind_name, Kind_value)
+	enums := []Kind{
+		Kind_INVALID,
+		Kind_CHEAP,
+		Kind_FAST,
+		Kind_GOOD,
+	}
+	for index, enum := range enums {
+		if got, want := enum, Kind(index); got != want {
+			t.Errorf("%T(%d) != %v", got, got, want)
+		}
+	}
 }
 
-func TestNestedEnum(t *testing.T) {
-	tests.ValidateEnum(t, OuterMessage_InnerEnum(0), OuterMessage_InnerEnum_name, OuterMessage_InnerEnum_value)
+func TestNestedEnums(t *testing.T) {
+	tests.ValidateEnum(t, Outer_Route(0), Outer_Route_name, Outer_Route_value)
+	tests.ValidateEnum(t, Outer_Middle_Flavor(0), Outer_Middle_Flavor_name, Outer_Middle_Flavor_value)
+	tests.ValidateEnum(t, Outer_Middle_Inner_Arch(0), Outer_Middle_Inner_Arch_name, Outer_Middle_Inner_Arch_value)
 }
 
 func TestRenamedEnum(t *testing.T) {
-	tests.ValidateEnum(t, RenamedEnum(0), RenamedEnum_name, RenamedEnum_value)
+	tests.ValidateEnum(t, Flavour(0), Flavour_name, Flavour_value)
+	enums := []Flavour{
+		Flavour_INVALID,
+		Flavour_SWEET,
+		Flavour_SALTY,
+		Flavour_SOUR,
+		Flavour_BITTER,
+	}
+	for index, enum := range enums {
+		if got, want := enum, Flavour(index); got != want {
+			t.Errorf("%T(%d) != %v", got, got, want)
+		}
+	}
 }
 
 func TestRenamedEnumValue(t *testing.T) {
-	tests.ValidateEnum(t, EnumWithRenamedValue(0), EnumWithRenamedValue_name, EnumWithRenamedValue_value)
-	if got, want := RenamedValue, EnumWithRenamedValue(0); got != want {
-		t.Errorf("%T(%d) != %v", got, got, want)
+	tests.ValidateEnum(t, Level(0), Level_name, Level_value)
+	enums := []Level{
+		LevelSimple,
+		Level_COMPLEX,
+	}
+	for index, enum := range enums {
+		if got, want := enum, Level(index); got != want {
+			t.Errorf("%T(%d) != %v", got, got, want)
+		}
 	}
 }
 
 func TestRenamedNestedEnumValue(t *testing.T) {
-	tests.ValidateEnum(t, RenamedNestedEnum(0), EnumWithRenamedValue_name, EnumWithRenamedValue_value)
-	enums := []RenamedNestedEnum{
+	tests.ValidateEnum(t, RenamedNested(0), RenamedNested_name, RenamedNested_value)
+	enums := []RenamedNested{
 		RenamedValueInvalid,
 		RenamedValueA,
 		RenamedValueB,
 		RenamedValueC,
 	}
 	for index, enum := range enums {
-		if got, want := enum, RenamedNestedEnum(index); got != want {
+		if got, want := enum, RenamedNested(index); got != want {
+			t.Errorf("%T(%d) != %v", got, got, want)
+		}
+	}
+}
+
+func TestRenamedOuterMessage(t *testing.T) {
+	m := &Wrapper{}
+	tests.ValidateMessage(t, m)
+	tests.ValidateEnum(t, Holiday_Route(0), Holiday_Route_name, Holiday_Route_value)
+	enums := []Holiday_Route{
+		Holiday_INVALID,
+		Holiday_FAST,
+		Holiday_SLOW,
+		Holiday_SCENIC,
+	}
+	for index, enum := range enums {
+		if got, want := enum, Holiday_Route(index); got != want {
 			t.Errorf("%T(%d) != %v", got, got, want)
 		}
 	}

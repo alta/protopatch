@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package tests.lint;
+
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/tests/lint";
+
+option (go.lint) = true;
+
+message ExtendedMessage {
+	extensions 100 to 199;
+}
+
+extend ExtendedMessage {
+	optional string alpha = 101;
+}
+
+extend ExtendedMessage {
+	optional string beta = 102;
+}
+
+extend ExtendedMessage {
+	optional string gamma = 103;
+}
+
+extend ExtendedMessage {
+	optional string delta = 104;
+}

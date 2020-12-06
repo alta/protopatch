@@ -8,25 +8,30 @@ import (
 )
 
 func TestBasicMessage(t *testing.T) {
-	tests.ValidateMessage(t, &BasicMessage{})
+	tests.ValidateMessage(t, &Basic{})
 }
 
 func TestOneofMessage(t *testing.T) {
-	m := &OneofMessage{}
+	m := &Union{}
 	tests.ValidateMessage(t, m)
-	var _ isOneofMessage_Contents = &OneofMessage_Id{}
-	var _ isOneofMessage_Contents = &OneofMessage_Name{}
+	var _ isUnion_Contents = &Union_Id{}
+	var _ isUnion_Contents = &Union_Name{}
 	var _ int32 = m.GetId()
 	var _ string = m.GetName()
 }
 
 func TestNestedMessage(t *testing.T) {
-	tests.ValidateMessage(t, &OuterMessage{})
-	tests.ValidateMessage(t, &OuterMessage_InnerMessage{})
+	m := &Outer{}
+	tests.ValidateMessage(t, m)
+	tests.ValidateMessage(t, &Outer_Middle{})
+	tests.ValidateMessage(t, &Outer_Middle_Inner{})
+	var _ *Outer_Middle = m.GetMiddle()
+	var _ *Outer_Middle_Inner = m.GetInner()
+	var _ *Outer_Middle_Inner = m.GetMiddle().GetInner()
 }
 
 func TestRenamedMessage(t *testing.T) {
-	tests.ValidateMessage(t, &RenamedMessage{})
+	tests.ValidateMessage(t, &Frank{})
 }
 
 func TestRenamedOneofMessage(t *testing.T) {
