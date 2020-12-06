@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alta/protopatch/patch/gopb"
 	"github.com/alta/protopatch/patch/ident"
 	"golang.org/x/tools/go/ast/astutil"
 
@@ -29,24 +30,23 @@ import (
 // - go_enum_name (Enum option) overrides the name of an enum type.
 // - go_value_name (EnumValue option) overrides the name of an enum const.
 type Patcher struct {
-	gen                 *protogen.Plugin
-	fset                *token.FileSet
-	files               []*ast.File
-	filesByName         map[string]*ast.File
-	info                *types.Info
-	packages            []*Package
-	packagesByPath      map[string]*Package
-	packagesByName      map[string]*Package
-	renames             map[protogen.GoIdent]string
-	typeRenames         map[protogen.GoIdent]string
-	valueRenames        map[protogen.GoIdent]string
-	fieldRenames        map[protogen.GoIdent]string
-	methodRenames       map[protogen.GoIdent]string
-	objectRenames       map[types.Object]string
-	tags                map[protogen.GoIdent]string
-	fieldTags           map[types.Object]string
-	fileEnumPrefixAll   bool
-	fileFixIDFieldNames bool
+	gen            *protogen.Plugin
+	fset           *token.FileSet
+	files          []*ast.File
+	filesByName    map[string]*ast.File
+	info           *types.Info
+	packages       []*Package
+	packagesByPath map[string]*Package
+	packagesByName map[string]*Package
+	renames        map[protogen.GoIdent]string
+	typeRenames    map[protogen.GoIdent]string
+	valueRenames   map[protogen.GoIdent]string
+	fieldRenames   map[protogen.GoIdent]string
+	methodRenames  map[protogen.GoIdent]string
+	objectRenames  map[types.Object]string
+	tags           map[protogen.GoIdent]string
+	fieldTags      map[types.Object]string
+	fileOptions    *gopb.FileOptions
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -78,10 +78,7 @@ func (p *Patcher) scanFile(f *protogen.File) {
 	log.Printf("\nScan proto:\t%s", f.Desc.Path())
 
 	_ = p.getPackage(string(f.GoImportPath), string(f.GoPackageName), true)
-
-	// save options for the file
-	p.fileEnumPrefixAll = fileEnumPrefixAllOption(f)
-	p.fileFixIDFieldNames = fileFixIDFieldNamesOption(f)
+	p.fileOptions = fileOptions(f)
 
 	for _, e := range f.Enums {
 		p.scanEnum(e)
@@ -122,7 +119,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 	} else {
-		if p.fileEnumPrefixAll {
+		if p.fileOptions.GetDisableEnumPrefixes() {
 			newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName+"_", "")
 		}
 	}
@@ -189,8 +186,18 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
 	} else {
-		if p.fileFixIDFieldNames {
-			newName = newIDFieldName(f.GoName)
+		if p.fileOptions.GetFixInitialisms() {
+			initialisms := commonInitialisms
+			if p.fileOptions.GetInitialisms() != nil {
+				initialisms = make(map[string]bool, 0)
+				for _, s := range p.fileOptions.GetInitialisms() {
+					initialisms[s] = true
+				}
+			}
+			lintName := lintName(f.GoName, initialisms)
+			if lintName != f.GoName {
+				newName = lintName
+			}
 		}
 	}
 

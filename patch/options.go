@@ -5,7 +5,6 @@ import (
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func enumOptions(e *protogen.Enum) *gopb.Options {
@@ -28,18 +27,6 @@ func oneofOptions(o *protogen.Oneof) *gopb.Options {
 	return proto.GetExtension(o.Desc.Options(), gopb.E_Oneof).(*gopb.Options)
 }
 
-func getBoolExtension(pb proto.Message, extension protoreflect.ExtensionType, ifnotset bool) bool {
-	value := proto.GetExtension(pb, extension)
-	if v, ok := value.(bool); ok {
-		return v
-	}
-	return ifnotset
-}
-
-func fileEnumPrefixAllOption(f *protogen.File) bool {
-	return getBoolExtension(f.Proto.Options, gopb.E_EnumPrefixAll, false)
-}
-
-func fileFixIDFieldNamesOption(f *protogen.File) bool {
-	return getBoolExtension(f.Proto.Options, gopb.E_FixIdFieldNames, false)
+func fileOptions(f *protogen.File) *gopb.FileOptions {
+	return proto.GetExtension(f.Proto.Options, gopb.E_File).(*gopb.FileOptions)
 }

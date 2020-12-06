@@ -30,28 +30,41 @@ message Options {
 	optional string stringer_name = 30; // TODO: implement for messages
 }
 
-extend google.protobuf.MessageOptions {
-	optional Options message = 7001;
+// File-level options
+message FileOptions {
+	// The disable_enum_prefixes option disables adding a prefix with a type name for an enum value.
+	optional bool disable_enum_prefixes = 1;
+
+	// The fix_initialisms option changes message field names to the golang naming convention.
+	// So for example the field named in proto file "id" would be named "ID" in go.
+	optional bool fix_initialisms = 2;
+
+	// The initialisms option contains the list of initialisms used if the fix_initialisms option is enabled.
+	// Initialisms should be in uppercase. This list may be empty, in this case the default golint initialisms
+	// list will be used.
+	repeated string initialisms = 3;
 }
 
-extend google.protobuf.FieldOptions {
-	optional Options field = 7001;
+extend google.protobuf.MessageOptions { 
+	optional Options message = 7001; 
 }
 
-extend google.protobuf.OneofOptions {
-	optional Options oneof = 7001;
+extend google.protobuf.FieldOptions { 
+	optional Options field = 7001; 
 }
 
-extend google.protobuf.EnumOptions {
-	optional Options enum = 7001;
+extend google.protobuf.OneofOptions { 
+	optional Options oneof = 7001; 
 }
 
-extend google.protobuf.EnumValueOptions {
-	optional Options value = 7001;
+extend google.protobuf.EnumOptions { 
+	optional Options enum = 7001; 
 }
 
-extend google.protobuf.FileOptions {
-	optional bool enum_prefix_all = 7001;
+extend google.protobuf.EnumValueOptions { 
+	optional Options value = 7001; 
+}
 
-	optional bool fix_id_field_names = 7002;
+extend google.protobuf.FileOptions { 
+	optional FileOptions file = 7001; 
 }
