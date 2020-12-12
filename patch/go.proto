@@ -16,6 +16,10 @@ message Options {
 	// For an enum value, this renames the generated Go const.
 	optional string name = 1;
 
+	// The prefix option overrides the default prefix for a generated Go name.
+	// Set to "" to omit the default generated prefix (if any).
+	optional string prefix = 2;
+
 	// The getter_name option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
 	optional string getter_name = 10; // TODO: implement this
@@ -30,41 +34,49 @@ message Options {
 	optional string stringer_name = 30; // TODO: implement for messages
 }
 
-// File-level options
-message FileOptions {
-	// The disable_enum_prefixes option disables adding a prefix with a type name for an enum value.
-	optional bool disable_enum_prefixes = 1;
-
-	// The fix_initialisms option changes message field names to the golang naming convention.
-	// So for example the field named in proto file "id" would be named "ID" in go.
-	optional bool fix_initialisms = 2;
-
-	// The initialisms option contains the list of initialisms used if the fix_initialisms option is enabled.
-	// Initialisms should be in uppercase. This list may be empty, in this case the default golint initialisms
-	// list will be used.
-	repeated string initialisms = 3;
+extend google.protobuf.MessageOptions {
+	optional Options message = 7001;
 }
 
-extend google.protobuf.MessageOptions { 
-	optional Options message = 7001; 
+extend google.protobuf.FieldOptions {
+	optional Options field = 7001;
 }
 
-extend google.protobuf.FieldOptions { 
-	optional Options field = 7001; 
+extend google.protobuf.OneofOptions {
+	optional Options oneof = 7001;
 }
 
-extend google.protobuf.OneofOptions { 
-	optional Options oneof = 7001; 
+extend google.protobuf.EnumOptions {
+	optional Options enum
+	= 7001;
 }
 
-extend google.protobuf.EnumOptions { 
-	optional Options enum = 7001; 
+extend google.protobuf.EnumValueOptions {
+	optional Options value = 7001;
 }
 
-extend google.protobuf.EnumValueOptions { 
-	optional Options value = 7001; 
-}
+extend google.protobuf.FileOptions {
+	// Options for all messages in the file.
+	// Can be overridden by options on a specific message.
+	optional Options messages = 7001;
 
-extend google.protobuf.FileOptions { 
-	optional FileOptions file = 7001; 
+	// Options for all message fields in the file.
+	// Can be overridden by options on a specific field.
+	optional Options fields = 7002;
+
+	// Options for all oneof fields in the file.
+	// Can be overridden by options on a specific oneof.
+	optional Options oneofs = 7003;
+
+	// Options for all enums in the file.
+	// Can be overridden by options on a specific enum.
+	optional Options enums = 7004;
+
+	// Options for all enum values in the file.
+	// Can be overridden by options on a specific value.
+	optional Options values = 7005;
+
+	// The initialisms option lets you specify strings that should not be generated as mixed-case,
+	// Examples: ID, URL, HTTP, etc.
+	repeated string initialisms = 7010;
 }

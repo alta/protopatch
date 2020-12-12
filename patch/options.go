@@ -27,6 +27,14 @@ func oneofOptions(o *protogen.Oneof) *gopb.Options {
 	return proto.GetExtension(o.Desc.Options(), gopb.E_Oneof).(*gopb.Options)
 }
 
-func fileOptions(f *protogen.File) *gopb.FileOptions {
-	return proto.GetExtension(f.Proto.Options, gopb.E_File).(*gopb.FileOptions)
+func fileFieldOptions(f *protogen.File) *gopb.Options {
+	return proto.GetExtension(f.Proto.Options, gopb.E_Fields).(*gopb.Options)
+}
+
+func fileValuesOptions(f *protogen.File) *gopb.Options {
+	return proto.GetExtension(f.Proto.Options, gopb.E_Values).(*gopb.Options)
+}
+
+func fileInitialisms(f *protogen.File) []string {
+	return proto.GetExtension(f.Proto.Options, gopb.E_Initialisms).([]string)
 }
