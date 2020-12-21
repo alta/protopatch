@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == ""  {
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
 		log.SetOutput(ioutil.Discard)
 	}
 
