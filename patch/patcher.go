@@ -409,7 +409,7 @@ func (p *Patcher) synthesize(id protogen.GoIdent) error {
 	pkg := p.getPackage(string(id.GoImportPath), id.GoName, true)
 
 	// Already synthesized?
-	filename := pkg.pkg.Name() + "/" + id.GoName + ".synthetic.go"
+	filename := pkg.pkg.Path() + "/" + id.GoName + ".synthetic.go"
 	if f := pkg.File(filename); f != nil {
 		return nil
 	}
