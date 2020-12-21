@@ -345,6 +345,28 @@ func (p *Patcher) checkGoFiles() error {
 		recheck = true
 	}
 
+	// Find missing field declarations.
+	for id := range p.fieldRenames {
+		if obj, _ := p.find(id); obj != nil {
+			continue
+		}
+		if err := p.synthesize(id); err != nil {
+			return err
+		}
+		recheck = true
+	}
+
+	// Find missing method declarations.
+	for id := range p.methodRenames {
+		if obj, _ := p.find(id); obj != nil {
+			continue
+		}
+		if err := p.synthesize(id); err != nil {
+			return err
+		}
+		recheck = true
+	}
+
 	// Find missing value declarations.
 	for id := range p.valueRenames {
 		if obj, _ := p.find(id); obj != nil {
