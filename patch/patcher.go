@@ -554,6 +554,8 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 		p.patchComments(id, name)
 		id.Name = name
 		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
+	} else {
+		// log.Printf("Unresolved:\t%v", id)
 	}
 }
 
