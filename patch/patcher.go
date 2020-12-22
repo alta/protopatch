@@ -516,9 +516,9 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 	// Renames
 	name := p.objectRenames[obj]
 	if name != "" {
-		log.Printf("Rename %s:\t%q.%s → %s", typeString(obj), obj.Pkg().Path(), id.Name, name)
 		p.patchComments(id, name)
 		id.Name = name
+		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
 	}
 
 	// Struct tags
