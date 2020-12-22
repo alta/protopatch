@@ -82,8 +82,6 @@ func run() error {
 		return err
 	}
 
-	log.Printf("Writing %d file(s) to protoc: %s", len(res.File), *res.File[0].Name)
-
 	// Write the patched CodeGeneratorResponse to stdout.
 	return patch.WriteResponse(os.Stdout, res)
 }
