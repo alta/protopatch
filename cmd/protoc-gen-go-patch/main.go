@@ -11,6 +11,8 @@ import (
 	"github.com/alta/protopatch/patch"
 
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/pluginpb"
 )
 
 func main() {
@@ -22,13 +24,27 @@ func main() {
 		return
 	}
 
-	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
-		log.SetOutput(ioutil.Discard)
+	err := run()
+	if err != nil {
+		log.Printf("Error: %s", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
+	in, err := ioutil.ReadAll(os.Stdin)
+	if err != nil {
+		return err
+	}
+
+	req := &pluginpb.CodeGeneratorRequest{}
+	if err := proto.Unmarshal(in, req); err != nil {
+		return err
 	}
 
 	var plugin string
 
-	protogen.Options{
+	opts := protogen.Options{
 		ParamFunc: func(name, value string) error {
 			switch name {
 			case "plugin":
@@ -36,34 +52,45 @@ func main() {
 			}
 			return nil // Ignore unknown params.
 		},
-	}.Run(func(gen *protogen.Plugin) error {
-		if plugin == "" {
-			s := strings.TrimPrefix(filepath.Base(os.Args[0]), "protoc-gen-")
-			return fmt.Errorf("no protoc plugin specified; use 'protoc --%s_out=plugin=$PLUGIN:...'", s)
-		}
+	}
 
-		// Strip our custom param(s).
-		patch.StripParam(gen.Request, "plugin")
+	gen, err := opts.New(req)
+	if err != nil {
+		return err
+	}
 
-		// Run the specified plugin and unmarshal the CodeGeneratorResponse.
-		res, err := patch.RunPlugin(plugin, gen.Request, nil)
-		if err != nil {
-			return err
-		}
+	if plugin == "" {
+		s := strings.TrimPrefix(filepath.Base(os.Args[0]), "protoc-gen-")
+		return fmt.Errorf("no protoc plugin specified; use 'protoc --%s_out=plugin=$PLUGIN:...'", s)
+	}
 
-		// Initialize a Patcher and scan source proto files.
-		patcher, err := patch.NewPatcher(gen)
-		if err != nil {
-			return err
-		}
+	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
+		log.SetOutput(ioutil.Discard)
+	}
 
-		// Patch the CodeGeneratorResponse.
-		err = patcher.Patch(res)
-		if err != nil {
-			return err
-		}
+	// Strip our custom param(s).
+	patch.StripParam(gen.Request, "plugin")
 
-		// Write the patched CodeGeneratorResponse to stdout.
-		return patch.Write(res, os.Stdout)
-	})
+	// Run the specified plugin and unmarshal the CodeGeneratorResponse.
+	res, err := patch.RunPlugin(plugin, gen.Request, nil)
+	if err != nil {
+		return err
+	}
+
+	// Initialize a Patcher and scan source proto files.
+	patcher, err := patch.NewPatcher(gen)
+	if err != nil {
+		return err
+	}
+
+	// Patch the CodeGeneratorResponse.
+	err = patcher.Patch(res)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Writing %d file(s) to protoc: %s", len(res.File), *res.File[0].Name)
+
+	// Write the patched CodeGeneratorResponse to stdout.
+	return patch.Write(res, os.Stdout)
 }
