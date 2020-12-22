@@ -31,7 +31,6 @@ import (
 type Patcher struct {
 	gen            *protogen.Plugin
 	fset           *token.FileSet
-	files          []*ast.File
 	filesByName    map[string]*ast.File
 	info           *types.Info
 	packages       []*Package
@@ -293,7 +292,6 @@ func (p *Patcher) Patch(res *pluginpb.CodeGeneratorResponse) error {
 
 func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 	p.fset = token.NewFileSet()
-	p.files = nil
 	p.filesByName = make(map[string]*ast.File)
 
 	for _, rf := range res.File {
@@ -307,7 +305,6 @@ func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 		}
 
 		// TODO: should we cache these?
-		p.files = append(p.files, f)
 		p.filesByName[*rf.Name] = f
 
 		// FIXME: this will break if the package’s implicit name differs from the types.Package name.
@@ -506,7 +503,7 @@ func (p *Patcher) patchGoFiles() error {
 	}
 
 	log.Printf("\nUnresolved\n")
-	for _, f := range p.files {
+	for _, f := range p.filesByName {
 		for _, id := range f.Unresolved {
 			p.patchIdent(id, nil)
 		}
