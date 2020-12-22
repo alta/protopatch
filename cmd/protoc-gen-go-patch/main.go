@@ -11,8 +11,6 @@ import (
 	"github.com/alta/protopatch/patch"
 
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/pluginpb"
 )
 
 func main() {
@@ -32,13 +30,8 @@ func main() {
 }
 
 func run() error {
-	in, err := ioutil.ReadAll(os.Stdin)
+	req, err := patch.Read(os.Stdin)
 	if err != nil {
-		return err
-	}
-
-	req := &pluginpb.CodeGeneratorRequest{}
-	if err := proto.Unmarshal(in, req); err != nil {
 		return err
 	}
 
