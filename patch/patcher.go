@@ -17,6 +17,7 @@ import (
 
 	"github.com/fatih/structtag"
 	"golang.org/x/tools/go/ast/astutil"
+	"google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -74,6 +75,13 @@ func (p *Patcher) scan() error {
 
 func (p *Patcher) scanFile(f *protogen.File) {
 	log.Printf("\nScan proto:\t%s", f.Desc.Path())
+
+	// Locally generate Go from the source proto file.
+	// This is equivalent to running the go protoc plugin, but in-process.
+	if f.Generate {
+		log.Printf("Generating:\t%s", f.Desc.Path())
+		internal_gengo.GenerateFile(p.gen, f)
+	}
 
 	_ = p.getPackage(string(f.GoImportPath), string(f.GoPackageName), true)
 
@@ -283,7 +291,16 @@ func (p *Patcher) Tag(id protogen.GoIdent, tags string) {
 // Clone res before calling Patch if you want to retain an unmodified copy.
 // The behavior of calling Patch multiple times is currently undefined.
 func (p *Patcher) Patch(res *pluginpb.CodeGeneratorResponse) error {
+	p.reset()
+
 	if err := p.parseGoFiles(res); err != nil {
+		return err
+	}
+
+	// Inject default generated Go code from protoc-gen-go.
+	// FIXME: should this be here?
+	res2 := p.gen.Response()
+	if err := p.parseGoFiles(res2); err != nil {
 		return err
 	}
 
@@ -298,12 +315,19 @@ func (p *Patcher) Patch(res *pluginpb.CodeGeneratorResponse) error {
 	return p.serializeGoFiles(res)
 }
 
-func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
+func (p *Patcher) reset() {
 	p.fset = token.NewFileSet()
 	p.filesByName = make(map[string]*ast.File)
+}
 
+func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 	for _, rf := range res.File {
 		if rf.Name == nil || !strings.HasSuffix(*rf.Name, ".go") || rf.Content == nil {
+			continue
+		}
+
+		if p.filesByName[*rf.Name] != nil {
+			log.Printf("Skipping duplicate file:\t%s", *rf.Name)
 			continue
 		}
 
