@@ -30,7 +30,7 @@ func main() {
 }
 
 func run() error {
-	req, err := patch.Read(os.Stdin)
+	req, err := patch.ReadRequest(os.Stdin)
 	if err != nil {
 		return err
 	}
@@ -85,5 +85,5 @@ func run() error {
 	log.Printf("Writing %d file(s) to protoc: %s", len(res.File), *res.File[0].Name)
 
 	// Write the patched CodeGeneratorResponse to stdout.
-	return patch.Write(res, os.Stdout)
+	return patch.WriteResponse(res, os.Stdout)
 }

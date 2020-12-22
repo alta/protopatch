@@ -69,8 +69,8 @@ func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writ
 	return &res, nil
 }
 
-// Read reads and unmarshals a CodeGeneratorRequest.
-func Read(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
+// ReadRequest reads and unmarshals a CodeGeneratorRequest.
+func ReadRequest(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
 	in, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		return nil, err
@@ -83,8 +83,8 @@ func Read(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
 	return req, nil
 }
 
-// Write marshals and writes CodeGeneratorResponse res to w.
-func Write(res *pluginpb.CodeGeneratorResponse, w io.Writer) error {
+// WriteResponse marshals and writes CodeGeneratorResponse res to w.
+func WriteResponse(res *pluginpb.CodeGeneratorResponse, w io.Writer) error {
 	out, err := proto.Marshal(res)
 	if err != nil {
 		return err
