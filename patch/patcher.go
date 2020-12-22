@@ -427,7 +427,12 @@ func (p *Patcher) checkPackages() error {
 	}
 
 	for _, pkg := range p.packages {
-		err := pkg.Check(importer{p}, p.fset, p.info)
+		if len(pkg.files) == 0 {
+			continue
+		}
+		// Resolve symbols defined in this package across all files
+		_, _ = ast.NewPackage(p.fset, pkg.filesByName, nil, nil)
+		err := pkg.Check(basicImporter{p}, p.fset, p.info)
 		if err != nil {
 			return err
 		}
