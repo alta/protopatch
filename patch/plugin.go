@@ -84,7 +84,7 @@ func ReadRequest(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
 }
 
 // WriteResponse marshals and writes CodeGeneratorResponse res to w.
-func WriteResponse(res *pluginpb.CodeGeneratorResponse, w io.Writer) error {
+func WriteResponse(w io.Writer, res *pluginpb.CodeGeneratorResponse) error {
 	out, err := proto.Marshal(res)
 	if err != nil {
 		return err
