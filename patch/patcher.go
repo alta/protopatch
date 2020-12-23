@@ -194,12 +194,16 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
-	} else {
-		if len(p.fileInitialisms) > 0 {
-			lintName := lintName(f.GoName, p.fileInitialisms)
-			if lintName != f.GoName {
-				newName = lintName
-			}
+	}
+
+	if len(p.fileInitialisms) > 0 {
+		nameToCheck := f.GoName
+		if newName != "" {
+			nameToCheck = newName
+		}
+		lintName := lintName(nameToCheck, p.fileInitialisms)
+		if lintName != nameToCheck {
+			newName = lintName
 		}
 	}
 
@@ -645,20 +649,4 @@ func typeString(obj types.Object) string {
 		return "(nil)"
 	}
 	return obj.Type().String()
-}
-
-func newIDFieldName(fieldName string) string {
-	switch {
-	case fieldName == "Id":
-		return "ID"
-	case strings.HasPrefix(fieldName, "Id"):
-		if len(fieldName) > 2 && fieldName[2] >= 'A' && fieldName[2] <= 'Z' {
-			return "ID" + fieldName[2:]
-		}
-	case strings.HasSuffix(fieldName, "Id"):
-		return fieldName[:len(fieldName)-2] + "ID"
-	case strings.HasSuffix(fieldName, "Ids"):
-		return fieldName[:len(fieldName)-3] + "IDs"
-	}
-	return ""
 }

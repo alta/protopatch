@@ -9,7 +9,7 @@ import (
 )
 
 // lintName returns a different name if it should be different.
-func lintName(name string, commonInitialisms map[string]bool) (should string) {
+func lintName(name string, initialisms map[string]bool) (should string) {
 	// Fast path for simple cases: "_" and all lowercase.
 	if name == "_" {
 		return name
@@ -59,7 +59,7 @@ func lintName(name string, commonInitialisms map[string]bool) (should string) {
 
 		// [w,i) is a word.
 		word := string(runes[w:i])
-		if u := strings.ToUpper(word); commonInitialisms[u] {
+		if u := strings.ToUpper(word); initialisms[u] {
 			// Keep consistent case, which is lowercase only at the start.
 			if w == 0 && unicode.IsLower(runes[w]) {
 				u = strings.ToLower(u)
@@ -74,48 +74,4 @@ func lintName(name string, commonInitialisms map[string]bool) (should string) {
 		w = i
 	}
 	return string(runes)
-}
-
-// commonInitialisms is a set of common initialisms.
-// Only add entries that are highly unlikely to be non-initialisms.
-// For instance, "ID" is fine (Freudian code is rare), but "AND" is not.
-var commonInitialisms = map[string]bool{
-	"ACL":   true,
-	"API":   true,
-	"ASCII": true,
-	"CPU":   true,
-	"CSS":   true,
-	"DNS":   true,
-	"EOF":   true,
-	"GUID":  true,
-	"HTML":  true,
-	"HTTP":  true,
-	"HTTPS": true,
-	"ID":    true,
-	"IP":    true,
-	"JSON":  true,
-	"LHS":   true,
-	"QPS":   true,
-	"RAM":   true,
-	"RHS":   true,
-	"RPC":   true,
-	"SLA":   true,
-	"SMTP":  true,
-	"SQL":   true,
-	"SSH":   true,
-	"TCP":   true,
-	"TLS":   true,
-	"TTL":   true,
-	"UDP":   true,
-	"UI":    true,
-	"UID":   true,
-	"UUID":  true,
-	"URI":   true,
-	"URL":   true,
-	"UTF8":  true,
-	"VM":    true,
-	"XML":   true,
-	"XMPP":  true,
-	"XSRF":  true,
-	"XSS":   true,
 }
