@@ -16,5 +16,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/p1/compare/v0.1.0...HEAD>
-[v0.1.0]: <https://github.com/alta/p1/tree/v0.1.0>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.1.0...HEAD>
+[v0.1.0]: <https://github.com/alta/protopatch/tree/v0.1.0>
