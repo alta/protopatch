@@ -1,5 +1,7 @@
 # protopatch
 
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/alta/protopatch) [![build status](https://img.shields.io/github/workflow/status/alta/protopatch/Go.svg)](https://github.com/alta/protopatch/actions)
+
 Patch `protoc` plugin output with Go-specific features. The `protoc-gen-go-patch` command wraps calls to Go code generators like [`protoc-gen-go`](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) or [`protoc-gen-go-grpc`](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) and patches the Go syntax before being written to disk.
 
 ## Features
