@@ -49,7 +49,7 @@ func (pkg *Package) Reset() {
 
 // Check type-checks pkg.
 func (pkg *Package) Check(importer types.Importer, fset *token.FileSet, info *types.Info) error {
-	log.Printf("Type-check:\t%s", pkg.pkg.Path())
+	log.Printf("Type-check:\t%s \"%s\"", pkg.pkg.Path(), pkg.pkg.Name())
 
 	cfg := &types.Config{
 		Error: func(err error) {
