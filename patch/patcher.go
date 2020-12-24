@@ -99,9 +99,16 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_value"), newName+"_value") // Enum value map
 	}
-	stringerName := opts.GetStringerName()
-	if stringerName != "" {
-		p.RenameMethod(ident.WithChild(e.GoIdent, "String"), stringerName)
+	newStringer := opts.GetStringer()
+	// TODO: remove StringerName in two minor versions (~0.3.0)
+	if newStringer == "" {
+		newStringer = opts.GetStringerName()
+		if newStringer != "" {
+			log.Printf("Warning: stringer_name is deprecated and will be removed in a future version. Please use stringer.")
+		}
+	}
+	if newStringer != "" {
+		p.RenameMethod(ident.WithChild(e.GoIdent, "String"), newStringer)
 	}
 	for _, v := range e.Values {
 		p.scanEnumValue(v)

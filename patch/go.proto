@@ -16,18 +16,22 @@ message Options {
 	// For an enum value, this renames the generated Go const.
 	optional string name = 1;
 
-	// The getter_name option renames the generated getter method (default: Get<Field>)
+	// The getter option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
-	optional string getter_name = 10; // TODO: implement this
+	optional string getter = 10; // TODO: implement this
 
 	// The tags option specifies additional struct tags which are appended a generated Go struct field.
 	// This option may be specified on a message field or a oneof field.
 	// The value should omit the enclosing backticks.
 	optional string tags = 20;
 
-	// The stringer_name option renames a generated String() method (if any)
+	// The stringer option renames a generated String() method (if any)
 	// so a custom String() method can be implemented in its place.
-	optional string stringer_name = 30; // TODO: implement for messages
+	optional string stringer = 30; // TODO: implement for messages
+
+	// The stringer_name option is a deprecated alias for stringer.
+	// It will be removed in a future version of this package.
+	optional string stringer_name = 31;
 }
 
 extend google.protobuf.MessageOptions {
