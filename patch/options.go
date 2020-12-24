@@ -5,6 +5,7 @@ import (
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func enumOptions(e *protogen.Enum) *gopb.Options {
@@ -27,14 +28,19 @@ func oneofOptions(o *protogen.Oneof) *gopb.Options {
 	return proto.GetExtension(o.Desc.Options(), gopb.E_Oneof).(*gopb.Options)
 }
 
-func fileFieldOptions(f *protogen.File) *gopb.Options {
-	return proto.GetExtension(f.Proto.Options, gopb.E_Fields).(*gopb.Options)
+func fileValuesOptions(fileDescriptor protoreflect.FileDescriptor) *gopb.Options {
+	return proto.GetExtension(fileDescriptor.Options(), gopb.E_Values).(*gopb.Options)
 }
 
-func fileValuesOptions(f *protogen.File) *gopb.Options {
-	return proto.GetExtension(f.Proto.Options, gopb.E_Values).(*gopb.Options)
+func fileInitialisms(fileDescriptor protoreflect.FileDescriptor) []string {
+	return proto.GetExtension(fileDescriptor.Options(), gopb.E_Initialisms).([]string)
 }
 
-func fileInitialisms(f *protogen.File) []string {
-	return proto.GetExtension(f.Proto.Options, gopb.E_Initialisms).([]string)
+func fileInitialismsAsMap(fileDescriptor protoreflect.FileDescriptor) map[string]bool {
+	result := make(map[string]bool)
+	for _, s := range fileInitialisms(fileDescriptor) {
+		result[s] = true
+	}
+
+	return result
 }
