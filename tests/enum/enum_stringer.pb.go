@@ -80,6 +80,58 @@ func (CustomStringerEnum) EnumDescriptor() ([]byte, []int) {
 	return file_tests_enum_enum_stringer_proto_rawDescGZIP(), []int{0}
 }
 
+type DeprecatedStringerEnum int32
+
+const (
+	DeprecatedStringerEnum_DEPRECATED_STRINGER_INVALID DeprecatedStringerEnum = 0
+	DeprecatedStringerEnum_DEPRECATED_STRINGER_A       DeprecatedStringerEnum = 1
+	DeprecatedStringerEnum_DEPRECATED_STRINGER_B       DeprecatedStringerEnum = 2
+	DeprecatedStringerEnum_DEPRECATED_STRINGER_C       DeprecatedStringerEnum = 3
+)
+
+// Enum value maps for DeprecatedStringerEnum.
+var (
+	DeprecatedStringerEnum_name = map[int32]string{
+		0: "DEPRECATED_STRINGER_INVALID",
+		1: "DEPRECATED_STRINGER_A",
+		2: "DEPRECATED_STRINGER_B",
+		3: "DEPRECATED_STRINGER_C",
+	}
+	DeprecatedStringerEnum_value = map[string]int32{
+		"DEPRECATED_STRINGER_INVALID": 0,
+		"DEPRECATED_STRINGER_A":       1,
+		"DEPRECATED_STRINGER_B":       2,
+		"DEPRECATED_STRINGER_C":       3,
+	}
+)
+
+func (x DeprecatedStringerEnum) Enum() *DeprecatedStringerEnum {
+	p := new(DeprecatedStringerEnum)
+	*p = x
+	return p
+}
+
+func (x DeprecatedStringerEnum) OrigString() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DeprecatedStringerEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_tests_enum_enum_stringer_proto_enumTypes[1].Descriptor()
+}
+
+func (DeprecatedStringerEnum) Type() protoreflect.EnumType {
+	return &file_tests_enum_enum_stringer_proto_enumTypes[1]
+}
+
+func (x DeprecatedStringerEnum) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DeprecatedStringerEnum.Descriptor instead.
+func (DeprecatedStringerEnum) EnumDescriptor() ([]byte, []int) {
+	return file_tests_enum_enum_stringer_proto_rawDescGZIP(), []int{1}
+}
+
 type DefaultStringerEnum int32
 
 const (
@@ -110,11 +162,11 @@ func (x DefaultStringerEnum) String() string {
 }
 
 func (DefaultStringerEnum) Descriptor() protoreflect.EnumDescriptor {
-	return file_tests_enum_enum_stringer_proto_enumTypes[1].Descriptor()
+	return file_tests_enum_enum_stringer_proto_enumTypes[2].Descriptor()
 }
 
 func (DefaultStringerEnum) Type() protoreflect.EnumType {
-	return &file_tests_enum_enum_stringer_proto_enumTypes[1]
+	return &file_tests_enum_enum_stringer_proto_enumTypes[2]
 }
 
 func (x DefaultStringerEnum) Number() protoreflect.EnumNumber {
@@ -123,7 +175,7 @@ func (x DefaultStringerEnum) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DefaultStringerEnum.Descriptor instead.
 func (DefaultStringerEnum) EnumDescriptor() ([]byte, []int) {
-	return file_tests_enum_enum_stringer_proto_rawDescGZIP(), []int{1}
+	return file_tests_enum_enum_stringer_proto_rawDescGZIP(), []int{2}
 }
 
 var File_tests_enum_enum_stringer_proto protoreflect.FileDescriptor
@@ -141,6 +193,16 @@ var file_tests_enum_enum_stringer_proto_rawDesc = []byte{
 	0x4d, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x45, 0x52, 0x5f, 0x42, 0x10, 0x02, 0x12, 0x15,
 	0x0a, 0x11, 0x43, 0x55, 0x53, 0x54, 0x4f, 0x4d, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x45,
 	0x52, 0x5f, 0x43, 0x10, 0x03, 0x1a, 0x11, 0xca, 0xb5, 0x03, 0x0d, 0xf2, 0x01, 0x0a, 0x4f, 0x72,
+	0x69, 0x67, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x2a, 0x9d, 0x01, 0x0a, 0x16, 0x44, 0x65, 0x70,
+	0x72, 0x65, 0x63, 0x61, 0x74, 0x65, 0x64, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x45,
+	0x6e, 0x75, 0x6d, 0x12, 0x1f, 0x0a, 0x1b, 0x44, 0x45, 0x50, 0x52, 0x45, 0x43, 0x41, 0x54, 0x45,
+	0x44, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x45, 0x52, 0x5f, 0x49, 0x4e, 0x56, 0x41, 0x4c,
+	0x49, 0x44, 0x10, 0x00, 0x12, 0x19, 0x0a, 0x15, 0x44, 0x45, 0x50, 0x52, 0x45, 0x43, 0x41, 0x54,
+	0x45, 0x44, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x45, 0x52, 0x5f, 0x41, 0x10, 0x01, 0x12,
+	0x19, 0x0a, 0x15, 0x44, 0x45, 0x50, 0x52, 0x45, 0x43, 0x41, 0x54, 0x45, 0x44, 0x5f, 0x53, 0x54,
+	0x52, 0x49, 0x4e, 0x47, 0x45, 0x52, 0x5f, 0x42, 0x10, 0x02, 0x12, 0x19, 0x0a, 0x15, 0x44, 0x45,
+	0x50, 0x52, 0x45, 0x43, 0x41, 0x54, 0x45, 0x44, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x45,
+	0x52, 0x5f, 0x43, 0x10, 0x03, 0x1a, 0x11, 0xca, 0xb5, 0x03, 0x0d, 0xfa, 0x01, 0x0a, 0x4f, 0x72,
 	0x69, 0x67, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x2a, 0x4f, 0x0a, 0x13, 0x44, 0x65, 0x66, 0x61,
 	0x75, 0x6c, 0x74, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x45, 0x6e, 0x75, 0x6d, 0x12,
 	0x1a, 0x0a, 0x16, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e,
@@ -164,10 +226,11 @@ func file_tests_enum_enum_stringer_proto_rawDescGZIP() []byte {
 	return file_tests_enum_enum_stringer_proto_rawDescData
 }
 
-var file_tests_enum_enum_stringer_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_tests_enum_enum_stringer_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_tests_enum_enum_stringer_proto_goTypes = []interface{}{
-	(CustomStringerEnum)(0),  // 0: tests.enum.CustomStringerEnum
-	(DefaultStringerEnum)(0), // 1: tests.enum.DefaultStringerEnum
+	(CustomStringerEnum)(0),     // 0: tests.enum.CustomStringerEnum
+	(DeprecatedStringerEnum)(0), // 1: tests.enum.DeprecatedStringerEnum
+	(DefaultStringerEnum)(0),    // 2: tests.enum.DefaultStringerEnum
 }
 var file_tests_enum_enum_stringer_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -187,7 +250,7 @@ func file_tests_enum_enum_stringer_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_tests_enum_enum_stringer_proto_rawDesc,
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

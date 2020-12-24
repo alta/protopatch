@@ -9,11 +9,19 @@ import "patch/go.proto";
 option go_package = "github.com/alta/protopatch/tests/enum";
 
 enum CustomStringerEnum {
-	option (go.enum).stringer_name = 'OrigString';
+	option (go.enum).stringer = 'OrigString';
 	CUSTOM_STRINGER_INVALID = 0;
 	CUSTOM_STRINGER_A = 1;
 	CUSTOM_STRINGER_B = 2;
 	CUSTOM_STRINGER_C = 3;
+}
+
+enum DeprecatedStringerEnum {
+	option (go.enum).stringer_name = 'OrigString';
+	DEPRECATED_STRINGER_INVALID = 0;
+	DEPRECATED_STRINGER_A = 1;
+	DEPRECATED_STRINGER_B = 2;
+	DEPRECATED_STRINGER_C = 3;
 }
 
 enum DefaultStringerEnum {

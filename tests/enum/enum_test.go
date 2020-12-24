@@ -28,7 +28,7 @@ func TestRenamedEnumValue(t *testing.T) {
 
 func TestRenamedNestedEnumValue(t *testing.T) {
 	tests.ValidateEnum(t, RenamedNestedEnum(0), EnumWithRenamedValue_name, EnumWithRenamedValue_value)
-	enums := []RenamedNestedEnum {
+	enums := []RenamedNestedEnum{
 		RenamedValueInvalid,
 		RenamedValueA,
 		RenamedValueB,
@@ -51,6 +51,30 @@ func TestCustomStringerEnum(t *testing.T) {
 		{1, "CUSTOM_STRINGER_A", "custom_stringer_a"},
 		{2, "CUSTOM_STRINGER_B", "custom_stringer_b"},
 		{3, "CUSTOM_STRINGER_C", "custom_stringer_c"},
+	}
+	for _, tt := range tests {
+		name := fmt.Sprintf("enum(%d)/%s/%s", int32(tt.enum), tt.original, tt.patched)
+		t.Run(name, func(t *testing.T) {
+			if s := tt.enum.OrigString(); s != tt.original {
+				t.Errorf("%T(%d) incorrect original string %q != %q", tt.enum, tt.enum, s, tt.original)
+			}
+			if s := tt.enum.String(); s != tt.patched {
+				t.Errorf("%T(%d) incorrect patched string %q != %q", tt.enum, tt.enum, s, tt.patched)
+			}
+		})
+	}
+}
+
+func TestDeprecatedStringerEnum(t *testing.T) {
+	tests := []struct {
+		enum     DeprecatedStringerEnum
+		original string
+		patched  string
+	}{
+		{0, "DEPRECATED_STRINGER_INVALID", "deprecated_stringer_invalid"},
+		{1, "DEPRECATED_STRINGER_A", "deprecated_stringer_a"},
+		{2, "DEPRECATED_STRINGER_B", "deprecated_stringer_b"},
+		{3, "DEPRECATED_STRINGER_C", "deprecated_stringer_c"},
 	}
 	for _, tt := range tests {
 		name := fmt.Sprintf("enum(%d)/%s/%s", int32(tt.enum), tt.original, tt.patched)

@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Breaking Changes
+- Renamed the `stringer_name` option to `stringer` to match the Go [`fmt.Stringer`](https://golang.org/pkg/fmt/#Stringer) interface. For backwards compatibility, `stringer_name` will be supported for at least 6 months.
+
 ### Added
 - Updated docs, examples, and tests to use concise option syntax instead of `{}` delimited options.
 ### Fixed
