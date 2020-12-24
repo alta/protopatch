@@ -14,8 +14,9 @@ import (
 	"strings"
 
 	"github.com/alta/protopatch/patch/ident"
-	"golang.org/x/tools/go/ast/astutil"
 
+	"github.com/fatih/structtag"
+	"golang.org/x/tools/go/ast/astutil"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -502,6 +503,7 @@ func (p *Patcher) patchGoFiles() error {
 	log.Printf("\nDefs")
 	for id, obj := range p.info.Defs {
 		p.patchIdent(id, obj)
+		p.patchTags(id, obj)
 	}
 
 	log.Printf("\nUses\n")
@@ -520,28 +522,49 @@ func (p *Patcher) patchGoFiles() error {
 }
 
 func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
-	// Renames
 	name := p.objectRenames[obj]
 	if name != "" {
 		p.patchComments(id, name)
 		id.Name = name
 		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
 	}
+}
 
-	// Struct tags
-	tags := p.fieldTags[obj]
-	if tags != "" && id.Obj != nil {
-		v, ok := id.Obj.Decl.(*ast.Field)
-		if !ok {
-			log.Printf("Warning: struct tags declared for non-field object: %v `%s`", obj, tags)
-		} else {
-			if v.Tag == nil {
-				v.Tag = &ast.BasicLit{}
-			}
-			v.Tag.Value = "`" + strings.TrimSpace(strings.Trim(v.Tag.Value, "` ")+" "+tags) + "`"
-			log.Printf("Add tags:\t%q.%s %s", obj.Pkg().Path(), id.Name, v.Tag.Value)
-		}
+func (p *Patcher) patchTags(id *ast.Ident, obj types.Object) {
+	fieldTags := p.fieldTags[obj]
+	if fieldTags == "" || id.Obj == nil {
+		return
 	}
+
+	v, ok := id.Obj.Decl.(*ast.Field)
+	if !ok {
+		log.Printf("Warning: struct tags declared for non-field object: %v `%s`", obj, fieldTags)
+		return
+	}
+
+	if v.Tag == nil {
+		v.Tag = &ast.BasicLit{}
+	}
+
+	tags, err := structtag.Parse(strings.Trim(v.Tag.Value, "`"))
+	if err != nil {
+		log.Printf("Error: parsing struct tags for %q.%s: %s", obj.Pkg().Path(), id.Name, err)
+		return
+	}
+
+	newTags, err := structtag.Parse(fieldTags)
+	if err != nil {
+		log.Printf("Error: parsing struct tags for %q.%s: %s", obj.Pkg().Path(), id.Name, err)
+		return
+	}
+
+	for _, tag := range newTags.Tags() {
+		tags.Set(tag)
+	}
+
+	v.Tag.Value = "`" + tags.String() + "`"
+
+	log.Printf("Add tags:\t%q.%s `%s`", obj.Pkg().Path(), id.Name, newTags.String())
 }
 
 func (p *Patcher) patchComments(id *ast.Ident, repl string) {

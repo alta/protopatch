@@ -116,8 +116,8 @@ type MessageWithJSONTags struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" json:"custom_value"`
-	Empty string `protobuf:"bytes,2,opt,name=empty,proto3" json:"empty,omitempty" json:"custom_empty,omitempty"`
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"custom_value"`
+	Empty string `protobuf:"bytes,2,opt,name=empty,proto3" json:"custom_empty,omitempty"`
 }
 
 func (x *MessageWithJSONTags) Reset() {
