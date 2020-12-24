@@ -24,14 +24,30 @@ test-cgo-disabled:
 
 go_module = $(shell go list -m)
 proto_files = $(sort $(shell find . -name '*.proto'))
+proto_includes = \
+	-I . \
+	-I $(shell go list -m -f {{.Dir}} google.golang.org/protobuf) \
+	-I $(shell go list -m -f {{.Dir}} github.com/envoyproxy/protoc-gen-validate) \
 
 protos: $(proto_files)
 
 .PHONY: $(proto_files)
 $(proto_files): tools Makefile
+	# protoc-gen-go
 	protoc \
-		-I . \
-		-I `go list -m -f {{.Dir}} google.golang.org/protobuf` \
-		--go-patch_out=plugin=go,paths=import,module=$(go_module):. \
+		$(proto_includes) \
 		--go-patch_out=plugin=go-grpc,paths=import,module=$(go_module):. \
 		$@
+
+	# protoc-gen-go-grpc
+	protoc \
+		$(proto_includes) \
+		--go-patch_out=plugin=go,paths=import,module=$(go_module):. \
+		$@
+
+	# protoc-gen-validate
+	if grep -q validate/validate\.proto $@; then protoc \
+		$(proto_includes) \
+		--go-patch_out=plugin=validate,paths=source_relative,lang=go:. \
+		$@ ; \
+	fi
