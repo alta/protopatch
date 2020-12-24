@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
-
+- Updated docs, examples, and tests to use concise option syntax instead of `{}` delimited options.
 ### Fixed
 
 ### Known Issues
