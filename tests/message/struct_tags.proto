@@ -20,3 +20,7 @@ message MessageWithJSONTags {
 	string value = 1 [(go.field).tags = 'json:"custom_value"'];
 	string empty = 2 [(go.field).tags = 'json:"custom_empty,omitempty"'];
 }
+
+message MessageWithRedundantTags {
+	string value = 1 [(go.field).tags = 'test:"1" test:"2" test:"3"'];
+}

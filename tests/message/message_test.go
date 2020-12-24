@@ -70,3 +70,9 @@ func TestMessageWithJSONTags(t *testing.T) {
 	tests.ValidateTag(t, m, "Value", "json", "custom_value")
 	tests.ValidateTag(t, m, "Empty", "json", "custom_empty,omitempty")
 }
+
+func TestMessageWithRedundantTags(t *testing.T) {
+	m := &MessageWithRedundantTags{}
+	tests.ValidateTag(t, m, "Value", "test", "3")
+	tests.ValidateTag(t, m, "Value", "json", "value,omitempty")
+}
