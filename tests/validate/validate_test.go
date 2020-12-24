@@ -48,7 +48,7 @@ func TestInterfaceValidate(t *testing.T) {
 	}
 }
 
-func TestAddressValidate(t *testing.T) {
+func TestIPAddressValidate(t *testing.T) {
 	tests := []struct {
 		name    string
 		ip      *IPAddress
