@@ -6,9 +6,6 @@ install:
 tools: internal/tools/*.go
 	go generate --tags tools ./internal/tools
 
-generate:
-	go generate ./...
-
 vet:
 	go vet ./...
 

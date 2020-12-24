@@ -17,6 +17,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install protoc
+        uses: arduino/setup-protoc@HEAD
+        with:
+          version: "3.14"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -25,8 +31,8 @@ jobs:
       - name: Install Go tools
         run: make tools
 
-      - name: Regenerate Go code
-        run: make generate
+      - name: Regenerate protos
+        run: make protos
 
       - name: Vet Go code
         run: make vet
