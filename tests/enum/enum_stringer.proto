@@ -9,9 +9,7 @@ import "patch/go.proto";
 option go_package = "github.com/alta/protopatch/tests/enum";
 
 enum CustomStringerEnum {
-	option (go.enum) = {
-		stringer_name: 'OrigString'
-	};
+	option (go.enum).stringer_name = 'OrigString';
 	CUSTOM_STRINGER_INVALID = 0;
 	CUSTOM_STRINGER_A = 1;
 	CUSTOM_STRINGER_B = 2;
