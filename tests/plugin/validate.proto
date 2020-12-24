@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package tests.validate;
+package tests.plugin;
 
 import "patch/go.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/alta/protopatch/tests/validate";
+option go_package = "github.com/alta/protopatch/tests/plugin";
 
 message Interface {
 	string name = 1;
@@ -15,7 +15,7 @@ message Interface {
 		UP = 1 [(go.value).name = "StatusUp"];
 		DOWN = 2 [(go.value).name = "StatusDown"];
 	}
-	Status status = 2 [(.validate.rules).enum = {
+	Status status = 2 [(validate.rules).enum = {
 		defined_only: true,
 		not_in: [0]
 	}];
@@ -24,7 +24,7 @@ message Interface {
 
 message IPAddress {
 	oneof Address {
-		string ipv4 = 3 [(go.field).name = "IPV4", (.validate.rules).string.ipv4 = true];
-		string ipv6 = 4 [(go.field).name = "IPV6", (.validate.rules).string.ipv6 = true];
+		string ipv4 = 3 [(go.field).name = "IPV4", (validate.rules).string.ipv4 = true];
+		string ipv6 = 4 [(go.field).name = "IPV6", (validate.rules).string.ipv6 = true];
 	}
 }
