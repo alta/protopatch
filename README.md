@@ -20,6 +20,26 @@ Patches are defined via an `Options` extension on messages, fields, `oneof` fiel
 import "patch/go.proto";
 
 message OldName {
+	option (go.message).name = 'NewName';
+	int id = 1 [(go.field).name = 'ID'];
+}
+
+enum Errors {
+	option (go.enum).name = 'ProtocolErrors';
+	INVALID = 1 [(go.value).name = 'ErrInvalid'];
+	NOT_FOUND = 2 [(go.value).name = 'ErrNotFound'];
+	TOO_FUN = 3 [(go.value).name = 'ErrTooFun'];
+}
+```
+
+#### Alternate Syntax
+
+Multiple options can be grouped together with a message bounded by `{}`:
+
+```proto
+import "patch/go.proto";
+
+message OldName {
 	option (go.message) = {name: 'NewName'};
 	int id = 1 [(go.field) = {name: 'ID'}];
 }
@@ -33,6 +53,17 @@ enum Errors {
 ```
 
 ### Struct Tags
+
+```proto
+message ToDo {
+	int32 id = 1 [(go.field).name: 'ID', tags: 'xml:"id,attr"'];
+	string description = 2 [(go.field).tags: 'xml:"desc"'];
+}
+```
+
+#### Alternate Syntax
+
+Multiple options can be grouped together with a message bounded by `{}`:
 
 ```proto
 message ToDo {
