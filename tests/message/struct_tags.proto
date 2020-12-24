@@ -15,3 +15,8 @@ message OuterMessageWithTags {
 		string value = 1 [(go.field).tags = 'test:"value"'];
 	}
 }
+
+message MessageWithJSONTags {
+	string value = 1 [(go.field).tags = 'json:"custom_value"'];
+	string empty = 2 [(go.field).tags = 'json:"custom_empty,omitempty"'];
+}

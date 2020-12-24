@@ -63,3 +63,9 @@ func TestNestedMessageWithStructTags(t *testing.T) {
 	m := &OuterMessageWithTags_InnerMessage{}
 	tests.ValidateTag(t, m, "Value", "test", "value")
 }
+
+func TestMessageWithJSONTags(t *testing.T) {
+	m := &MessageWithJSONTags{}
+	tests.ValidateTag(t, m, "Value", "json", "custom_value")
+	tests.ValidateTag(t, m, "Empty", "json", "custom_empty,omitempty")
+}
