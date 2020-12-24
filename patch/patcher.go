@@ -21,13 +21,13 @@ import (
 )
 
 // Patcher patches a set of generated Go Protobuf files with additional features:
-// - go_name (Field option) overrides the name of a synthesized struct field and getters.
-// - go_tags (Field option) lets you add additional struct tags to a field.
-// - go_oneof_name (Oneof option) overrides the name of a oneof field, including wrapper types and getters.
-// - go_oneof_tags (Oneof option) lets you specify additional struct tags on a oneof field.
-// - go_message_name (Message option) overrides the name of the synthesized struct.
-// - go_enum_name (Enum option) overrides the name of an enum type.
-// - go_value_name (EnumValue option) overrides the name of an enum const.
+// - (go.message).name overrides the name of a message’s synthesized struct.
+// - (go.field).name overrides the name of a synthesized struct field and getters.
+// - (go.field).tags lets you add additional struct tags to a field.
+// - (go.oneof).name overrides the name of a oneof field, including wrapper types and getters.
+// - (go.oneof).tags lets you specify additional struct tags on a oneof field.
+// - (go.enum).name overrides the name of an enum type.
+// - (go.value).name overrides the name of an enum value.
 type Patcher struct {
 	gen            *protogen.Plugin
 	fset           *token.FileSet
