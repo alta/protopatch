@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package tests.validate;
+
+import "patch/go.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/alta/protopatch/tests/validate";
+
+message Interface {
+	string name = 1;
+	enum Status {
+		option (go.enum).name = "InterfaceStatus";
+		UNKNOWN = 0 [(go.value).name = "StatusUnknown"];
+		UP = 1 [(go.value).name = "StatusUp"];
+		DOWN = 2 [(go.value).name = "StatusDown"];
+	}
+	Status status = 2 [(.validate.rules).enum = {
+		defined_only: true,
+		not_in: [0]
+	}];
+	repeated IPAddress addresses = 3;
+}
+
+message IPAddress {
+	oneof Address {
+		string ipv4 = 3 [(go.field).name = "IPV4", (.validate.rules).string.ipv4 = true];
+		string ipv6 = 4 [(go.field).name = "IPV6", (.validate.rules).string.ipv6 = true];
+	}
+}
