@@ -15,7 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — It is now possible to patch output of other plugins like [`protoc-gen-validate`](https://github.com/envoyproxy/protoc-gen-validate).
 
 ### Known Issues
-- [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
 ## [v0.1.0] — 2020-12-23
 
