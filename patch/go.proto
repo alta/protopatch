@@ -59,27 +59,11 @@ extend google.protobuf.EnumValueOptions {
 }
 
 extend google.protobuf.FileOptions {
-	// Options for all messages in the file.
-	// Can be overridden by options on a specific message.
-	optional Options messages = 7001;
-
-	// Options for all message fields in the file.
-	// Can be overridden by options on a specific field.
-	optional Options fields = 7002;
-
-	// Options for all oneof fields in the file.
-	// Can be overridden by options on a specific oneof.
-	optional Options oneofs = 7003;
-
-	// Options for all enums in the file.
-	// Can be overridden by options on a specific enum.
-	optional Options enums = 7004;
-
-	// Options for all enum values in the file.
-	// Can be overridden by options on a specific value.
-	optional Options values = 7005;
+	// Set lint to true if generated Go symbols should be linted.
+	// Can be overridden by options on a specific message or enum.
+	optional bool lint = 7010;
 
 	// The initialisms option lets you specify strings that should not be generated as mixed-case,
 	// Examples: ID, URL, HTTP, etc.
-	repeated string initialisms = 7010;
+	repeated string initialisms = 7020;
 }
