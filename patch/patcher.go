@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alta/protopatch/lint"
 	"github.com/alta/protopatch/patch/ident"
 
 	"github.com/fatih/structtag"
@@ -95,6 +96,12 @@ func (p *Patcher) scanFile(f *protogen.File) {
 func (p *Patcher) scanEnum(e *protogen.Enum) {
 	opts := enumOptions(e)
 	newName := opts.GetName()
+	if lintParentFile(e.Desc) {
+		if newName == "" {
+			newName = e.GoIdent.GoName
+		}
+		newName = lint.Name(newName, nil)
+	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
@@ -123,6 +130,19 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 	}
+	if lintParentFile(e.Desc) {
+		if newName == "" {
+			newName = v.GoIdent.GoName
+		}
+		newName = lint.Name(strings.Title(strings.ToLower(newName)), nil)
+
+		// Remove stutter, e.g. FooFooUnknown → FooUnknown
+		pname := p.nameFor(e.GoIdent)
+		pfx := pname + pname
+		if len(newName) > len(pfx) {
+			newName = strings.TrimPrefix(newName, pname)
+		}
+	}
 	if newName != "" {
 		p.RenameValue(v.GoIdent, newName) // Value const
 	}
@@ -133,6 +153,13 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
+	}
+	if lintParentFile(m.Desc) {
+		log.Printf("Linting: %q.%s", m.GoIdent.GoImportPath, m.GoIdent.GoName)
+		if newName == "" {
+			newName = m.GoIdent.GoName
+		}
+		newName = lint.Name(newName, nil)
 	}
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
@@ -163,6 +190,12 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		// Implicitly rename this oneof field because its parent message was renamed.
 		newName = o.GoName
 	}
+	if lintParentFile(o.Desc) {
+		if newName == "" {
+			newName = o.GoIdent.GoName
+		}
+		newName = lint.Name(newName, nil)
+	}
 	if newName != "" {
 		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+o.GoName), "Get"+newName) // Getter
@@ -185,6 +218,12 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
+	}
+	if lintParentFile(f.Desc) {
+		if newName == "" {
+			newName = f.GoName
+		}
+		newName = lint.Name(newName, nil)
 	}
 	if newName != "" {
 		if o != nil {
@@ -504,6 +543,10 @@ func (p *Patcher) patchGoFiles() error {
 	for id, obj := range p.info.Defs {
 		p.patchIdent(id, obj)
 		p.patchTags(id, obj)
+		// if id.IsExported() {
+		// 	f := p.fset.File(id.NamePos)
+		// 	log.Printf("Ident %s:\t%s @ %s", typeString(obj), id.Name, f.Name())
+		// }
 	}
 
 	log.Printf("\nUses\n")
