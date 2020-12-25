@@ -5,6 +5,7 @@ import (
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func enumOptions(e *protogen.Enum) *gopb.Options {
@@ -25,4 +26,8 @@ func fieldOptions(f *protogen.Field) *gopb.Options {
 
 func oneofOptions(o *protogen.Oneof) *gopb.Options {
 	return proto.GetExtension(o.Desc.Options(), gopb.E_Oneof).(*gopb.Options)
+}
+
+func lintParentFile(d protoreflect.Descriptor) bool {
+	return proto.GetExtension(d.ParentFile().Options(), gopb.E_Lint).(bool)
 }
