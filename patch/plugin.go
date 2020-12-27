@@ -3,6 +3,7 @@ package patch
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -68,8 +69,22 @@ func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writ
 	return &res, nil
 }
 
-// Write marshals and writes CodeGeneratorResponse res to w.
-func Write(res *pluginpb.CodeGeneratorResponse, w io.Writer) error {
+// ReadRequest reads and unmarshals a CodeGeneratorRequest.
+func ReadRequest(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
+	in, err := ioutil.ReadAll(os.Stdin)
+	if err != nil {
+		return nil, err
+	}
+	req := &pluginpb.CodeGeneratorRequest{}
+	err = proto.Unmarshal(in, req)
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+// WriteResponse marshals and writes CodeGeneratorResponse res to w.
+func WriteResponse(w io.Writer, res *pluginpb.CodeGeneratorResponse) error {
 	out, err := proto.Marshal(res)
 	if err != nil {
 		return err

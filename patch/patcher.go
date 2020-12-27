@@ -17,6 +17,7 @@ import (
 
 	"github.com/fatih/structtag"
 	"golang.org/x/tools/go/ast/astutil"
+	"google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -34,7 +35,6 @@ type Patcher struct {
 	fset           *token.FileSet
 	filesByName    map[string]*ast.File
 	info           *types.Info
-	packages       []*Package
 	packagesByPath map[string]*Package
 	packagesByName map[string]*Package
 	renames        map[protogen.GoIdent]string
@@ -74,6 +74,13 @@ func (p *Patcher) scan() error {
 
 func (p *Patcher) scanFile(f *protogen.File) {
 	log.Printf("\nScan proto:\t%s", f.Desc.Path())
+
+	// Locally generate Go from the source proto file.
+	// This is equivalent to running the go protoc plugin, but in-process.
+	if f.Generate {
+		log.Printf("Generating:\t%s", f.Desc.Path())
+		internal_gengo.GenerateFile(p.gen, f)
+	}
 
 	_ = p.getPackage(string(f.GoImportPath), string(f.GoPackageName), true)
 
@@ -283,7 +290,16 @@ func (p *Patcher) Tag(id protogen.GoIdent, tags string) {
 // Clone res before calling Patch if you want to retain an unmodified copy.
 // The behavior of calling Patch multiple times is currently undefined.
 func (p *Patcher) Patch(res *pluginpb.CodeGeneratorResponse) error {
+	p.reset()
+
 	if err := p.parseGoFiles(res); err != nil {
+		return err
+	}
+
+	// Inject default generated Go code from protoc-gen-go.
+	// FIXME: should this be here?
+	res2 := p.gen.Response()
+	if err := p.parseGoFiles(res2); err != nil {
 		return err
 	}
 
@@ -298,12 +314,19 @@ func (p *Patcher) Patch(res *pluginpb.CodeGeneratorResponse) error {
 	return p.serializeGoFiles(res)
 }
 
-func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
+func (p *Patcher) reset() {
 	p.fset = token.NewFileSet()
 	p.filesByName = make(map[string]*ast.File)
+}
 
+func (p *Patcher) parseGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 	for _, rf := range res.File {
 		if rf.Name == nil || !strings.HasSuffix(*rf.Name, ".go") || rf.Content == nil {
+			continue
+		}
+
+		if p.filesByName[*rf.Name] != nil {
+			log.Printf("Skipping duplicate file:\t%s", *rf.Name)
 			continue
 		}
 
@@ -336,6 +359,28 @@ func (p *Patcher) checkGoFiles() error {
 
 	// Find missing type declarations.
 	for id := range p.typeRenames {
+		if obj, _ := p.find(id); obj != nil {
+			continue
+		}
+		if err := p.synthesize(id); err != nil {
+			return err
+		}
+		recheck = true
+	}
+
+	// Find missing field declarations.
+	for id := range p.fieldRenames {
+		if obj, _ := p.find(id); obj != nil {
+			continue
+		}
+		if err := p.synthesize(id); err != nil {
+			return err
+		}
+		recheck = true
+	}
+
+	// Find missing method declarations.
+	for id := range p.methodRenames {
 		if obj, _ := p.find(id); obj != nil {
 			continue
 		}
@@ -400,12 +445,17 @@ func (p *Patcher) checkPackages() error {
 		Uses:  make(map[*ast.Ident]types.Object),
 	}
 
-	for _, pkg := range p.packages {
+	for _, pkg := range p.packagesByName {
 		pkg.Reset()
 	}
 
-	for _, pkg := range p.packages {
-		err := pkg.Check(importer{p}, p.fset, p.info)
+	for _, pkg := range p.packagesByName {
+		if len(pkg.files) == 0 {
+			continue
+		}
+		// Resolve symbols defined in this package across all files
+		_, _ = ast.NewPackage(p.fset, pkg.filesByName, nil, nil)
+		err := pkg.Check(basicImporter{p}, p.fset, p.info)
 		if err != nil {
 			return err
 		}
@@ -469,7 +519,6 @@ func (p *Patcher) getPackage(path, name string, create bool) *Package {
 	}
 	pkg := NewPackage(path, name)
 	name = pkg.pkg.Name() // Get real name
-	p.packages = append(p.packages, pkg)
 	p.packagesByPath[path] = pkg
 	p.packagesByName[name] = pkg
 	return pkg
@@ -527,6 +576,8 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
 		p.patchComments(id, name)
 		id.Name = name
 		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
+	} else {
+		// log.Printf("Unresolved:\t%v", id)
 	}
 }
 
