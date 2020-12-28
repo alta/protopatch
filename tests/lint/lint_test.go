@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/alta/protopatch/tests"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestProtocol(t *testing.T) {
@@ -38,4 +39,13 @@ func TestOuterMessage(t *testing.T) {
 	tests.ValidateMessage(t, &OuterMessageInnerURL{})
 	var _ *OuterMessageInnerID = m.GetID()
 	var _ *OuterMessageInnerURL = m.GetURL()
+}
+
+func TestExtendedMessage(t *testing.T) {
+	m := &ExtendedMessage{}
+	tests.ValidateMessage(t, m)
+	_ = proto.GetExtension(m, ExtAlpha).(string)
+	_ = proto.GetExtension(m, ExtBeta).(string)
+	_ = proto.GetExtension(m, ExtGamma).(string)
+	_ = proto.GetExtension(m, ExtDelta).(string)
 }

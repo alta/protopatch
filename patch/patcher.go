@@ -284,10 +284,17 @@ func (p *Patcher) scanExtension(f *protogen.Field) {
 
 	// Rename extension?
 	newName := opts.GetName()
+	if lintParentFile(f.Desc) {
+		if newName == "" {
+			// Idiomatic Go values are prefixed with some flavor of the type, in this case Ext.
+			newName = "Ext" + f.GoName
+		}
+		newName = lint.Name(newName, nil)
+	}
 	if newName != "" {
 		id := f.GoIdent
-		id.GoName = f.GoName
-		p.RenameValue(ident.WithPrefix(id, "E_"), newName)
+		id.GoName = "E_" + f.GoName
+		p.RenameValue(id, newName)
 	}
 }
 
