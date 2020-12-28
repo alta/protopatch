@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.2.0] — 2020-12-28
 
 ### Breaking Changes
 - Renamed the `stringer_name` option to `stringer` to match the Go [`fmt.Stringer`](https://golang.org/pkg/fmt/#Stringer) interface. For backwards compatibility, `stringer_name` will be supported for at least 6 months.
@@ -23,5 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/protopatch/compare/v0.1.0...HEAD>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.2.0...HEAD>
+[v0.2.0]: <https://github.com/alta/protopatch/compare/v0.1.0...v0.2.0>
 [v0.1.0]: <https://github.com/alta/protopatch/tree/v0.1.0>
