@@ -16,10 +16,6 @@ message Options {
 	// For an enum value, this renames the generated Go const.
 	optional string name = 1;
 
-	// The prefix option overrides the default prefix for a generated Go name.
-	// Set to "" to omit the default generated prefix (if any).
-	optional string prefix = 2;
-
 	// The getter option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
 	optional string getter = 10; // TODO: implement this
