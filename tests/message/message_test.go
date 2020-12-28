@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/alta/protopatch/tests"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestBasicMessage(t *testing.T) {
@@ -75,4 +76,13 @@ func TestMessageWithRedundantTags(t *testing.T) {
 	m := &MessageWithRedundantTags{}
 	tests.ValidateTag(t, m, "Value", "test", "3")
 	tests.ValidateTag(t, m, "Value", "json", "value,omitempty")
+}
+
+func TestExtendedMessage(t *testing.T) {
+	m := &ExtendedMessage{}
+	tests.ValidateMessage(t, m)
+	_ = proto.GetExtension(m, E_Alpha).(string)
+	_ = proto.GetExtension(m, E_Beta).(string)
+	_ = proto.GetExtension(m, ExtGamma).(string)
+	_ = proto.GetExtension(m, ExtDelta).(string)
 }

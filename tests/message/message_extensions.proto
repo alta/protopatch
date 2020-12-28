@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package tests.message;
+
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message ExtendedMessage {
+	extensions 100 to 199;
+}
+
+extend ExtendedMessage {
+	optional string alpha = 101;
+}
+
+extend ExtendedMessage {
+	optional string beta = 102;
+}
+
+extend ExtendedMessage {
+	optional string gamma = 103 [(go.field).name = 'ExtGamma'];
+}
+
+extend ExtendedMessage {
+	optional string delta = 104 [(go.field).name = 'ExtDelta'];
+}
