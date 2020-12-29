@@ -214,6 +214,9 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 }
 
 func replacePrefix(s, prefix, with string) string {
+	if !strings.HasPrefix(s, prefix) {
+		return s
+	}
 	return with + strings.TrimPrefix(s, prefix)
 }
 
