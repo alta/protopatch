@@ -7,6 +7,9 @@ import "patch/go.proto";
 option go_package = "github.com/alta/protopatch/tests/lint";
 
 option (go.lint) = true;
+option (go.initialisms) = 'RGB';
+option (go.initialisms) = 'RGBA';
+option (go.initialisms) = 'HSV';
 
 enum Protocol {
 	// PROTOCOL_INVALID value should lint to ProtocolInvalid.
@@ -24,6 +27,9 @@ message Url {}
 
 // Id message type should lint to ID.
 message Id {}
+
+// RgbColor should lint to RGBColor.
+message RGBColor {}
 
 message OneofMessage {
 	oneof contents {
@@ -43,4 +49,15 @@ message OuterMessage {
 	InnerId id = 1;
 	// url field should lint to URL.
 	InnerUrl url = 2;
+}
+
+message Color {
+	oneof value {
+		// rgb should lint to RGB.
+		string rgb = 1;
+		// rgba should lint to RGBA.
+		string rgba = 2;
+		// hsv should lint to HSV.
+		string hsv = 3;
+	}
 }

@@ -109,7 +109,7 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 		if newName == "" {
 			newName = e.GoIdent.GoName
 		}
-		newName = lint.Name(newName, nil)
+		newName = lint.Name(newName, fileInitialismsMap(e.Desc))
 	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
@@ -149,7 +149,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 		if newName == "" {
 			newName = v.GoIdent.GoName
 		}
-		newName = lint.Name(strings.Title(strings.ToLower(newName)), nil)
+		newName = lint.Name(strings.Title(strings.ToLower(newName)), fileInitialismsMap(v.Desc))
 
 		// Remove stutter, e.g. FooFooUnknown → FooUnknown
 		pname := p.nameFor(e.GoIdent)
@@ -176,7 +176,7 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 		if newName == "" {
 			newName = m.GoIdent.GoName
 		}
-		newName = lint.Name(newName, nil)
+		newName = lint.Name(newName, fileInitialismsMap(m.Desc))
 	}
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
@@ -221,7 +221,7 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		if newName == "" {
 			newName = o.GoIdent.GoName
 		}
-		newName = lint.Name(newName, nil)
+		newName = lint.Name(newName, fileInitialismsMap(o.Desc))
 	}
 	if newName != "" {
 		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
@@ -254,7 +254,7 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		if newName == "" {
 			newName = f.GoName
 		}
-		newName = lint.Name(newName, nil)
+		newName = lint.Name(newName, fileInitialismsMap(f.Desc))
 	}
 	if newName != "" {
 		if o != nil {
@@ -289,7 +289,7 @@ func (p *Patcher) scanExtension(f *protogen.Field) {
 			// Idiomatic Go values are prefixed with some flavor of the type, in this case Ext.
 			newName = "Ext" + f.GoName
 		}
-		newName = lint.Name(newName, nil)
+		newName = lint.Name(newName, fileInitialismsMap(f.Desc))
 	}
 	if newName != "" {
 		id := f.GoIdent

@@ -23,6 +23,10 @@ func TestID(t *testing.T) {
 	tests.ValidateMessage(t, &ID{})
 }
 
+func TestRGBColor(t *testing.T) {
+	tests.ValidateMessage(t, &RGBColor{})
+}
+
 func TestOneofMessage(t *testing.T) {
 	m := &OneofMessage{}
 	tests.ValidateMessage(t, m)
@@ -39,6 +43,14 @@ func TestOuterMessage(t *testing.T) {
 	tests.ValidateMessage(t, &OuterMessageInnerURL{})
 	var _ *OuterMessageInnerID = m.GetID()
 	var _ *OuterMessageInnerURL = m.GetURL()
+}
+
+func TestColor(t *testing.T) {
+	m := &Color{}
+	tests.ValidateMessage(t, m)
+	var _ string = m.GetRGB()
+	var _ string = m.GetRGBA()
+	var _ string = m.GetHSV()
 }
 
 func TestExtendedMessage(t *testing.T) {

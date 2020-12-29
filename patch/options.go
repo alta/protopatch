@@ -31,3 +31,16 @@ func oneofOptions(o *protogen.Oneof) *gopb.Options {
 func lintParentFile(d protoreflect.Descriptor) bool {
 	return proto.GetExtension(d.ParentFile().Options(), gopb.E_Lint).(bool)
 }
+
+func fileInitialisms(d protoreflect.Descriptor) []string {
+	return proto.GetExtension(d.ParentFile().Options(), gopb.E_Initialisms).([]string)
+}
+
+func fileInitialismsMap(d protoreflect.Descriptor) map[string]bool {
+	fi := fileInitialisms(d)
+	initialisms := make(map[string]bool, len(fi))
+	for _, i := range fi {
+		initialisms[i] = true
+	}
+	return initialisms
+}
