@@ -56,7 +56,7 @@ enum Errors {
 
 ```proto
 message ToDo {
-	int32 id = 1 [(go.field).name: 'ID', tags: 'xml:"id,attr"'];
+	int32 id = 1 [(go.field).name: 'ID', (go.field).tags = 'xml:"id,attr"'];
 	string description = 2 [(go.field).tags: 'xml:"desc"'];
 }
 ```
