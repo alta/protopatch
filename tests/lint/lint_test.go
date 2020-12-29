@@ -7,14 +7,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func TestProtocol(t *testing.T) {
-	tests.ValidateEnum(t, Protocol(0), Protocol_name, Protocol_value)
-	tests.ValidateEnum(t, ProtocolInvalid, Protocol_name, Protocol_value)
-	tests.ValidateEnum(t, ProtocolIP, Protocol_name, Protocol_value)
-	tests.ValidateEnum(t, ProtocolUDP, Protocol_name, Protocol_value)
-	tests.ValidateEnum(t, ProtocolTCP, Protocol_name, Protocol_value)
-}
-
 func TestURL(t *testing.T) {
 	tests.ValidateMessage(t, &URL{})
 }
@@ -60,4 +52,20 @@ func TestExtendedMessage(t *testing.T) {
 	_ = proto.GetExtension(m, ExtBeta).(string)
 	_ = proto.GetExtension(m, ExtGamma).(string)
 	_ = proto.GetExtension(m, ExtDelta).(string)
+}
+
+func TestBasic(t *testing.T) {
+	tests.ValidateEnum(t, Basic(0), Basic_name, Basic_value)
+	tests.ValidateEnum(t, BasicInvalid, Basic_name, Basic_value)
+	tests.ValidateEnum(t, BasicA, Basic_name, Basic_value)
+	tests.ValidateEnum(t, BasicB, Basic_name, Basic_value)
+	tests.ValidateEnum(t, BasicC, Basic_name, Basic_value)
+}
+
+func TestProtocol(t *testing.T) {
+	tests.ValidateEnum(t, Protocol(0), Protocol_name, Protocol_value)
+	tests.ValidateEnum(t, ProtocolInvalid, Protocol_name, Protocol_value)
+	tests.ValidateEnum(t, ProtocolIP, Protocol_name, Protocol_value)
+	tests.ValidateEnum(t, ProtocolUDP, Protocol_name, Protocol_value)
+	tests.ValidateEnum(t, ProtocolTCP, Protocol_name, Protocol_value)
 }

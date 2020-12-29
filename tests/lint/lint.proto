@@ -61,3 +61,24 @@ message Color {
 		string hsv = 3;
 	}
 }
+
+enum Basic {
+	// INVALID value should lint to BasicInvalid.
+	INVALID = 0;
+	// A value should lint to BasicInvalid.
+	A = 1;
+	// B value should lint to BasicInvalid.
+	B = 2;
+	// C value should lint to BasicInvalid.
+	C = 3;
+}
+
+// IdFieldsTest message should lint to IDFieldsTest.
+message IdFieldsTest {
+	// id field should lint to ID.
+	string id = 1;
+	// customer_id field should lint to CustomerID.
+	string customer_id = 2;
+	// api_path field should lint to APIPath.
+	string api_path = 3;
+}
