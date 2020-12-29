@@ -143,14 +143,12 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	// Rename enum value?
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(e.GoIdent) {
+		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 		if lintParentFile(v.Desc) {
 			vname := string(v.Desc.Name())
-			if vname == strings.ToUpper(vname) {
-				vname = strings.ToLower(vname)
+			if vname == strings.ToUpper(vname) && strings.HasSuffix(newName, vname) {
+				newName = strings.TrimSuffix(newName, vname) + "_" + strings.ToLower(vname)
 			}
-			newName = p.nameFor(e.GoIdent) + "_" + vname
-		} else {
-			newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 		}
 	}
 	if lintParentFile(v.Desc) {
@@ -171,7 +169,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 		}
 	}
 	if newName != "" {
-		p.RenameValue(v.GoIdent, newName) // Value const
+		p.RenameValue(v.GoIdent, newName)
 	}
 }
 

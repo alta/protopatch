@@ -45,6 +45,13 @@ message OuterMessage {
 	message InnerId {}
 	// InnerId message should lint to InnerURL.
 	message InnerUrl {}
+	// Flavor should lint to OuterMessageFlavor.
+	enum Flavor {
+		FLAVOR_INVALID = 0;
+		FLAVOR_A = 1;
+		FLAVOR_B = 2;
+		FLAVOR_C = 3;
+	}
 	// id field should lint to ID.
 	InnerId id = 1;
 	// url field should lint to URL.

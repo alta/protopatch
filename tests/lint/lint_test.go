@@ -33,6 +33,7 @@ func TestOuterMessage(t *testing.T) {
 	tests.ValidateMessage(t, &OuterMessage{})
 	tests.ValidateMessage(t, &OuterMessageInnerID{})
 	tests.ValidateMessage(t, &OuterMessageInnerURL{})
+	tests.ValidateEnum(t, OuterMessageFlavor(0), OuterMessageFlavor_name, OuterMessageFlavor_value)
 	var _ *OuterMessageInnerID = m.GetID()
 	var _ *OuterMessageInnerURL = m.GetURL()
 }
