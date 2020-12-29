@@ -143,18 +143,30 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	// Rename enum value?
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(e.GoIdent) {
-		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
+		if lintParentFile(v.Desc) {
+			vname := string(v.Desc.Name())
+			if vname == strings.ToUpper(vname) {
+				vname = strings.ToLower(vname)
+			}
+			newName = p.nameFor(e.GoIdent) + "_" + vname
+		} else {
+			newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
+		}
 	}
 	if lintParentFile(v.Desc) {
 		if newName == "" {
-			newName = v.GoIdent.GoName
+			vname := string(v.Desc.Name())
+			if vname == strings.ToUpper(vname) {
+				vname = strings.ToLower(vname)
+			}
+			newName = p.nameFor(e.GoIdent) + "_" + vname
 		}
-		newName = lint.Name(strings.Title(strings.ToLower(newName)), fileInitialismsMap(v.Desc))
+		newName = lint.Name(newName, fileInitialismsMap(v.Desc))
 
-		// Remove stutter, e.g. FooFooUnknown → FooUnknown
+		// Remove type name prefix stutter, e.g. FooFooUnknown → FooUnknown
 		pname := p.nameFor(e.GoIdent)
 		pfx := pname + pname
-		if len(newName) > len(pfx) {
+		if len(newName) > len(pfx) && strings.HasPrefix(newName, pfx) {
 			newName = strings.TrimPrefix(newName, pname)
 		}
 	}
