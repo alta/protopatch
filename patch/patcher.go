@@ -145,7 +145,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	if newName == "" && p.isRenamed(e.GoIdent) {
 		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
 	}
-	if lintParentFile(e.Desc) {
+	if lintParentFile(v.Desc) {
 		if newName == "" {
 			newName = v.GoIdent.GoName
 		}
