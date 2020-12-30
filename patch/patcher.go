@@ -143,7 +143,14 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
 	// Rename enum value?
 	newName := opts.GetName()
 	if newName == "" {
-		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
+		pfx := p.nameFor(e.GoIdent)
+		if opts != nil && opts.Prefix != nil {
+			pfx = *opts.Prefix
+		}
+		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, pfx)
+		if pfx == "" {
+			newName = strings.TrimPrefix(newName, "_")
+		}
 		if lintParentFile(v.Desc) {
 			vname := string(v.Desc.Name())
 			if vname == strings.ToUpper(vname) && strings.HasSuffix(newName, vname) {
