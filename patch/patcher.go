@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alta/protopatch/lint"
 	"github.com/alta/protopatch/patch/ident"
 
 	"github.com/fatih/structtag"
@@ -108,6 +109,12 @@ func (p *Patcher) scanEnum(e *protogen.Enum, parent *protogen.Message) {
 		newName = replacePrefix(e.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
 		log.Printf("•••• %s → newName: %s", e.GoIdent.GoName, newName)
 	}
+	if lintParentFile(e.Desc) {
+		if newName == "" {
+			newName = e.GoIdent.GoName
+		}
+		newName = lint.Name(newName, fileInitialismsMap(e.Desc))
+	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
@@ -147,6 +154,21 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue, parent *protogen.Message)
 	if newName == "" {
 		newName = replacePrefix(v.GoIdent.GoName, parentIdent.GoName, p.nameFor(parentIdent))
 	}
+	if lintParentFile(v.Desc) {
+		vname := string(v.Desc.Name())
+		if vname == strings.ToUpper(vname) && strings.HasSuffix(newName, vname) {
+			newName = strings.TrimSuffix(newName, vname) + "_" + strings.ToLower(vname)
+		}
+
+		newName = lint.Name(newName, fileInitialismsMap(v.Desc))
+
+		// Remove type name prefix stutter, e.g. FooFooUnknown → FooUnknown
+		pname := p.nameFor(parentIdent)
+		pfx := pname + pname
+		if len(newName) > len(pfx) && strings.HasPrefix(newName, pfx) {
+			newName = strings.TrimPrefix(newName, pname)
+		}
+	}
 	if newName != "" && newName != v.GoIdent.GoName {
 		p.RenameValue(v.GoIdent, newName)
 	}
@@ -159,6 +181,13 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
+	}
+	if lintParentFile(m.Desc) {
+		log.Printf("Linting: %q.%s", m.GoIdent.GoImportPath, m.GoIdent.GoName)
+		if newName == "" {
+			newName = m.GoIdent.GoName
+		}
+		newName = lint.Name(newName, fileInitialismsMap(m.Desc))
 	}
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
@@ -202,6 +231,12 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		// Implicitly rename this oneof field because its parent message was renamed.
 		newName = o.GoName
 	}
+	if lintParentFile(o.Desc) {
+		if newName == "" {
+			newName = o.GoIdent.GoName
+		}
+		newName = lint.Name(newName, fileInitialismsMap(o.Desc))
+	}
 	if newName != "" {
 		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+o.GoName), "Get"+newName) // Getter
@@ -228,6 +263,12 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
+	}
+	if lintParentFile(f.Desc) {
+		if newName == "" {
+			newName = f.GoName
+		}
+		newName = lint.Name(newName, fileInitialismsMap(f.Desc))
 	}
 	if newName != "" {
 		if o != nil {
@@ -257,6 +298,13 @@ func (p *Patcher) scanExtension(f *protogen.Field) {
 
 	// Rename extension?
 	newName := opts.GetName()
+	if lintParentFile(f.Desc) {
+		if newName == "" {
+			// Idiomatic Go values are prefixed with some flavor of the type, in this case Ext.
+			newName = "Ext" + f.GoName
+		}
+		newName = lint.Name(newName, fileInitialismsMap(f.Desc))
+	}
 	if newName != "" {
 		id := f.GoIdent
 		id.GoName = "E_" + f.GoName
