@@ -53,13 +53,3 @@ extend google.protobuf.EnumOptions {
 extend google.protobuf.EnumValueOptions {
 	optional Options value = 7001;
 }
-
-extend google.protobuf.FileOptions {
-	// Set lint to true if generated Go symbols should be linted.
-	// Can be overridden by options on a specific message or enum.
-	optional bool lint = 7010;
-
-	// The initialisms option lets you specify strings that should not be generated as mixed-case,
-	// Examples: ID, URL, HTTP, etc.
-	repeated string initialisms = 7020;
-}
