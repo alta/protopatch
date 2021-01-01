@@ -85,7 +85,7 @@ func (p *Patcher) scanFile(f *protogen.File) {
 	_ = p.getPackage(string(f.GoImportPath), string(f.GoPackageName), true)
 
 	for _, e := range f.Enums {
-		p.scanEnum(e)
+		p.scanEnum(e, nil)
 	}
 
 	for _, m := range f.Messages {
@@ -99,14 +99,22 @@ func (p *Patcher) scanFile(f *protogen.File) {
 	// TODO: scan gRPC services
 }
 
-func (p *Patcher) scanEnum(e *protogen.Enum) {
+func (p *Patcher) scanEnum(e *protogen.Enum, parent *protogen.Message) {
 	opts := enumOptions(e)
+
+	// Rename enum?
 	newName := opts.GetName()
+	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
+		newName = replacePrefix(e.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
+		log.Printf("•••• %s → newName: %s", e.GoIdent.GoName, newName)
+	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_name"), newName+"_name")   // Enum name map
 		p.RenameValue(ident.WithSuffix(e.GoIdent, "_value"), newName+"_value") // Enum value map
 	}
+
+	// Rename String method?
 	newStringer := opts.GetStringer()
 	// TODO: remove StringerName in two minor versions (~0.3.0)
 	if newStringer == "" {
@@ -118,25 +126,36 @@ func (p *Patcher) scanEnum(e *protogen.Enum) {
 	if newStringer != "" {
 		p.RenameMethod(ident.WithChild(e.GoIdent, "String"), newStringer)
 	}
+
+	// Scan enum values.
 	for _, v := range e.Values {
-		p.scanEnumValue(v)
+		p.scanEnumValue(v, parent)
 	}
 }
 
-func (p *Patcher) scanEnumValue(v *protogen.EnumValue) {
-	e := v.Parent
-	opts := valueOptions(v)
-	newName := opts.GetName()
-	if newName == "" && p.isRenamed(e.GoIdent) {
-		newName = replacePrefix(v.GoIdent.GoName, e.GoIdent.GoName, p.nameFor(e.GoIdent))
+func (p *Patcher) scanEnumValue(v *protogen.EnumValue, parent *protogen.Message) {
+	// Enum values are prefixed with the parent *message* name if it exists.
+	// https://github.com/protocolbuffers/protobuf-go/blob/160c7477e0e899d5072bb25635f46053df619fbf/compiler/protogen/protogen.go#L640-L643
+	parentIdent := v.Parent.GoIdent
+	if parent != nil {
+		parentIdent = parent.GoIdent
 	}
-	if newName != "" {
-		p.RenameValue(v.GoIdent, newName) // Value const
+	opts := valueOptions(v)
+
+	// Rename enum value?
+	newName := opts.GetName()
+	if newName == "" {
+		newName = replacePrefix(v.GoIdent.GoName, parentIdent.GoName, p.nameFor(parentIdent))
+	}
+	if newName != "" && newName != v.GoIdent.GoName {
+		p.RenameValue(v.GoIdent, newName)
 	}
 }
 
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	opts := messageOptions(m)
+
+	// Rename message?
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
@@ -144,27 +163,40 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
 	}
+
+	// Scan message oneof fields.
 	for _, o := range m.Oneofs {
 		p.scanOneof(o)
 	}
+
+	// Scan message fields.
 	for _, f := range m.Fields {
 		p.scanField(f)
 	}
+
+	// Scan nested enums.
 	for _, e := range m.Enums {
-		p.scanEnum(e)
+		p.scanEnum(e, m)
 	}
+
+	// Scan nested messages.
 	for _, mm := range m.Messages {
 		p.scanMessage(mm, m)
 	}
 }
 
 func replacePrefix(s, prefix, with string) string {
+	if !strings.HasPrefix(s, prefix) {
+		return s
+	}
 	return with + strings.TrimPrefix(s, prefix)
 }
 
 func (p *Patcher) scanOneof(o *protogen.Oneof) {
 	m := o.Parent
 	opts := oneofOptions(o)
+
+	// Rename oneof field?
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(m.GoIdent) {
 		// Implicitly rename this oneof field because its parent message was renamed.
@@ -178,6 +210,8 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		p.RenameType(ifName, newIfName)                                   // Interface type (e.g. isExample_Person)
 		p.RenameMethod(ident.WithChild(ifName, ifName.GoName), newIfName) // Interface method
 	}
+
+	// Add or replace any struct tags?
 	tags := opts.GetTags()
 	if tags != "" {
 		p.Tag(ident.WithChild(m.GoIdent, o.GoName), tags)
@@ -188,6 +222,8 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
 	opts := fieldOptions(f)
+
+	// Rename message field?
 	newName := opts.GetName()
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
@@ -204,6 +240,8 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		}
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
+
+	// Add or replace any struct tags?
 	tags := opts.GetTags()
 	if tags != "" {
 		if o != nil {
@@ -216,11 +254,13 @@ func (p *Patcher) scanField(f *protogen.Field) {
 
 func (p *Patcher) scanExtension(f *protogen.Field) {
 	opts := fieldOptions(f)
+
+	// Rename extension?
 	newName := opts.GetName()
 	if newName != "" {
 		id := f.GoIdent
-		id.GoName = f.GoName
-		p.RenameValue(ident.WithPrefix(id, "E_"), newName)
+		id.GoName = "E_" + f.GoName
+		p.RenameValue(id, newName)
 	}
 }
 
@@ -553,6 +593,10 @@ func (p *Patcher) patchGoFiles() error {
 	for id, obj := range p.info.Defs {
 		p.patchIdent(id, obj)
 		p.patchTags(id, obj)
+		// if id.IsExported() {
+		// 	f := p.fset.File(id.NamePos)
+		// 	log.Printf("Ident %s:\t%s @ %s", typeString(obj), id.Name, f.Name())
+		// }
 	}
 
 	log.Printf("\nUses\n")

@@ -4,19 +4,25 @@ package tests.message;
 
 option go_package = "github.com/alta/protopatch/tests/message";
 
-message BasicMessage {
+message Basic {
 	int32 id = 1;
 	string name = 2;
 }
 
-message OneofMessage {
+message Union {
 	oneof contents {
 		int32 id = 1;
 		string name = 2;
 	};
 }
 
-message OuterMessage {
-	message InnerMessage {}
-	InnerMessage inner = 1;
+message Outer {
+	message Middle {
+		message Inner {
+			int32 id = 1;
+		}
+		Inner inner = 1;
+	}
+	Middle middle = 1;
+	Middle.Inner inner = 2;
 }
