@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.3.0]
 
 ### Added
 - [#37](https://github.com/alta/protopatch/pull/32): new file-level `go.lint` option. When specified, `protoc-gen-go-patch` will attempt to fix generated Go names to their idiomatic equivalents, e.g. `Id` → `ID`, `Url` → `URL`, etc. It will also eliminate stutter from enum values, e.g. `Foo_FOO_UNKNOWN` → `FooUnknown`. Thanks to [@Green7](https://github.com/Green7) for the initial implementation in [#22](https://github.com/alta/protopatch/pull/22).
@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/protopatch/compare/v0.2.0...HEAD>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.3.0...HEAD>
+[v0.3.0]: <https://github.com/alta/protopatch/compare/v0.2.0...v0.3.0>
 [v0.2.0]: <https://github.com/alta/protopatch/compare/v0.1.0...v0.2.0>
 [v0.1.0]: <https://github.com/alta/protopatch/tree/v0.1.0>
