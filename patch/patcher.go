@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alta/protopatch/lint"
 	"github.com/alta/protopatch/patch/ident"
 
 	"github.com/fatih/structtag"
@@ -101,12 +102,19 @@ func (p *Patcher) scanFile(f *protogen.File) {
 
 func (p *Patcher) scanEnum(e *protogen.Enum, parent *protogen.Message) {
 	opts := enumOptions(e)
+	lints := fileLintOptions(e.Desc)
 
 	// Rename enum?
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(e.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
 		log.Printf("•••• %s → newName: %s", e.GoIdent.GoName, newName)
+	}
+	if lints.GetEnums() || lints.GetAll() {
+		if newName == "" {
+			newName = e.GoIdent.GoName
+		}
+		newName = lint.Name(newName, lints.InitialismsMap())
 	}
 	if newName != "" {
 		p.RenameType(e.GoIdent, newName)                                       // Enum type
@@ -141,11 +149,27 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue, parent *protogen.Message)
 		parentIdent = parent.GoIdent
 	}
 	opts := valueOptions(v)
+	lints := fileLintOptions(v.Desc)
 
 	// Rename enum value?
 	newName := opts.GetName()
 	if newName == "" {
 		newName = replacePrefix(v.GoIdent.GoName, parentIdent.GoName, p.nameFor(parentIdent))
+	}
+	if lints.GetValues() || lints.GetAll() {
+		vname := string(v.Desc.Name())
+		if vname == strings.ToUpper(vname) && strings.HasSuffix(newName, vname) {
+			newName = strings.TrimSuffix(newName, vname) + "_" + strings.ToLower(vname)
+		}
+
+		newName = lint.Name(newName, lints.InitialismsMap())
+
+		// Remove type name prefix stutter, e.g. FooFooUnknown → FooUnknown
+		pname := p.nameFor(parentIdent)
+		pfx := pname + pname
+		if len(newName) > len(pfx) && strings.HasPrefix(newName, pfx) {
+			newName = strings.TrimPrefix(newName, pname)
+		}
 	}
 	if newName != "" && newName != v.GoIdent.GoName {
 		p.RenameValue(v.GoIdent, newName)
@@ -154,11 +178,19 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue, parent *protogen.Message)
 
 func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	opts := messageOptions(m)
+	lints := fileLintOptions(m.Desc)
 
 	// Rename message?
 	newName := opts.GetName()
 	if newName == "" && parent != nil && p.isRenamed(parent.GoIdent) {
 		newName = replacePrefix(m.GoIdent.GoName, parent.GoIdent.GoName, p.nameFor(parent.GoIdent))
+	}
+	if lints.GetMessages() || lints.GetAll() {
+		log.Printf("Linting: %q.%s", m.GoIdent.GoImportPath, m.GoIdent.GoName)
+		if newName == "" {
+			newName = m.GoIdent.GoName
+		}
+		newName = lint.Name(newName, lints.InitialismsMap())
 	}
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
@@ -195,12 +227,19 @@ func replacePrefix(s, prefix, with string) string {
 func (p *Patcher) scanOneof(o *protogen.Oneof) {
 	m := o.Parent
 	opts := oneofOptions(o)
+	lints := fileLintOptions(o.Desc)
 
 	// Rename oneof field?
 	newName := opts.GetName()
 	if newName == "" && p.isRenamed(m.GoIdent) {
 		// Implicitly rename this oneof field because its parent message was renamed.
 		newName = o.GoName
+	}
+	if lints.GetFields() || lints.GetAll() {
+		if newName == "" {
+			newName = o.GoIdent.GoName
+		}
+		newName = lint.Name(newName, lints.InitialismsMap())
 	}
 	if newName != "" {
 		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
@@ -222,12 +261,19 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
 	opts := fieldOptions(f)
+	lints := fileLintOptions(f.Desc)
 
 	// Rename message field?
 	newName := opts.GetName()
 	if newName == "" && o != nil && (p.isRenamed(m.GoIdent) || p.isRenamed(o.GoIdent)) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
+	}
+	if lints.GetFields() || lints.GetAll() {
+		if newName == "" {
+			newName = f.GoName
+		}
+		newName = lint.Name(newName, lints.InitialismsMap())
 	}
 	if newName != "" {
 		if o != nil {
@@ -254,9 +300,17 @@ func (p *Patcher) scanField(f *protogen.Field) {
 
 func (p *Patcher) scanExtension(f *protogen.Field) {
 	opts := fieldOptions(f)
+	lints := fileLintOptions(f.Desc)
 
 	// Rename extension?
 	newName := opts.GetName()
+	if lints.GetExtensions() || lints.GetAll() {
+		if newName == "" {
+			// Idiomatic Go values are prefixed with some flavor of the type, in this case Ext.
+			newName = "Ext" + f.GoName
+		}
+		newName = lint.Name(newName, lints.InitialismsMap())
+	}
 	if newName != "" {
 		id := f.GoIdent
 		id.GoName = "E_" + f.GoName
