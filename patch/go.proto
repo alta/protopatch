@@ -54,12 +54,35 @@ extend google.protobuf.EnumValueOptions {
 	optional Options value = 7001;
 }
 
-extend google.protobuf.FileOptions {
-	// Set lint to true if generated Go symbols should be linted.
-	// Can be overridden by options on a specific message or enum.
-	optional bool lint = 7010;
+// LintOptions represent options for linting a generated Go file.
+message LintOptions {
+	// Set all to true if all generated Go symbols should be linted.
+	// This option affects generated structs, struct fields, enum types, and value constants.
+	optional bool all = 1;
+
+	// Set messages to true if message names should be linted.
+	// This does not affect message fields.
+	optional bool messages = 2;
+
+	// Set messages to true if message field names should be linted.
+	// This does not affect message fields.
+	optional bool fields = 3;
+
+	// Set enums to true if generated enum names should be linted.
+	// This does not affect enum values.
+	optional bool enums = 4;
+
+	// Set values to true if generated enum value constants should be linted.
+	optional bool values = 5;
+
+	// Set extensions to true if generated extension names should be linted.
+	optional bool extensions = 6;
 
 	// The initialisms option lets you specify strings that should not be generated as mixed-case,
 	// Examples: ID, URL, HTTP, etc.
-	repeated string initialisms = 7020;
+	repeated string initialisms = 10;
+}
+
+extend google.protobuf.FileOptions {
+	optional LintOptions lint = 7001;
 }

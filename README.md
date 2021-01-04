@@ -72,9 +72,43 @@ message ToDo {
 }
 ```
 
-### TODO: More Documentation
+### Linting
 
-…
+Protopatch can automatically “lint” generated names into a more idiomatic Go style.
+
+- Initialisms: names with `ID` or `URL` or other well-known initialisms will have their case preserved. For example `Id` would lint to `ID`, and `ApiBaseUrl` would lint to `APIBaseURL`.
+- Stuttering: it will attempt to remove repeated prefixed names from enum values. An enum value of type `Foo` named `Foo_FOO_BAR` would lint to `FooBar`.
+
+To lint all generated Go names, add `option (go.lint).all = true` to your `proto` file. To lint only enum values, add `option (go.lint).values = true)`. To specify one or more custom initialisms, specify an initialism with `option (go.lint).initialisms = 'HSV'` for the `HSV` initialism. All names with `HSV` will preserve its case.
+
+```proto
+option (go.lint).all = true;
+option (go.lint).initialisms = 'RGB';
+option (go.lint).initialisms = 'RGBA';
+option (go.lint).initialisms = 'HSV';
+
+enum Color {
+	// PROTOCOL_INVALID value should lint to ProtocolInvalid.
+	PROTOCOL_INVALID = 0;
+	// PROTOCOL_IP value should lint to ProtocolIP.
+	PROTOCOL_IP = 1;
+	// PROTOCOL_UDP value should lint to ProtocolUDP.
+	PROTOCOL_UDP = 2;
+	// PROTOCOL_TCP value should lint to ProtocolTCP.
+	PROTOCOL_TCP = 3;
+}
+
+message Color {
+	oneof value {
+		// rgb should lint to RGB.
+		string rgb = 1;
+		// rgba should lint to RGBA.
+		string rgba = 2;
+		// hsv should lint to HSV.
+		string hsv = 3;
+	}
+}
+```
 
 ## Install
 
