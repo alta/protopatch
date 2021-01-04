@@ -79,7 +79,7 @@ Protopatch can automatically “lint” generated names into something resemblin
 - **Initialisms:** names with `ID` or `URL` or other well-known initialisms will have their case preserved. For example `Id` would lint to `ID`, and `ApiBaseUrl` would lint to `APIBaseURL`.
 - **Stuttering:** it will attempt to remove repeated prefixed names from enum values. An enum value of type `Foo` named `Foo_FOO_BAR` would lint to `FooBar`.
 
-To lint all generated Go names, add `option (go.lint).all = true` to your `proto` file. To lint only enum values, add `option (go.lint).values = true)`. To specify one or more custom initialisms, specify an initialism with `option (go.lint).initialisms = 'HSV'` for the `HSV` initialism. All names with `HSV` will preserve its case.
+To lint all generated Go names, add `option (go.lint).all = true` to your `proto` file. To lint only enum values, add `option (go.lint).values = true`. To specify one or more custom initialisms, specify an initialism with `option (go.lint).initialisms = 'HSV'` for the `HSV` initialism. All names with `HSV` will preserve its case.
 
 ```proto
 option (go.lint).all = true;
