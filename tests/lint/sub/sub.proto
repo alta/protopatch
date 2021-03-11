@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tests.lint.sub;
+
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/tests/lint/sub";
+
+option (go.lint).all = true;
+
+enum Axis {
+	// AXIS_INVALID value should lint to AxisInvalid.
+	AXIS_INVALID = 0;
+	// PROTOCOL_IP value should lint to AxisH.
+	AXIS_H = 1;
+	// AXIS_V value should lint to AxisV.
+	AXIS_V = 2;
+}
