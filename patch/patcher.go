@@ -171,7 +171,7 @@ func (p *Patcher) scanEnumValue(v *protogen.EnumValue, parent *protogen.Message)
 			newName = strings.TrimPrefix(newName, pname)
 		}
 	}
-	if newName != "" && newName != v.GoIdent.GoName {
+	if newName != "" {
 		p.RenameValue(v.GoIdent, newName)
 	}
 }
