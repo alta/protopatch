@@ -31,7 +31,7 @@ func TestNestedEnums(t *testing.T) {
 func TestRenamedEnum(t *testing.T) {
 	tests.ValidateEnum(t, Flavour(0), Flavour_name, Flavour_value)
 	enums := []Flavour{
-		Flavour_INVALID,
+		Flavour_UMAMI,
 		Flavour_SWEET,
 		Flavour_SALTY,
 		Flavour_SOUR,
