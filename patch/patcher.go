@@ -36,6 +36,7 @@ type Patcher struct {
 	fset           *token.FileSet
 	filesByName    map[string]*ast.File
 	info           *types.Info
+	packages       []*Package
 	packagesByPath map[string]*Package
 	packagesByName map[string]*Package
 	renames        map[protogen.GoIdent]string
@@ -543,7 +544,8 @@ func (p *Patcher) checkPackages() error {
 		pkg.Reset()
 	}
 
-	for _, pkg := range p.packagesByName {
+	// Iterate packages deterministically
+	for _, pkg := range p.packages {
 		if len(pkg.files) == 0 {
 			continue
 		}
@@ -615,6 +617,7 @@ func (p *Patcher) getPackage(path, name string, create bool) *Package {
 	name = pkg.pkg.Name() // Get real name
 	p.packagesByPath[path] = pkg
 	p.packagesByName[name] = pkg
+	p.packages = append(p.packages, pkg)
 	return pkg
 }
 

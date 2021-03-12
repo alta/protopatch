@@ -2,12 +2,17 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.3.1]
+## [Unreleased]
+
+### Fixed
+- Scan Go packages in a deterministic order (FIFO) to fix a flaky recurrence of a bug related to the fix for [#40](https://github.com/alta/protopatch/issues/40).
+
+## [v0.3.1] — 2021-03-11
 
 ### Fixed
 - [#40](https://github.com/alta/protopatch/issues/40): enum values renamed with `go.lint` are now usable when imported into another proto file.
 
-## [v0.3.0]
+## [v0.3.0] — 2021-01-04
 
 ### Added
 - [#37](https://github.com/alta/protopatch/pull/32): new file-level `go.lint` option. When specified, `protoc-gen-go-patch` will attempt to fix generated Go names to their idiomatic equivalents, e.g. `Id` → `ID`, `Url` → `URL`, etc. It will also eliminate stutter from enum values, e.g. `Foo_FOO_UNKNOWN` → `FooUnknown`. Thanks to [@Green7](https://github.com/Green7) for the initial implementation in [#22](https://github.com/alta/protopatch/pull/22).
