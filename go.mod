@@ -3,7 +3,7 @@ module github.com/alta/protopatch
 go 1.14
 
 require (
-	github.com/envoyproxy/protoc-gen-validate v0.4.1
+	github.com/envoyproxy/protoc-gen-validate v0.5.0
 	github.com/fatih/structtag v1.2.0
 	github.com/golang/protobuf v1.4.3
 	github.com/iancoleman/strcase v0.1.2 // indirect
