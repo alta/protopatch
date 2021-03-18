@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Updated
+- github.com/envoyproxy/protoc-gen-validate v0.4.1 → v0.5.0
+- github.com/golang/protobuf v1.4.3 → v1.5.1
+- golang.org/x/tools v0.0.0-20201223225330-bdbb3c917f0b → v0.1.0
+- google.golang.org/protobuf v1.25.0 → v1.26.0
+- protoc v3.14.0 → v3.15.6
 ## [v0.3.2] — 2021-03-12
 
 ### Fixed
