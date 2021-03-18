@@ -41,4 +41,4 @@ jobs:
         run: make test
 
       - name: Verify repo is unchanged
-        run: git diff --exit-code HEAD
+        run: git diff --exit-code HEAD -w -G'(^[^# /])|(^#\w)|(^\s+[^#/])' # Ignore whitespace and comments
