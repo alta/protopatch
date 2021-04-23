@@ -42,8 +42,8 @@ message OldName {
 	int id = 1 [(go.field).name = 'ID'];
 }
 
-enum Errors {
-	option (go.enum).name = 'ProtocolErrors';
+enum Error {
+	option (go.enum).name = 'ProtocolError';
 	INVALID = 1 [(go.value).name = 'ErrInvalid'];
 	NOT_FOUND = 2 [(go.value).name = 'ErrNotFound'];
 	TOO_FUN = 3 [(go.value).name = 'ErrTooFun'];
@@ -62,8 +62,8 @@ message OldName {
 	int id = 1 [(go.field) = {name: 'ID'}];
 }
 
-enum Errors {
-	option (go.enum) = {name: 'ProtocolErrors'};
+enum Error {
+	option (go.enum) = {name: 'ProtocolError'};
 	INVALID = 1 [(go.value) = {name: 'ErrInvalid'}];
 	NOT_FOUND = 2 [(go.value) = {name: 'ErrNotFound'}];
 	TOO_FUN = 3 [(go.value) = {name: 'ErrTooFun'}];
@@ -105,7 +105,7 @@ option (go.lint).initialisms = 'RGB';
 option (go.lint).initialisms = 'RGBA';
 option (go.lint).initialisms = 'HSV';
 
-enum Color {
+enum Protocol {
 	// PROTOCOL_INVALID value should lint to ProtocolInvalid.
 	PROTOCOL_INVALID = 0;
 	// PROTOCOL_IP value should lint to ProtocolIP.
