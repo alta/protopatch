@@ -34,82 +34,45 @@ var (
 )
 
 // Validate checks the field values on Interface with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is
-// returned. When asked to return all errors, validation continues after first
-// violation, and the result is a list of violation errors wrapped in
-// InterfaceMultiError, or nil if none found. Otherwise, only the first error
-// is returned, if any.
-func (m *Interface) Validate(all bool) error {
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *Interface) Validate() error {
 	if m == nil {
 		return nil
 	}
 
-	var errors []error
-
 	// no validation rules for Name
 
 	if _, ok := _Interface_Status_NotInLookup[m.GetStatus()]; ok {
-		err := InterfaceValidationError{
+		return InterfaceValidationError{
 			field:  "Status",
 			reason: "value must not be in list [0]",
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
 	}
 
 	if _, ok := InterfaceStatus_name[int32(m.GetStatus())]; !ok {
-		err := InterfaceValidationError{
+		return InterfaceValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
 	}
 
 	for idx, item := range m.GetAddresses() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate(bool) error }); ok {
-			if err := v.Validate(all); err != nil {
-				err = InterfaceValidationError{
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return InterfaceValidationError{
 					field:  fmt.Sprintf("Addresses[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
 			}
 		}
 
 	}
 
-	if len(errors) > 0 {
-		return InterfaceMultiError(errors)
-	}
 	return nil
 }
-
-// InterfaceMultiError is an error wrapping multiple validation errors returned
-// by Interface.Validate(true) if the designated constraints aren't met.
-type InterfaceMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m InterfaceMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m InterfaceMultiError) AllErrors() []error { return m }
 
 // InterfaceValidationError is the validation error returned by
 // Interface.Validate if the designated constraints aren't met.
@@ -170,69 +133,36 @@ var _Interface_Status_NotInLookup = map[InterfaceStatus]struct{}{
 }
 
 // Validate checks the field values on IPAddress with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is
-// returned. When asked to return all errors, validation continues after first
-// violation, and the result is a list of violation errors wrapped in
-// IPAddressMultiError, or nil if none found. Otherwise, only the first error
-// is returned, if any.
-func (m *IPAddress) Validate(all bool) error {
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *IPAddress) Validate() error {
 	if m == nil {
 		return nil
 	}
-
-	var errors []error
 
 	switch m.Address.(type) {
 
 	case *IPAddress_IPV4:
 
 		if ip := net.ParseIP(m.GetIPV4()); ip == nil || ip.To4() == nil {
-			err := IPAddressValidationError{
+			return IPAddressValidationError{
 				field:  "Ipv4",
 				reason: "value must be a valid IPv4 address",
 			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	case *IPAddress_IPV6:
 
 		if ip := net.ParseIP(m.GetIPV6()); ip == nil || ip.To4() != nil {
-			err := IPAddressValidationError{
+			return IPAddressValidationError{
 				field:  "Ipv6",
 				reason: "value must be a valid IPv6 address",
 			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}
 
-	if len(errors) > 0 {
-		return IPAddressMultiError(errors)
-	}
 	return nil
 }
-
-// IPAddressMultiError is an error wrapping multiple validation errors returned
-// by IPAddress.Validate(true) if the designated constraints aren't met.
-type IPAddressMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m IPAddressMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m IPAddressMultiError) AllErrors() []error { return m }
 
 // IPAddressValidationError is the validation error returned by
 // IPAddress.Validate if the designated constraints aren't met.
