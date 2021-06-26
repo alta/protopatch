@@ -3,8 +3,9 @@ package lint
 import (
 	"testing"
 
-	"github.com/alta/protopatch/tests"
 	"google.golang.org/protobuf/proto"
+
+	"github.com/alta/protopatch/tests"
 )
 
 func TestURL(t *testing.T) {
@@ -74,4 +75,20 @@ func TestProtocol(t *testing.T) {
 	tests.ValidateEnum(t, ProtocolIP, Protocol_name, Protocol_value)
 	tests.ValidateEnum(t, ProtocolUDP, Protocol_name, Protocol_value)
 	tests.ValidateEnum(t, ProtocolTCP, Protocol_name, Protocol_value)
+}
+
+func TestEmbedLintedField(t *testing.T) {
+	apiPath := "/customers/{customer_id}/resources/{resource_id}"
+	m := &EmbedLintedField{
+		IDFields: &IDFields{
+			ID:            "0",
+			CustomerID:    "1",
+			APIPath:       apiPath,
+		},
+	}
+	tests.ValidateMessage(t, m)
+	var _ *IDFields = m.IDFields
+	if m.APIPath != apiPath {
+		t.Errorf("invalid EmbedLintedFieldTest.APIPath: expected '%s', got '%s'", apiPath, m.APIPath)
+	}
 }

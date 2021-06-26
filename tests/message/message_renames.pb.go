@@ -280,6 +280,100 @@ func (x *MessageWithRenamedField) GetID() int32 {
 	return 0
 }
 
+type MessageWithEmbeddedField struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	*Embedded `protobuf:"bytes,5,opt,name=embedded_message,json=embeddedMessage,proto3" json:"embedded_message,omitempty"`
+}
+
+func (x *MessageWithEmbeddedField) Reset() {
+	*x = MessageWithEmbeddedField{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tests_message_message_renames_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MessageWithEmbeddedField) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MessageWithEmbeddedField) ProtoMessage() {}
+
+func (x *MessageWithEmbeddedField) ProtoReflect() protoreflect.Message {
+	mi := &file_tests_message_message_renames_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MessageWithEmbeddedField.ProtoReflect.Descriptor instead.
+func (*MessageWithEmbeddedField) Descriptor() ([]byte, []int) {
+	return file_tests_message_message_renames_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *MessageWithEmbeddedField) GetEmbedded() *Embedded {
+	if x != nil {
+		return x.Embedded
+	}
+	return nil
+}
+
+type Embedded struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *Embedded) Reset() {
+	*x = Embedded{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tests_message_message_renames_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Embedded) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Embedded) ProtoMessage() {}
+
+func (x *Embedded) ProtoReflect() protoreflect.Message {
+	mi := &file_tests_message_message_renames_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Embedded.ProtoReflect.Descriptor instead.
+func (*Embedded) Descriptor() ([]byte, []int) {
+	return file_tests_message_message_renames_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *Embedded) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 type RenamedOuterMessage_InnerMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -289,7 +383,7 @@ type RenamedOuterMessage_InnerMessage struct {
 func (x *RenamedOuterMessage_InnerMessage) Reset() {
 	*x = RenamedOuterMessage_InnerMessage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tests_message_message_renames_proto_msgTypes[5]
+		mi := &file_tests_message_message_renames_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -302,7 +396,7 @@ func (x *RenamedOuterMessage_InnerMessage) String() string {
 func (*RenamedOuterMessage_InnerMessage) ProtoMessage() {}
 
 func (x *RenamedOuterMessage_InnerMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_tests_message_message_renames_proto_msgTypes[5]
+	mi := &file_tests_message_message_renames_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -327,7 +421,7 @@ type RenamedInnerMessage struct {
 func (x *RenamedInnerMessage) Reset() {
 	*x = RenamedInnerMessage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tests_message_message_renames_proto_msgTypes[6]
+		mi := &file_tests_message_message_renames_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -340,7 +434,7 @@ func (x *RenamedInnerMessage) String() string {
 func (*RenamedInnerMessage) ProtoMessage() {}
 
 func (x *RenamedInnerMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_tests_message_message_renames_proto_msgTypes[6]
+	mi := &file_tests_message_message_renames_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,11 +487,19 @@ var file_tests_message_message_renames_proto_rawDesc = []byte{
 	0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x33, 0x0a, 0x17, 0x4d, 0x65, 0x73,
 	0x73, 0x61, 0x67, 0x65, 0x57, 0x69, 0x74, 0x68, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x64, 0x46,
 	0x69, 0x65, 0x6c, 0x64, 0x12, 0x18, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
-	0x42, 0x08, 0xca, 0xb5, 0x03, 0x04, 0x0a, 0x02, 0x49, 0x44, 0x52, 0x02, 0x69, 0x64, 0x42, 0x2a,
-	0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6c, 0x74,
-	0x61, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2f, 0x74, 0x65, 0x73,
-	0x74, 0x73, 0x2f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x42, 0x08, 0xca, 0xb5, 0x03, 0x04, 0x0a, 0x02, 0x49, 0x44, 0x52, 0x02, 0x69, 0x64, 0x22, 0x66,
+	0x0a, 0x18, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x57, 0x69, 0x74, 0x68, 0x45, 0x6d, 0x62,
+	0x65, 0x64, 0x64, 0x65, 0x64, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x4a, 0x0a, 0x10, 0x65, 0x6d,
+	0x62, 0x65, 0x64, 0x64, 0x65, 0x64, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x6d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x2e, 0x45, 0x6d, 0x62, 0x65, 0x64, 0x64, 0x65, 0x64, 0x42, 0x06, 0xca,
+	0xb5, 0x03, 0x02, 0x10, 0x01, 0x52, 0x0f, 0x65, 0x6d, 0x62, 0x65, 0x64, 0x64, 0x65, 0x64, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x24, 0x0a, 0x08, 0x45, 0x6d, 0x62, 0x65, 0x64, 0x64,
+	0x65, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x2a, 0x5a, 0x28,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6c, 0x74, 0x61, 0x2f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x73,
+	0x2f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -412,24 +514,27 @@ func file_tests_message_message_renames_proto_rawDescGZIP() []byte {
 	return file_tests_message_message_renames_proto_rawDescData
 }
 
-var file_tests_message_message_renames_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_tests_message_message_renames_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_tests_message_message_renames_proto_goTypes = []interface{}{
 	(*Frank)(nil),                               // 0: tests.message.Francis
 	(*RenamedOneofMessage)(nil),                 // 1: tests.message.OriginalOneofMessage
 	(*RenamedOuterMessage)(nil),                 // 2: tests.message.OriginalOuterMessage
 	(*OuterMessageWithRenamedInnerMessage)(nil), // 3: tests.message.OuterMessageWithRenamedInnerMessage
 	(*MessageWithRenamedField)(nil),             // 4: tests.message.MessageWithRenamedField
-	(*RenamedOuterMessage_InnerMessage)(nil),    // 5: tests.message.OriginalOuterMessage.InnerMessage
-	(*RenamedInnerMessage)(nil),                 // 6: tests.message.OuterMessageWithRenamedInnerMessage.InnerMessage
+	(*MessageWithEmbeddedField)(nil),            // 5: tests.message.MessageWithEmbeddedField
+	(*Embedded)(nil),                            // 6: tests.message.Embedded
+	(*RenamedOuterMessage_InnerMessage)(nil),    // 7: tests.message.OriginalOuterMessage.InnerMessage
+	(*RenamedInnerMessage)(nil),                 // 8: tests.message.OuterMessageWithRenamedInnerMessage.InnerMessage
 }
 var file_tests_message_message_renames_proto_depIdxs = []int32{
-	5, // 0: tests.message.OriginalOuterMessage.inner:type_name -> tests.message.OriginalOuterMessage.InnerMessage
-	6, // 1: tests.message.OuterMessageWithRenamedInnerMessage.inner:type_name -> tests.message.OuterMessageWithRenamedInnerMessage.InnerMessage
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	7, // 0: tests.message.OriginalOuterMessage.inner:type_name -> tests.message.OriginalOuterMessage.InnerMessage
+	8, // 1: tests.message.OuterMessageWithRenamedInnerMessage.inner:type_name -> tests.message.OuterMessageWithRenamedInnerMessage.InnerMessage
+	6, // 2: tests.message.MessageWithEmbeddedField.embedded_message:type_name -> tests.message.Embedded
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_tests_message_message_renames_proto_init() }
@@ -499,7 +604,7 @@ func file_tests_message_message_renames_proto_init() {
 			}
 		}
 		file_tests_message_message_renames_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RenamedOuterMessage_InnerMessage); i {
+			switch v := v.(*MessageWithEmbeddedField); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -511,6 +616,30 @@ func file_tests_message_message_renames_proto_init() {
 			}
 		}
 		file_tests_message_message_renames_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Embedded); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_tests_message_message_renames_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RenamedOuterMessage_InnerMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_tests_message_message_renames_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RenamedInnerMessage); i {
 			case 0:
 				return &v.state
@@ -533,7 +662,7 @@ func file_tests_message_message_renames_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_tests_message_message_renames_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

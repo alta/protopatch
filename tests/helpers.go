@@ -26,6 +26,18 @@ func ValidateEnum(t *testing.T, e protoreflect.Enum, names EnumNames, values Enu
 // ValidateMessage performs basic validation of a message.
 func ValidateMessage(t *testing.T, m proto.Message) {
 	// TODO: add some validation
+	b, err := proto.Marshal(m)
+	if err != nil {
+		t.Errorf("failed to marshal message: %v", err)
+		return
+	}
+	n := m.ProtoReflect().New().Interface()
+	if err := proto.Unmarshal(b, n); err != nil {
+		t.Errorf("failed to unmarshal message: %v", err)
+	}
+	if !proto.Equal(m, n) {
+		t.Errorf("marshal / unmarshal: expected %+v got %+v", m, n)
+	}
 }
 
 // ValidateTag performs basic validation of a struct tag.
