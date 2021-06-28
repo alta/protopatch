@@ -16,6 +16,10 @@ message Options {
 	// For an enum value, this renames the generated Go const.
 	optional string name = 1;
 
+	// The embedded option changes the field as embedded in the generated Go struct.
+	// Only message types are allowed to be embedded, oneof fields are not embeddable.
+	optional bool embedded = 2;
+
 	// The getter option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
 	optional string getter = 10; // TODO: implement this

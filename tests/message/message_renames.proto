@@ -34,3 +34,7 @@ message OuterMessageWithRenamedInnerMessage {
 message MessageWithRenamedField {
 	int32 id = 1 [(go.field).name = 'ID'];
 }
+
+message MessageWithEmbeddedField {
+	OriginalOuterMessage embedded_renamed_message = 5 [(go.field).embedded = true];
+}

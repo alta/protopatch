@@ -3,8 +3,9 @@ package message
 import (
 	"testing"
 
-	"github.com/alta/protopatch/tests"
 	"google.golang.org/protobuf/proto"
+
+	"github.com/alta/protopatch/tests"
 )
 
 func TestBasicMessage(t *testing.T) {
@@ -58,6 +59,20 @@ func TestMessageWithRenamedField(t *testing.T) {
 	tests.ValidateMessage(t, m)
 	var _ int32 = m.ID
 	var _ int32 = m.GetID()
+}
+
+func TestMessageWithEmbeddedField(t *testing.T) {
+	m := &MessageWithEmbeddedField{
+		RenamedOuterMessage: &RenamedOuterMessage{
+			Inner: &RenamedOuterMessage_InnerMessage{
+
+			},
+		},
+	}
+	tests.ValidateMessage(t, m)
+	if &m.Inner != &m.RenamedOuterMessage.Inner {
+		t.Error("RenamedOuterMessage message is not embedded")
+	}
 }
 
 func TestMessageWithStructTags(t *testing.T) {
