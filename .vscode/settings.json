@@ -54,6 +54,7 @@
 	//
 	// Markdown
 	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
 		"editor.rulers": [
 			80
 		],
