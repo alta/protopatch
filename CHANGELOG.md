@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Updated
 - github.com/envoyproxy/protoc-gen-validate v0.6.0 → v0.6.1 (reverted breaking API change)
+- golang.org/x/tools v0.1.0 → v0.1.5
+- google.golang.org/protobuf v1.26.0 → v1.27.1
 ## [v0.3.4] — 2021-04-23
 
 ### Updated
