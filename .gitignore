@@ -6,3 +6,5 @@
 *.out
 *.so
 *.test
+debug
+.idea

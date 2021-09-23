@@ -95,12 +95,16 @@ enum Basic {
 	C = 3;
 }
 
-// IdFieldsTest message should lint to IDFieldsTest.
-message IdFieldsTest {
+// IdFields message should lint to IDFields.
+message IdFields {
 	// id field should lint to ID.
 	string id = 1;
 	// customer_id field should lint to CustomerID.
 	string customer_id = 2;
 	// api_path field should lint to APIPath.
 	string api_path = 3;
+}
+
+message EmbedLintedField {
+	IdFields embedded_id_field = 1 [(go.field).embed = true];
 }

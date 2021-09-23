@@ -47,6 +47,8 @@ type Patcher struct {
 	objectRenames  map[types.Object]string
 	tags           map[protogen.GoIdent]string
 	fieldTags      map[types.Object]string
+	embeds         map[protogen.GoIdent]string
+	fieldEmbeds    map[types.Object]string
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -63,6 +65,8 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		objectRenames:  make(map[types.Object]string),
 		tags:           make(map[protogen.GoIdent]string),
 		fieldTags:      make(map[types.Object]string),
+		embeds:         make(map[protogen.GoIdent]string),
+		fieldEmbeds:    make(map[types.Object]string),
 	}
 	return p, p.scan()
 }
@@ -243,7 +247,7 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 		newName = lint.Name(newName, lints.InitialismsMap())
 	}
 	if newName != "" {
-		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName)              // Oneof
+		p.RenameField(ident.WithChild(m.GoIdent, o.GoName), newName, false)       // Oneof
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+o.GoName), "Get"+newName) // Getter
 		ifName := ident.WithPrefix(o.GoIdent, "is")
 		newIfName := "is" + p.nameFor(m.GoIdent) + "_" + newName
@@ -270,6 +274,24 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		// Implicitly rename this oneof field because its parent(s) were renamed.
 		newName = f.GoName
 	}
+	// Embed field ?
+	embed := false
+	if opts.GetEmbed() {
+		switch {
+		case f.Message == nil:
+			log.Printf("Warning: embed declared for non-message field: %s", f.Desc.Name())
+		case f.Oneof != nil:
+			log.Printf("Warning: embed declared for oneof field: %s", f.Desc.Name())
+		default:
+			embed = true
+			// use the embed field message type's go name or rename option if defined
+			if mOpts := messageOptions(f.Message); mOpts.GetName() != "" {
+				newName = mOpts.GetName()
+			} else {
+				newName = f.Message.GoIdent.GoName
+			}
+		}
+	}
 	if lints.GetFields() || lints.GetAll() {
 		if newName == "" {
 			newName = f.GoName
@@ -278,12 +300,12 @@ func (p *Patcher) scanField(f *protogen.Field) {
 	}
 	if newName != "" {
 		if o != nil {
-			p.RenameType(f.GoIdent, p.nameFor(m.GoIdent)+"_"+newName)    // Oneof wrapper struct
-			p.RenameField(ident.WithChild(f.GoIdent, f.GoName), newName) // Oneof wrapper field
+			p.RenameType(f.GoIdent, p.nameFor(m.GoIdent)+"_"+newName)           // Oneof wrapper struct
+			p.RenameField(ident.WithChild(f.GoIdent, f.GoName), newName, false) // Oneof wrapper field (not embeddable)
 			ifName := ident.WithPrefix(o.GoIdent, "is")
 			p.RenameMethod(ident.WithChild(f.GoIdent, ifName.GoName), p.nameFor(ifName)) // Oneof interface method
 		} else {
-			p.RenameField(ident.WithChild(m.GoIdent, f.GoName), newName) // Field
+			p.RenameField(ident.WithChild(m.GoIdent, f.GoName), newName, embed) // Field
 		}
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
@@ -344,9 +366,12 @@ func (p *Patcher) RenameValue(id protogen.GoIdent, newName string) {
 // The id argument specifies a GoName from GoImportPath, e.g.: "github.com/org/repo/example".FooMessage.BarField
 // newName should be the unqualified name (after the dot).
 // The value of id.GoName should be the original generated identifier name, not a renamed identifier.
-func (p *Patcher) RenameField(id protogen.GoIdent, newName string) {
+func (p *Patcher) RenameField(id protogen.GoIdent, newName string, embed bool) {
 	p.renames[id] = newName
 	p.fieldRenames[id] = newName
+	if embed {
+		p.embeds[id] = newName
+	}
 	log.Printf("Rename field:\t%s.%s → %s", id.GoImportPath, id.GoName, newName)
 }
 
@@ -510,6 +535,9 @@ func (p *Patcher) checkGoFiles() error {
 			continue
 		}
 		p.objectRenames[obj] = name
+		if _, ok := p.embeds[id]; ok {
+			p.fieldEmbeds[obj] = name
+		}
 	}
 
 	// Map struct tags.
@@ -648,7 +676,7 @@ func (p *Patcher) serializeGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 func (p *Patcher) patchGoFiles() error {
 	log.Printf("\nDefs")
 	for id, obj := range p.info.Defs {
-		p.patchIdent(id, obj)
+		p.patchIdent(id, obj, true)
 		p.patchTags(id, obj)
 		// if id.IsExported() {
 		// 	f := p.fset.File(id.NamePos)
@@ -658,27 +686,32 @@ func (p *Patcher) patchGoFiles() error {
 
 	log.Printf("\nUses\n")
 	for id, obj := range p.info.Uses {
-		p.patchIdent(id, obj)
+		p.patchIdent(id, obj, false)
 	}
 
 	log.Printf("\nUnresolved\n")
 	for _, f := range p.filesByName {
 		for _, id := range f.Unresolved {
-			p.patchIdent(id, nil)
+			p.patchIdent(id, nil, false)
 		}
 	}
 
 	return nil
 }
 
-func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object) {
+func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object, isDecl bool) {
 	name := p.objectRenames[obj]
-	if name != "" {
-		p.patchComments(id, name)
-		id.Name = name
-		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
-	} else {
+	if name == "" {
 		// log.Printf("Unresolved:\t%v", id)
+		return
+	}
+	p.patchComments(id, name)
+	if _, ok := p.fieldEmbeds[obj]; ok && isDecl {
+		log.Printf("Renamed %s:\t%s → %s (embedded)", typeString(obj), id.Name, name)
+		id.Name = ""
+	} else {
+		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
+		id.Name = name
 	}
 }
 
