@@ -90,6 +90,53 @@ message ToDo {
 }
 ```
 
+### Embedded Fields
+
+A message field can be embedded in the generated [Go struct](https://golang.org/ref/spec#Struct_types) with the `(go.field).embed` option. This only works for message fields, and will not work for oneof fields or basic types.
+
+```proto
+import "patch/go.proto";
+
+message A {
+	B b = 1 [(go.field).embed = true];
+}
+
+message B {
+	string value = 1;
+}
+```
+
+The resulting Go struct will partially have the form:
+
+```go
+type A struct {
+	*B
+}
+
+type B struct {
+	Value string
+}
+
+var a A
+a.Value = "value" // This works because B is embedded in A
+```
+
+#### Alternate Syntax
+
+Multiple options can be grouped together with a message bounded by `{}`:
+
+```proto
+import "patch/go.proto";
+
+message A {
+	B b = 1 [(go.field) = {embed: true}];
+}
+
+message B {
+	string value = 1;
+}
+```
+
 ### Linting
 
 Protopatch can automatically “lint” generated names into something resembling [idiomatic Go style](https://golang.org/doc/effective_go.html#names). This feature should be considered *unstable*, and the names it generates are subject to change as this feature evolves.

@@ -4,10 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- [#65](https://github.com/alta/protopatch/pull/56): embedded message fields. Set `(go.field).embed = true` to embed a message field in the generated Go struct. The resulting field will be a pointer to and sharing a name with the generated Go struct.
+
 ### Updated
 - github.com/envoyproxy/protoc-gen-validate v0.6.0 → v0.6.1 (reverted breaking API change)
 - golang.org/x/tools v0.1.0 → v0.1.6
 - google.golang.org/protobuf v1.26.0 → v1.27.1
+
 ## [v0.3.4] — 2021-04-23
 
 ### Updated
@@ -22,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - golang.org/x/tools v0.0.0-20201223225330-bdbb3c917f0b → v0.1.0
 - google.golang.org/protobuf v1.25.0 → v1.26.0
 - protoc v3.14.0 → v3.15.6
+
 ## [v0.3.2] — 2021-03-12
 
 ### Fixed
