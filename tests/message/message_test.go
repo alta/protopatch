@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/alta/protopatch/tests"
@@ -55,7 +56,9 @@ func TestRenamedInnerMessage(t *testing.T) {
 }
 
 func TestMessageWithRenamedField(t *testing.T) {
-	m := &MessageWithRenamedField{}
+	m := &MessageWithRenamedField{
+		ID: 66,
+	}
 	tests.ValidateMessage(t, m)
 	var _ int32 = m.ID
 	var _ int32 = m.GetID()
@@ -152,4 +155,81 @@ func TestMessageWithOptionals(t *testing.T) {
 	if m.OptionalBool == nil || m.GetOptionalBool() {
 		t.Errorf("MessageWithOptions.GetOptionalBool() is true expected false")
 	}
+}
+
+func TestMessageWithCustomTypes(t *testing.T) {
+	m := &MessageWithCustomTypes{
+		StringField: "42",
+		Int32Field:  42,
+		Int64Field:  42,
+		FloatField:  42,
+		DoubleField: 42,
+		Uint32Field: 42,
+		Uint64Field: 42,
+	}
+
+	tests.ValidateMessage(t, m)
+	var _ string = string(m.StringField)
+	var _ int32 = int32(m.Int32Field)
+	var _ int64 = int64(m.Int64Field)
+	var _ float32 = float32(m.FloatField)
+	var _ float64 = float64(m.DoubleField)
+	var _ uint32 = uint32(m.Uint32Field)
+	var _ uint64 = uint64(m.Uint64Field)
+
+	assert.Equal(t, String("42"), m.StringField)
+	assert.Equal(t, Int32(42), m.Int32Field)
+	assert.Equal(t, Int64(42), m.Int64Field)
+	assert.Equal(t, Float(42), m.FloatField)
+	assert.Equal(t, Double(42), m.DoubleField)
+	assert.Equal(t, Uint32(42), m.Uint32Field)
+	assert.Equal(t, Uint64(42), m.Uint64Field)
+}
+
+func TestMessageWithOptionalCustomTypes(t *testing.T) {
+	var (
+		StringValue String = "42"
+		Int32Value  Int32  = 42
+		Int64Value  Int64  = 42
+		FloatValue  Float  = 42
+		DoubleValue Double = 42
+		Uint32Value Uint32 = 42
+		Uint64Value Uint64 = 42
+	)
+	m := &MessageWithOptionalCustomTypes{
+		StringField: &StringValue,
+		Int32Field:  &Int32Value,
+		Int64Field:  &Int64Value,
+		FloatField:  &FloatValue,
+		DoubleField: &DoubleValue,
+		Uint32Field: &Uint32Value,
+		Uint64Field: &Uint64Value,
+	}
+
+	tests.ValidateMessage(t, m)
+	var _ string = string(m.GetStringField())
+	var _ int32 = int32(m.GetInt32Field())
+	var _ int64 = int64(m.GetInt64Field())
+	var _ float32 = float32(m.GetFloatField())
+	var _ float64 = float64(m.GetDoubleField())
+	var _ uint32 = uint32(m.GetUint32Field())
+	var _ uint64 = uint64(m.GetUint64Field())
+
+	assert.Equal(t, &StringValue, m.StringField)
+	assert.Equal(t, &Int32Value, m.Int32Field)
+	assert.Equal(t, &Int64Value, m.Int64Field)
+	assert.Equal(t, &FloatValue, m.FloatField)
+	assert.Equal(t, &DoubleValue, m.DoubleField)
+	assert.Equal(t, &Uint32Value, m.Uint32Field)
+	assert.Equal(t, &Uint64Value, m.Uint64Field)
+}
+
+func TestMessageWithCustomRepeatedType(t *testing.T) {
+	slice := Strings{"one", "two"}
+	m := &MessageWithCustomRepeatedType{
+		RepeatedStringField: slice,
+	}
+	tests.ValidateMessage(t, m)
+	var _ Strings = m.RepeatedStringField
+	assert.Equal(t, slice, m.RepeatedStringField)
 }

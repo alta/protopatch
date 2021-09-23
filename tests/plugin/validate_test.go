@@ -33,9 +33,10 @@ func TestInterfaceValidate(t *testing.T) {
 		wantErr bool
 	}{
 		{"nil", nil, false}, // Weird, but OK
-		{"unknown", &Interface{Status: StatusUnknown}, true},
-		{"up", &Interface{Status: StatusUp, Addresses: nil}, false},
-		{"down", &Interface{Status: StatusDown, Addresses: nil}, false},
+		{"unknown", &Interface{Name: "eth0", Status: StatusUnknown}, true},
+		{"up", &Interface{Name: "eth0", Status: StatusUp, Addresses: nil}, false},
+		{"down", &Interface{Name: "eth0", Status: StatusDown, Addresses: nil}, false},
+		{"invalid name", &Interface{Name: "a", Status: StatusDown, Addresses: nil}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,6 +45,7 @@ func TestInterfaceValidate(t *testing.T) {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+			var _ IPAddresses = tt.i.GetAddresses()
 		})
 	}
 }
@@ -67,6 +69,31 @@ func TestIPAddressValidate(t *testing.T) {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+		})
+	}
+}
+
+func TestInterfaceWithCustomTypesValidate(t *testing.T) {
+	tests := []struct {
+		name    string
+		i       *InterfaceWithCustomTypes
+		wantErr bool
+	}{
+		{"unknown", &InterfaceWithCustomTypes{Name: "e"}, true},
+		{"up", &InterfaceWithCustomTypes{Name: "eth0", Addresses: nil, Aliases: Names{"eth0.0", "eth0.1"}}, false},
+		{"down", &InterfaceWithCustomTypes{Name: "eth0", Addresses: nil, Aliases: Names{"e", "eth0.1"}}, true},
+		{"invalid name", &InterfaceWithCustomTypes{Name: "a", Addresses: nil}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.i.Validate()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			var _ IPAddresses = tt.i.GetAddresses()
+			var _ Names = tt.i.Aliases
+			var _ Name = tt.i.Name
 		})
 	}
 }
