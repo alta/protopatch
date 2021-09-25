@@ -59,7 +59,7 @@ import "patch/go.proto";
 
 message OldName {
 	option (go.message) = {name: 'NewName'};
-	int id = 1 [(go.field) = {name: 'ID'}];
+	int32 id = 1 [(go.field) = {name: 'ID'}];
 }
 
 enum Error {
