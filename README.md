@@ -16,7 +16,7 @@ After installing `protoc-gen-go-patch`, use it by specifying it with a `--go-pat
 protoc \
 	-I . \
 	-I `go list -m -f {{.Dir}} github.com/alta/protopatch@latest` \
-	-I `go list -m -f {{.Dir}} google.golang.org/protobuf` \
+	-I `go list -m -f {{.Dir}} google.golang.org/protobuf@latest` \
 	--go-patch_out=plugin=go,paths=source_relative:. \
 	--go-patch_out=plugin=go-grpc,paths=source_relative:. \
 	*.proto
