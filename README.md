@@ -6,7 +6,7 @@ Patch `protoc` plugin output with Go-specific features. The `protoc-gen-go-patch
 
 ## Install
 
-`go install github.com/alta/protopatch/cmd/protoc-gen-go-patch`
+`go install github.com/alta/protopatch/cmd/protoc-gen-go-patch@latest`
 
 ## Update Go module
 
