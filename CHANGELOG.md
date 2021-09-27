@@ -4,13 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- [#65](https://github.com/alta/protopatch/pull/65): add `optional` [support for proto3](https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md).
+
 ### Updated
 - Updated go.mod to Go 1.17 format
 
 ## [v0.4.0] — 2021-09-23
 
 ### Added
-- [#65](https://github.com/alta/protopatch/pull/56): embedded message fields. Set `(go.field).embed = true` to embed a message field in the generated Go struct. The resulting field will be a pointer to and sharing a name with the generated Go struct.
+- [#56](https://github.com/alta/protopatch/pull/56): embedded message fields. Set `(go.field).embed = true` to embed a message field in the generated Go struct. The resulting field will be a pointer to and sharing a name with the generated Go struct.
 
 ### Updated
 - github.com/envoyproxy/protoc-gen-validate v0.6.0 → v0.6.1 (reverted breaking API change)

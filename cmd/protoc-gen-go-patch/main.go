@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"google.golang.org/protobuf/types/pluginpb"
+
 	"github.com/alta/protopatch/patch"
 
 	"google.golang.org/protobuf/compiler/protogen"
@@ -81,6 +83,9 @@ func run() error {
 	if err != nil {
 		return err
 	}
+
+	supportedFeatures := uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
+	res.SupportedFeatures = &supportedFeatures
 
 	// Write the patched CodeGeneratorResponse to stdout.
 	return patch.WriteResponse(os.Stdout, res)
