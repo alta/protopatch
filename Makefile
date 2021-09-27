@@ -29,19 +29,19 @@ protos: $(proto_files)
 .PHONY: $(proto_files)
 $(proto_files): tools Makefile
 	# protoc-gen-go
-	protoc \
+	protoc --experimental_allow_proto3_optional \
 		$(proto_includes) \
 		--go-patch_out=plugin=go-grpc,paths=import,module=$(go_module):. \
 		$@
 
 	# protoc-gen-go-grpc
-	protoc \
+	protoc --experimental_allow_proto3_optional \
 		$(proto_includes) \
 		--go-patch_out=plugin=go,paths=import,module=$(go_module):. \
 		$@
 
 	# protoc-gen-validate
-	if grep -q validate/validate\.proto $@; then protoc \
+	if grep -q validate/validate\.proto $@; then protoc --experimental_allow_proto3_optional \
 		$(proto_includes) \
 		--go-patch_out=plugin=validate,paths=source_relative,lang=go:. \
 		$@ ; \

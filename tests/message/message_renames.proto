@@ -36,9 +36,20 @@ message MessageWithRenamedField {
 }
 
 message MessageWithEmbeddedField {
-  Embedded embedded_message = 5 [(go.field).embed = true];
+	Embedded embedded_message = 5 [(go.field).embed = true];
 }
 
 message Embedded {
-  string message = 1;
+	string message = 1;
+}
+
+message MessageWithOptionals {
+	optional string string_field = 1 [(go.field).name = 'OptionalString'];
+	optional int32 int32_field = 2 [(go.field).name = 'OptionalInt32'];
+	optional int64 int64_field = 3 [(go.field).name = 'OptionalInt64'];
+	optional float float_field = 4 [(go.field).name = 'OptionalFloat'];
+	optional double double_field = 5 [(go.field).name = 'OptionalDouble'];
+	optional uint32 uint32_field = 6 [(go.field).name = 'OptionalUInt32'];
+	optional uint64 uint64_field = 7 [(go.field).name = 'OptionalUInt64'];
+	optional bool bool_field = 8 [(go.field).name = 'OptionalBool'];
 }

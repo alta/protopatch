@@ -265,6 +265,9 @@ func (p *Patcher) scanOneof(o *protogen.Oneof) {
 func (p *Patcher) scanField(f *protogen.Field) {
 	m := f.Parent
 	o := f.Oneof
+	if f.Desc.HasOptionalKeyword() {
+		o = nil
+	}
 	opts := fieldOptions(f)
 	lints := fileLintOptions(f.Desc)
 
