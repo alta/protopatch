@@ -186,6 +186,31 @@ func useContent() {
 `,
 		},
 		{
+			name: "cast field already casted",
+			src: srcDef+`
+type OtherString string
+
+func multi(s1, s2, s3 OtherString) {
+}
+
+func useContent() {
+	msg := &Message{}
+	multi("", "", OtherString(msg.Content))
+}
+`,
+			want: wantDef+`
+type OtherString string
+
+func multi(s1, s2, s3 OtherString) {
+}
+
+func useContent() {
+	msg := &Message{}
+	multi("", "", OtherString(string(msg.Content)))
+}
+`,
+		},
+		{
 			name: "cast full code",
 			src: srcDef+`
 func useContent() {

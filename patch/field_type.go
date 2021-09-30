@@ -131,6 +131,12 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 				}
 			}
 		case *ast.CallExpr:
+			for i := range parentExpr.Args {
+				if parentExpr.Args[i] == usage {
+					parentExpr.Args[i] = cast(originalType, parentExpr.Args[i])
+					return
+				}
+			}
 			parent := p.findParentNode(parentExpr)
 			assign, isAssign := parent.(*ast.AssignStmt)
 			if parentExpr.Fun == usage && isAssign {
