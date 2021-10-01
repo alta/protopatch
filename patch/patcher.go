@@ -421,14 +421,9 @@ func (p *Patcher) nameFor(id protogen.GoIdent) string {
 
 // Type casts the Go struct field as the desired type
 // The typeName value must be a named type, e.g.: "type String string"
-// It can also be a fully qualified type name, e.g.: "go.repo.com/mymodule/types.String"
 func (p *Patcher) Type(id protogen.GoIdent, typeName string) {
-	if pkg, _, _ := packageAndName(typeName); pkg != "" {
-		log.Printf("Warning: field %s declared type from external module: %s", id.GoImportPath, typeName)
-		return
-	}
-	if isSliceType(typeName) {
-		log.Printf("Warning: field %s declared slice type: %s", id.GoImportPath, typeName)
+	if isTypeValid(typeName) {
+		log.Printf("Warning: field %s has invalid type option: %s", id.GoImportPath, typeName)
 		return
 	}
 	p.types[id] = typeName

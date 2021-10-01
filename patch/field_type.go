@@ -163,17 +163,9 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 	}
 }
 
-func packageAndName(fqn string) (pkg string, name string, isSlice bool) {
-	isSlice = isSliceType(fqn)
-	fqn = strings.TrimPrefix(fqn, "[]")
-	parts := strings.Split(fqn, ".")
-	if len(parts) == 1 {
-		return "", fqn, isSlice
-	}
-	return strings.Join(parts[:len(parts)-1], "."), parts[len(parts)-1], isSlice
+func isTypeValid(typeName string) bool {
+	return strings.Contains(typeName, ".") ||
+		strings.Contains(typeName, "/") ||
+		strings.Contains(typeName, "[]") ||
+		strings.Contains(typeName, "*")
 }
-
-func isSliceType(typeName string) bool {
-	return strings.HasPrefix(strings.TrimSpace(typeName), "[]")
-}
-
