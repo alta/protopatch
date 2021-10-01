@@ -5,8 +5,6 @@ import (
 	"go/types"
 	"log"
 	"strings"
-
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func (p *Patcher) patchTypeDef(id *ast.Ident, obj types.Object) {
@@ -15,34 +13,16 @@ func (p *Patcher) patchTypeDef(id *ast.Ident, obj types.Object) {
 		return
 	}
 
-	parent := p.findParentNode(id)
-	if pkg, name, isSlice := packageAndName(fieldType); pkg != "" {
-		f := p.fileOf(id)
-		pkgImport := packageImport(pkg)
-		astutil.AddNamedImport(p.fset, f, pkgImport, pkg)
-		fieldType = pkgImport + "." + name
-		if isSlice {
-			fieldType = "[]" + fieldType
-		}
-	}
 	castDecl := func(v *ast.Field) bool {
 		switch t := v.Type.(type) {
 		case *ast.Ident:
 			t.Name = fieldType
 			return true
 		case *ast.ArrayType:
-			if isSliceType(fieldType) {
-				if id, ok := t.Elt.(*ast.Ident); ok {
-					id.Name = strings.TrimPrefix(fieldType, "[]")
-					return true
-				}
-			} else {
-				v.Type = &ast.Ident{
-					Name: fieldType,
-				}
-				return true
+			v.Type = &ast.Ident{
+				Name: fieldType,
 			}
-			return false
+			return true
 		case *ast.StarExpr:
 			t.X = &ast.Ident{
 				Name: fieldType,
@@ -68,6 +48,7 @@ func (p *Patcher) patchTypeDef(id *ast.Ident, obj types.Object) {
 	switch obj.Type().(type) {
 	// Cast Getter signature
 	case *types.Signature:
+		parent := p.findParentNode(id)
 		n, ok := parent.(*ast.FuncDecl)
 		if !ok {
 			log.Printf("Warning: unexpected type for getter: %v `%T`", obj, parent)
@@ -196,6 +177,3 @@ func isSliceType(typeName string) bool {
 	return strings.HasPrefix(strings.TrimSpace(typeName), "[]")
 }
 
-func packageImport(pkg string) string {
-	return strings.Replace(strings.Replace(pkg, "/", "_", -1), ".", "_", -1)
-}
