@@ -8,11 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"google.golang.org/protobuf/types/pluginpb"
-
 	"github.com/alta/protopatch/patch"
-
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/types/pluginpb"
 )
 
 func main() {
