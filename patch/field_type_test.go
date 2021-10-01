@@ -11,64 +11,14 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const (
-	srcDef = `package foo
-
-import (
-	"fmt"
-)
-
-type String string
-
-type Message struct {
-	Content string
-}
-
-func (m *Message) GetContent() string {
-	if m != nil {
-		return m.Content
-	}
-	return ""
-}
-
-func print(s string) {
-	fmt.Println(s)
-}
-`
-	wantDef = `package foo
-
-import (
-	"fmt"
-)
-
-type String string
-
-type Message struct {
-	Content String
-}
-
-func (m *Message) GetContent() String {
-	if m != nil {
-		return m.Content
-	}
-	return ""
-}
-
-func print(s string) {
-	fmt.Println(s)
-}
-`
-)
-
-const (
-	fileName    = "foo.go"
-	packageName = "foo"
-	fieldName   = "Content"
-	msgName   = "Message"
-	fieldType = "String"
-)
-
 func prepareCastType(src string) (*Patcher, *ast.File, error) {
+	const (
+		fileName    = "foo.go"
+		packageName = "foo"
+		fieldName   = "Content"
+		msgName   = "Message"
+		fieldType = "String"
+	)
 	p, err := NewPatcher(&protogen.Plugin{})
 	if err != nil {
 	    return nil, nil, err
@@ -109,6 +59,54 @@ func prepareCastType(src string) (*Patcher, *ast.File, error) {
 }
 
 func TestScalarCastType(t *testing.T) {
+	const (
+		srcDef = `package foo
+
+import (
+	"fmt"
+)
+
+type String string
+
+type Message struct {
+	Content string
+}
+
+func (m *Message) GetContent() string {
+	if m != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func print(s string) {
+	fmt.Println(s)
+}
+`
+		wantDef = `package foo
+
+import (
+	"fmt"
+)
+
+type String string
+
+type Message struct {
+	Content String
+}
+
+func (m *Message) GetContent() String {
+	if m != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func print(s string) {
+	fmt.Println(s)
+}
+`
+	)
 	tests := []struct{
 		name string
 		src string
