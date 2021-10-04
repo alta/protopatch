@@ -184,6 +184,23 @@ func useContent() {
 `,
 		},
 		{
+			name: "cast field used as pointer argument",
+			src: srcDef+`
+func useContent() {
+	msg := &Message{Content: "ok"}
+	var s *string
+	s = &msg.Content
+}
+`,
+			want: wantDef+`
+func useContent() {
+	msg := &Message{Content: String("ok")}
+	var s *string
+	s = (*string)(&msg.Content)
+}
+`,
+		},
+		{
 			name: "cast field already casted",
 			src: srcDef+`
 type OtherString string
@@ -243,6 +260,194 @@ func useContentGetter(msg *Message) {
 	s = string(msg.GetContent())
 	s = string(msg.Content)
 	s = string(msg.Content) + "..."
+	print(s)
+}
+`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p, file, err := prepareCastType(tt.src)
+			if err != nil {
+				t.Errorf("failed to initilialize test")
+				return
+			}
+
+			if err := p.patchGoFiles(); err != nil {
+				t.Fatal(err)
+			}
+			got := p.nodeToString(file)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+
+}
+
+func TestScalarOptionalCastType(t *testing.T) {
+	const (
+		srcDef = `package foo
+
+import (
+	"fmt"
+)
+
+type String string
+
+type Message struct {
+	Content *string
+}
+
+func (m *Message) GetContent() string {
+	if m != nil && m.Content != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func print(s string) {
+	fmt.Println(s)
+}
+`
+		wantDef = `package foo
+
+import (
+	"fmt"
+)
+
+type String string
+
+type Message struct {
+	Content *String
+}
+
+func (m *Message) GetContent() String {
+	if m != nil && m.Content != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func print(s string) {
+	fmt.Println(s)
+}
+`
+	)
+	tests := []struct{
+		name string
+		src string
+		want string
+	}{
+		{
+			name: "cast definition",
+			src: srcDef,
+			want: wantDef,
+		},
+		{
+			name: "cast field initialization",
+			src: srcDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: &s}
+}
+`,
+			want: wantDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: (*String)(&s)}
+}
+`,
+		},
+		{
+			name: "cast field assignation",
+			src: srcDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{}
+	msg.Content = &s
+}
+`,
+			want: wantDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{}
+	msg.Content = (*String)(&s)
+}
+`,
+		},
+		{
+			name: "cast field assignation",
+			src: srcDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: &s}
+	s = *msg.Content
+}
+`,
+			want: wantDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: (*String)(&s)}
+	s = string(*msg.Content)
+}
+`,
+		},
+		{
+			name: "cast and statement",
+			src: srcDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: &s}
+	if true && msg.Content != nil {
+		s = *msg.Content
+	}
+}
+`,
+			want: wantDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: (*String)(&s)}
+	if true && (*string)(msg.Content) != nil {
+		s = string(*msg.Content)
+	}
+}
+`,
+		},
+		{
+			name: "cast full code",
+			src: srcDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: &s}
+	print(*msg.Content)
+	print(msg.GetContent())
+	msg.Content = &s
+	useContentGetter(msg)
+}
+
+func useContentGetter(msg *Message) {
+	var s string
+	s = msg.GetContent()
+	s = *msg.Content
+	s = *msg.Content + "..."
+	print(s)
+}
+`,
+			want: wantDef+`
+func useContent() {
+	s := "ok"
+	msg := &Message{Content: (*String)(&s)}
+	print(string(*msg.Content))
+	print(string(msg.GetContent()))
+	msg.Content = (*String)(&s)
+	useContentGetter(msg)
+}
+
+func useContentGetter(msg *Message) {
+	var s string
+	s = string(msg.GetContent())
+	s = string(*msg.Content)
+	s = string(*msg.Content) + "..."
 	print(s)
 }
 `,

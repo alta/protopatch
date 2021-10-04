@@ -1,7 +1,9 @@
 package patch
 
 import (
+	"fmt"
 	"go/ast"
+	"go/token"
 	"go/types"
 	"log"
 	"strings"
@@ -70,10 +72,28 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 	if !ok {
 		return
 	}
+	// we don't want to modify the getter body,
+	// so we check if we are in the getter declaration body ?
+	node := ast.Node(id)
+	for{
+		node = p.findParentNode(node)
+		if node == nil {
+			break
+		}
+		if fn, ok := node.(*ast.FuncDecl); ok {
+			if fn.Name.String() == "Get"+id.Name {
+				return
+			}
+			break
+		}
+	}
 	var originalType string
 	switch t := obj.Type().(type) {
 	case *types.Basic:
 		originalType = t.Name()
+	case *types.Pointer:
+		originalType = t.String()
+		desiredType = "*"+desiredType
 	case *types.Signature:
 		if t.Results().Len() != 1 {
 			return
@@ -81,6 +101,9 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 		originalType = t.Results().At(0).Type().String()
 	}
 	cast := func(as string, expr ast.Expr) ast.Expr {
+		if strings.HasPrefix(as, "*") {
+			as = fmt.Sprintf("(%s)", as)
+		}
 		return &ast.CallExpr{
 			Fun: &ast.Ident{
 				Name: as,
@@ -89,40 +112,70 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 		}
 	}
 
-	usageNode := p.findParentNode(id)
-	parentNode := p.findParentNode(usageNode)
+	expr := p.findParentNode(id)
 
-	switch usage := usageNode.(type) {
-	case *ast.SelectorExpr:
-		switch parentExpr := parentNode.(type) {
-		case *ast.AssignStmt:
-			if len(parentExpr.Lhs) != len(parentExpr.Rhs) {
+	if kv, ok := expr.(*ast.KeyValueExpr); ok {
+		if kv.Key == id {
+			kv.Value = cast(desiredType, kv.Value)
+			return
+		}
+		if kv.Value == id {
+			kv.Value = cast(originalType, kv.Value)
+			return
+		}
+		return
+	}
+
+	selectorExpr, ok := expr.(*ast.SelectorExpr)
+	if !ok {
+		return
+	}
+
+	var patch func(node ast.Node)
+	patch = func(node ast.Node) {
+		switch nodeExpr := node.(type) {
+		case *ast.StarExpr:
+			desiredType = strings.TrimPrefix(desiredType, "*")
+			originalType = strings.TrimPrefix(originalType, "*")
+			expr = node
+			patch(p.findParentNode(node))
+			return
+		case *ast.UnaryExpr:
+			if nodeExpr.Op != token.AND {
 				return
 			}
-			for i := range parentExpr.Lhs {
-				if parentExpr.Lhs[i] == usage {
-					parentExpr.Rhs[i] = cast(desiredType, parentExpr.Rhs[i])
+			desiredType = "*" + desiredType
+			originalType = "*" + originalType
+			expr = node
+			patch(p.findParentNode(node))
+		case *ast.AssignStmt:
+			if len(nodeExpr.Lhs) != len(nodeExpr.Rhs) {
+				return
+			}
+			for i := range nodeExpr.Lhs {
+				if nodeExpr.Lhs[i] == expr {
+					nodeExpr.Rhs[i] = cast(desiredType, nodeExpr.Rhs[i])
 					return
 				}
 			}
-			for i := range parentExpr.Rhs {
-				if parentExpr.Rhs[i] == usage {
-					parentExpr.Rhs[i] = cast(originalType, parentExpr.Rhs[i])
+			for i := range nodeExpr.Rhs {
+				if nodeExpr.Rhs[i] == expr {
+					nodeExpr.Rhs[i] = cast(originalType, nodeExpr.Rhs[i])
 					return
 				}
 			}
 		case *ast.CallExpr:
-			for i := range parentExpr.Args {
-				if parentExpr.Args[i] == usage {
-					parentExpr.Args[i] = cast(originalType, parentExpr.Args[i])
+			for i := range nodeExpr.Args {
+				if nodeExpr.Args[i] == expr {
+					nodeExpr.Args[i] = cast(originalType, nodeExpr.Args[i])
 					return
 				}
 			}
-			parent := p.findParentNode(parentExpr)
+			parent := p.findParentNode(nodeExpr)
 			assign, isAssign := parent.(*ast.AssignStmt)
-			if parentExpr.Fun == usage && isAssign {
+			if nodeExpr.Fun == expr && isAssign {
 				for i := range assign.Rhs {
-					if assign.Rhs[i] == parentExpr {
+					if assign.Rhs[i] == nodeExpr {
 						assign.Rhs[i] = cast(originalType, assign.Rhs[i])
 						return
 					}
@@ -131,36 +184,28 @@ func (p *Patcher) patchTypeUsage(id *ast.Ident, obj types.Object) {
 			call, isCall := parent.(*ast.CallExpr)
 			if isCall {
 				for i := range call.Args {
-					if call.Args[i] == parentExpr {
+					if call.Args[i] == nodeExpr {
 						call.Args[i] = cast(originalType, call.Args[i])
 						return
 					}
 				}
 			}
-			for i, v := range parentExpr.Args {
-				if v == usage {
-					parentExpr.Args[i] = cast(originalType, usage)
+			for i, v := range nodeExpr.Args {
+				if v == expr {
+					nodeExpr.Args[i] = cast(originalType, selectorExpr)
 					return
 				}
 			}
 		case *ast.BinaryExpr:
-			if parentExpr.X == usage {
-				parentExpr.X = cast(originalType, parentExpr.X)
+			if nodeExpr.X == expr {
+				nodeExpr.X = cast(originalType, nodeExpr.X)
 			}
-			if parentExpr.Y == usage {
-				parentExpr.Y = cast(originalType, parentExpr.Y)
+			if nodeExpr.Y == expr {
+				nodeExpr.Y = cast(originalType, nodeExpr.Y)
 			}
-		}
-	case *ast.KeyValueExpr:
-		if usage.Key == id {
-			usage.Value = cast(desiredType, usage.Value)
-			return
-		}
-		if usage.Value == id {
-			usage.Value = cast(originalType, usage.Value)
-			return
 		}
 	}
+	patch(p.findParentNode(expr))
 }
 
 func isTypeValid(typeName string) bool {

@@ -163,49 +163,49 @@ func (*MessageWithOptionalCustomTypes) Descriptor() ([]byte, []int) {
 }
 
 func (x *MessageWithOptionalCustomTypes) GetStringField() String {
-	if x != nil && (x.StringField) != nil {
+	if x != nil && x.StringField != nil {
 		return *x.StringField
 	}
 	return ""
 }
 
 func (x *MessageWithOptionalCustomTypes) GetInt32Field() Int32 {
-	if x != nil && (x.Int32Field) != nil {
+	if x != nil && x.Int32Field != nil {
 		return *x.Int32Field
 	}
 	return 0
 }
 
 func (x *MessageWithOptionalCustomTypes) GetInt64Field() Int64 {
-	if x != nil && (x.Int64Field) != nil {
+	if x != nil && x.Int64Field != nil {
 		return *x.Int64Field
 	}
 	return 0
 }
 
 func (x *MessageWithOptionalCustomTypes) GetFloatField() Float {
-	if x != nil && (x.FloatField) != nil {
+	if x != nil && x.FloatField != nil {
 		return *x.FloatField
 	}
 	return 0
 }
 
 func (x *MessageWithOptionalCustomTypes) GetDoubleField() Double {
-	if x != nil && (x.DoubleField) != nil {
+	if x != nil && x.DoubleField != nil {
 		return *x.DoubleField
 	}
 	return 0
 }
 
 func (x *MessageWithOptionalCustomTypes) GetUint32Field() Uint32 {
-	if x != nil && (x.Uint32Field) != nil {
+	if x != nil && x.Uint32Field != nil {
 		return *x.Uint32Field
 	}
 	return 0
 }
 
 func (x *MessageWithOptionalCustomTypes) GetUint64Field() Uint64 {
-	if x != nil && (x.Uint64Field) != nil {
+	if x != nil && x.Uint64Field != nil {
 		return *x.Uint64Field
 	}
 	return 0
