@@ -57,7 +57,27 @@ func (m *Interface) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 2 || l > 10 {
+		err := InterfaceValidationError{
+			field:  "Name",
+			reason: "value length must be between 2 and 10 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_Interface_Name_Pattern.MatchString(m.GetName()) {
+		err := InterfaceValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"[0-9a-zA-Z.-_]*\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if _, ok := _Interface_Status_NotInLookup[m.GetStatus()]; ok {
 		err := InterfaceValidationError{
@@ -191,6 +211,8 @@ var _ interface {
 	ErrorName() string
 } = InterfaceValidationError{}
 
+var _Interface_Name_Pattern = regexp.MustCompile("[0-9a-zA-Z.-_]*")
+
 var _Interface_Status_NotInLookup = map[InterfaceStatus]struct{}{
 	0: {},
 }
@@ -322,3 +344,202 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = IPAddressValidationError{}
+
+// Validate checks the field values on InterfaceWithCustomTypes with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *InterfaceWithCustomTypes) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InterfaceWithCustomTypes with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// InterfaceWithCustomTypesMultiError, or nil if none found.
+func (m *InterfaceWithCustomTypes) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InterfaceWithCustomTypes) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(string(m.GetName())); l < 2 || l > 10 {
+		err := InterfaceWithCustomTypesValidationError{
+			field:  "Name",
+			reason: "value length must be between 2 and 10 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_InterfaceWithCustomTypes_Name_Pattern.MatchString(string(m.GetName())) {
+		err := InterfaceWithCustomTypesValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"[0-9a-zA-Z.-_]*\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetAddresses() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, InterfaceWithCustomTypesValidationError{
+						field:  fmt.Sprintf("Addresses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, InterfaceWithCustomTypesValidationError{
+						field:  fmt.Sprintf("Addresses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return InterfaceWithCustomTypesValidationError{
+					field:  fmt.Sprintf("Addresses[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len([]string(m.GetAliases())) > 10 {
+		err := InterfaceWithCustomTypesValidationError{
+			field:  "Aliases",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetAliases() {
+		_, _ = idx, item
+
+		if l := utf8.RuneCountInString(item); l < 2 || l > 10 {
+			err := InterfaceWithCustomTypesValidationError{
+				field:  fmt.Sprintf("Aliases[%v]", idx),
+				reason: "value length must be between 2 and 10 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_InterfaceWithCustomTypes_Aliases_Pattern.MatchString(item) {
+			err := InterfaceWithCustomTypesValidationError{
+				field:  fmt.Sprintf("Aliases[%v]", idx),
+				reason: "value does not match regex pattern \"[0-9a-zA-Z.-_]*\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return InterfaceWithCustomTypesMultiError(errors)
+	}
+	return nil
+}
+
+// InterfaceWithCustomTypesMultiError is an error wrapping multiple validation
+// errors returned by InterfaceWithCustomTypes.ValidateAll() if the designated
+// constraints aren't met.
+type InterfaceWithCustomTypesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InterfaceWithCustomTypesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InterfaceWithCustomTypesMultiError) AllErrors() []error { return m }
+
+// InterfaceWithCustomTypesValidationError is the validation error returned by
+// InterfaceWithCustomTypes.Validate if the designated constraints aren't met.
+type InterfaceWithCustomTypesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InterfaceWithCustomTypesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InterfaceWithCustomTypesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InterfaceWithCustomTypesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InterfaceWithCustomTypesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InterfaceWithCustomTypesValidationError) ErrorName() string {
+	return "InterfaceWithCustomTypesValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e InterfaceWithCustomTypesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInterfaceWithCustomTypes.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InterfaceWithCustomTypesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InterfaceWithCustomTypesValidationError{}
+
+var _InterfaceWithCustomTypes_Name_Pattern = regexp.MustCompile("[0-9a-zA-Z.-_]*")
+
+var _InterfaceWithCustomTypes_Aliases_Pattern = regexp.MustCompile("[0-9a-zA-Z.-_]*")

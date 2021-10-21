@@ -48,10 +48,10 @@ type Patcher struct {
 	objectRenames  map[types.Object]string
 	tags           map[protogen.GoIdent]string
 	fieldTags      map[types.Object]string
-	embeds      map[protogen.GoIdent]string
-	fieldEmbeds map[types.Object]string
-	types       map[protogen.GoIdent]string
-	fieldTypes  map[types.Object]string
+	embeds         map[protogen.GoIdent]string
+	fieldEmbeds    map[types.Object]string
+	types          map[protogen.GoIdent]string
+	fieldTypes     map[types.Object]string
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -60,18 +60,18 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		gen:            gen,
 		packagesByPath: make(map[string]*Package),
 		packagesByName: make(map[string]*Package),
-		renames:       make(map[protogen.GoIdent]string),
-		typeRenames:   make(map[protogen.GoIdent]string),
-		valueRenames:  make(map[protogen.GoIdent]string),
-		fieldRenames:  make(map[protogen.GoIdent]string),
-		methodRenames: make(map[protogen.GoIdent]string),
-		objectRenames: make(map[types.Object]string),
-		tags:          make(map[protogen.GoIdent]string),
-		fieldTags:     make(map[types.Object]string),
-		embeds:        make(map[protogen.GoIdent]string),
-		fieldEmbeds:   make(map[types.Object]string),
-		types:         make(map[protogen.GoIdent]string),
-		fieldTypes:    make(map[types.Object]string),
+		renames:        make(map[protogen.GoIdent]string),
+		typeRenames:    make(map[protogen.GoIdent]string),
+		valueRenames:   make(map[protogen.GoIdent]string),
+		fieldRenames:   make(map[protogen.GoIdent]string),
+		methodRenames:  make(map[protogen.GoIdent]string),
+		objectRenames:  make(map[types.Object]string),
+		tags:           make(map[protogen.GoIdent]string),
+		fieldTags:      make(map[types.Object]string),
+		embeds:         make(map[protogen.GoIdent]string),
+		fieldEmbeds:    make(map[types.Object]string),
+		types:          make(map[protogen.GoIdent]string),
+		fieldTypes:     make(map[types.Object]string),
 	}
 	return p, p.scan()
 }
@@ -902,4 +902,3 @@ func typeString(obj types.Object) string {
 	}
 	return obj.Type().String()
 }
-
