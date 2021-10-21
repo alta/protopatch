@@ -49,8 +49,8 @@ type Patcher struct {
 	tags           map[protogen.GoIdent]string
 	fieldTags      map[types.Object]string
 	embeds      map[protogen.GoIdent]string
-	types       map[protogen.GoIdent]string
 	fieldEmbeds map[types.Object]string
+	types       map[protogen.GoIdent]string
 	fieldTypes  map[types.Object]string
 }
 
