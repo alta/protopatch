@@ -300,7 +300,7 @@ type Message struct {
 
 func (m *Message) GetContent() string {
 	if m != nil && m.Content != nil {
-		return m.Content
+		return *m.Content
 	}
 	return ""
 }
@@ -323,7 +323,7 @@ type Message struct {
 
 func (m *Message) GetContent() String {
 	if m != nil && m.Content != nil {
-		return m.Content
+		return *m.Content
 	}
 	return ""
 }
