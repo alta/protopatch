@@ -39,7 +39,7 @@ type Options struct {
 	// See https://golang.org/ref/spec#Struct_types.
 	Embed *bool `protobuf:"varint,2,opt,name=embed" json:"embed,omitempty"`
 	// The type option changes the generated field type.
-	// All generated code assumes that this type is castable to the protocol buffer field type,
+	// All generated code assumes that this type is castable to the protocol buffer field type.
 	Type *string `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
 	// The getter option renames the generated getter method (default: Get<Field>)
 	// so a custom getter can be implemented in its place.
