@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/format"
 	"go/parser"
+	"go/printer"
 	"go/token"
 	"go/types"
 	"log"
@@ -13,14 +14,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/alta/protopatch/lint"
-	"github.com/alta/protopatch/patch/ident"
-
 	"github.com/fatih/structtag"
 	"golang.org/x/tools/go/ast/astutil"
 	"google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
+
+	"github.com/alta/protopatch/lint"
+	"github.com/alta/protopatch/patch/ident"
 )
 
 // Patcher patches a set of generated Go Protobuf files with additional features:
@@ -49,6 +50,8 @@ type Patcher struct {
 	fieldTags      map[types.Object]string
 	embeds         map[protogen.GoIdent]string
 	fieldEmbeds    map[types.Object]string
+	types          map[protogen.GoIdent]string
+	fieldTypes     map[types.Object]string
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -67,6 +70,8 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		fieldTags:      make(map[types.Object]string),
 		embeds:         make(map[protogen.GoIdent]string),
 		fieldEmbeds:    make(map[types.Object]string),
+		types:          make(map[protogen.GoIdent]string),
+		fieldTypes:     make(map[types.Object]string),
 	}
 	return p, p.scan()
 }
@@ -313,6 +318,20 @@ func (p *Patcher) scanField(f *protogen.Field) {
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
 	}
 
+	// check type
+	if fieldType := opts.GetType(); fieldType != "" {
+		switch {
+		case f.Message != nil && !f.Desc.IsList():
+			log.Printf("Warning: type declared for message field: %s", f.Desc.Name())
+		case f.Oneof != nil && !f.Desc.HasOptionalKeyword():
+			p.Type(ident.WithChild(f.GoIdent, f.GoName), fieldType)
+			p.Type(ident.WithChild(m.GoIdent, "Get"+f.GoName), fieldType)
+		default:
+			p.Type(ident.WithChild(m.GoIdent, f.GoName), fieldType)
+			p.Type(ident.WithChild(m.GoIdent, "Get"+f.GoName), fieldType)
+		}
+	}
+
 	// Add or replace any struct tags?
 	tags := opts.GetTags()
 	if tags != "" {
@@ -398,6 +417,17 @@ func (p *Patcher) nameFor(id protogen.GoIdent) string {
 		return name
 	}
 	return ident.LeafName(id)
+}
+
+// Type casts the Go struct field as the desired type
+// The typeName value must be a named type, e.g.: "type String string"
+func (p *Patcher) Type(id protogen.GoIdent, typeName string) {
+	if isTypeValid(typeName) {
+		log.Printf("Warning: field %s has invalid type option: %s", id.GoImportPath, typeName)
+		return
+	}
+	p.types[id] = typeName
+	log.Printf("Cast type:\t%s.%s → %s", id.GoImportPath, id.GoName, typeName)
 }
 
 // Tag adds the specified struct tags to the field specified by selector,
@@ -543,6 +573,15 @@ func (p *Patcher) checkGoFiles() error {
 		}
 	}
 
+	// Map cast types
+	for id, typ := range p.types {
+		obj, _ := p.find(id)
+		if obj == nil {
+			continue
+		}
+		p.fieldTypes[obj] = typ
+	}
+
 	// Map struct tags.
 	for id, tags := range p.tags {
 		obj, _ := p.find(id)
@@ -679,6 +718,7 @@ func (p *Patcher) serializeGoFiles(res *pluginpb.CodeGeneratorResponse) error {
 func (p *Patcher) patchGoFiles() error {
 	log.Printf("\nDefs")
 	for id, obj := range p.info.Defs {
+		p.patchTypeDef(id, obj)
 		p.patchIdent(id, obj, true)
 		p.patchTags(id, obj)
 		// if id.IsExported() {
@@ -689,6 +729,7 @@ func (p *Patcher) patchGoFiles() error {
 
 	log.Printf("\nUses\n")
 	for id, obj := range p.info.Uses {
+		p.patchTypeUsage(id, obj)
 		p.patchIdent(id, obj, false)
 	}
 
@@ -716,6 +757,26 @@ func (p *Patcher) patchIdent(id *ast.Ident, obj types.Object, isDecl bool) {
 		log.Printf("Renamed %s:\t%s → %s", typeString(obj), id.Name, name)
 		id.Name = name
 	}
+}
+
+func (p *Patcher) nodeToString(n ast.Node) string {
+	b := &bytes.Buffer{}
+	if err := printer.Fprint(b, p.fset, n); err != nil {
+		log.Fatal(err)
+	}
+	return b.String()
+}
+
+func (p *Patcher) findParentNode(id ast.Node) ast.Node {
+	var node ast.Node
+	astutil.Apply(p.fileOf(id), func(cursor *astutil.Cursor) bool {
+		if cursor.Node() == id {
+			node = cursor.Parent()
+			return false
+		}
+		return true
+	}, nil)
+	return node
 }
 
 func (p *Patcher) patchTags(id *ast.Ident, obj types.Object) {
@@ -771,11 +832,7 @@ func (p *Patcher) patchComments(id *ast.Ident, repl string) {
 
 // Borrowed from https://github.com/golang/tools/blob/HEAD/refactor/rename/rename.go#L543
 func (p *Patcher) findCommentGroups(id *ast.Ident) (doc *ast.CommentGroup, comment *ast.CommentGroup) {
-	tf := p.fset.File(id.Pos())
-	if tf == nil {
-		return
-	}
-	f := p.filesByName[tf.Name()]
+	f := p.fileOf(id)
 	if f == nil {
 		return
 	}
@@ -803,6 +860,14 @@ func (p *Patcher) findCommentGroups(id *ast.Ident) (doc *ast.CommentGroup, comme
 		}
 	}
 	return
+}
+
+func (p *Patcher) fileOf(node ast.Node) *ast.File {
+	tf := p.fset.File(node.Pos())
+	if tf == nil {
+		return nil
+	}
+	return p.filesByName[tf.Name()]
 }
 
 func patchCommentGroup(c *ast.CommentGroup, x *regexp.Regexp, repl string) {

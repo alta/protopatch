@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package tests.message;
+
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message MessageWithCustomTypes {
+	string string_field = 1 [(go.field).type = "String"];
+	int32 int32_field = 2 [(go.field).type = "Int32"];
+	int64 int64_field = 3 [(go.field).type = "Int64"];
+	float float_field = 4 [(go.field).type = "Float"];
+	double double_field = 5 [(go.field).type = "Double"];
+	uint32 uint32_field = 6 [(go.field).type = "Uint32"];
+	uint64 uint64_field = 7 [(go.field).type = "Uint64"];
+}
+
+message MessageWithOptionalCustomTypes {
+	optional string string_field = 1 [(go.field).type = "String"];
+	optional int32 int32_field = 2 [(go.field).type = "Int32"];
+	optional int64 int64_field = 3 [(go.field).type = "Int64"];
+	optional float float_field = 4 [(go.field).type = "Float"];
+	optional double double_field = 5 [(go.field).type = "Double"];
+	optional uint32 uint32_field = 6 [(go.field).type = "Uint32"];
+	optional uint64 uint64_field = 7 [(go.field).type = "Uint64"];
+}
+
+message MessageWithOneOfCustomType {
+	oneof one_of {
+		string string_field = 1 [(go.field).type = "String"];
+		int64 int64_field = 3 [(go.field).type = "Int64"];
+	}
+}
+
+message MessageWithCustomRepeatedType {
+	repeated string repeated_string_field = 1 [(go.field).type = "Strings"];
+}

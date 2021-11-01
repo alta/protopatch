@@ -26,6 +26,9 @@ func ValidateEnum(t *testing.T, e protoreflect.Enum, names EnumNames, values Enu
 // ValidateMessage performs basic validation of a message.
 func ValidateMessage(t *testing.T, m proto.Message) {
 	// TODO: add some validation
+	if m == nil {
+		return
+	}
 	b, err := proto.Marshal(m)
 	if err != nil {
 		t.Errorf("failed to marshal message: %v", err)
