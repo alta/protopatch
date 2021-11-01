@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- [#61](https://github.com/alta/protopatch/pull/61): specify the Go type for a message field. Specify `(go.field).type = "SomeType"` to override the field type in generated Go code. The specified type *must* be castable to the field’s native type, and defined in the target package. Scalar and repeated fields are supported, e.g. `type Things []Thing`. This feature is similar to the [`casttype`](https://github.com/gogo/protobuf/blob/master/extensions.md#more-canonical-go-structures) feature in gogoprotobuf.
 - [#65](https://github.com/alta/protopatch/pull/65): add `optional` [support for proto3](https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md).
 
 ### Updated
+- github.com/envoyproxy/protoc-gen-validate v0.6.1 → v0.6.2
+- golang.org/x/tools v0.1.6 → v0.1.7
 - Updated go.mod to Go 1.17 format
 
 ## [v0.4.0] — 2021-09-23
