@@ -22,7 +22,7 @@ message Options {
 	optional bool embed = 2;
 
 	// The type option changes the generated field type.
-	// All generated code assumes that this type is castable to the protocol buffer field type,
+	// All generated code assumes that this type is castable to the protocol buffer field type.
 	optional string type = 3;
 
 	// The getter option renames the generated getter method (default: Get<Field>)
