@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.5.0] — 2021-11-01
 
 ### Added
 - [#61](https://github.com/alta/protopatch/pull/61): specify the Go type for a message field. Specify `(go.field).type = "SomeType"` to override the field type in generated Go code. The specified type *must* be castable to the field’s native type, and defined in the target package. Scalar and repeated fields are supported, e.g. `type Things []Thing`. This feature is similar to the [`casttype`](https://github.com/gogo/protobuf/blob/master/extensions.md#more-canonical-go-structures) feature in gogoprotobuf.
@@ -76,7 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/protopatch/compare/v0.4.0...HEAD>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.5.0...HEAD>
+[v0.5.0]: <https://github.com/alta/protopatch/compare/v0.4.0...v0.5.0>
 [v0.4.0]: <https://github.com/alta/protopatch/compare/v0.3.4...v0.4.0>
 [v0.3.4]: <https://github.com/alta/protopatch/compare/v0.3.3...v0.3.4>
 [v0.3.3]: <https://github.com/alta/protopatch/compare/v0.3.2...v0.3.3>
