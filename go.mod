@@ -3,10 +3,10 @@ module github.com/alta/protopatch
 go 1.17
 
 require (
-	github.com/envoyproxy/protoc-gen-validate v0.6.2
+	github.com/envoyproxy/protoc-gen-validate v0.6.3
 	github.com/fatih/structtag v1.2.0
 	github.com/iancoleman/strcase v0.2.0 // indirect
-	github.com/lyft/protoc-gen-star v0.5.3 // indirect
+	github.com/lyft/protoc-gen-star v0.6.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/tools v0.1.8
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
