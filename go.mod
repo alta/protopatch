@@ -8,7 +8,7 @@ require (
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/lyft/protoc-gen-star v0.6.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/tools v0.1.8
+	golang.org/x/tools v0.1.9
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.27.1
 )
