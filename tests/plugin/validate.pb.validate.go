@@ -138,6 +138,7 @@ func (m *Interface) validate(all bool) error {
 	if len(errors) > 0 {
 		return InterfaceMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -272,6 +273,7 @@ func (m *IPAddress) validate(all bool) error {
 	if len(errors) > 0 {
 		return IPAddressMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -464,6 +466,7 @@ func (m *InterfaceWithCustomTypes) validate(all bool) error {
 	if len(errors) > 0 {
 		return InterfaceWithCustomTypesMultiError(errors)
 	}
+
 	return nil
 }
 
