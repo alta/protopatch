@@ -1,6 +1,6 @@
 module github.com/alta/protopatch
 
-go 1.17
+go 1.20
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v0.9.1
