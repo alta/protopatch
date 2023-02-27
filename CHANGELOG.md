@@ -2,6 +2,16 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.5.1] — 2023-02-27
+
+### Updated
+- github.com/envoyproxy/protoc-gen-validate v0.6.2 → v0.9.1
+- github.com/stretchr/testify v1.6.1 → v1.8.2
+- golang.org/x/tools v0.1.7 → v0.6.0
+- google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 → v1.2.0
+- google.golang.org/protobuf v1.27.1 → v1.28.1
+- (other indirect dependencies)
+
 ## [v0.5.0] — 2021-11-01
 
 ### Added
@@ -76,7 +86,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/protopatch/compare/v0.5.0...HEAD>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.5.1...HEAD>
+[v0.5.1]: <https://github.com/alta/protopatch/compare/v0.5.0...v0.5.1>
 [v0.5.0]: <https://github.com/alta/protopatch/compare/v0.4.0...v0.5.0>
 [v0.4.0]: <https://github.com/alta/protopatch/compare/v0.3.4...v0.4.0>
 [v0.3.4]: <https://github.com/alta/protopatch/compare/v0.3.3...v0.3.4>
