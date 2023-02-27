@@ -240,9 +240,18 @@ func (m *IPAddress) validate(all bool) error {
 
 	var errors []error
 
-	switch m.Address.(type) {
-
+	switch v := m.Address.(type) {
 	case *IPAddress_IPV4:
+		if v == nil {
+			err := IPAddressValidationError{
+				field:  "Address",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if ip := net.ParseIP(m.GetIPV4()); ip == nil || ip.To4() == nil {
 			err := IPAddressValidationError{
@@ -256,6 +265,16 @@ func (m *IPAddress) validate(all bool) error {
 		}
 
 	case *IPAddress_IPV6:
+		if v == nil {
+			err := IPAddressValidationError{
+				field:  "Address",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if ip := net.ParseIP(m.GetIPV6()); ip == nil || ip.To4() != nil {
 			err := IPAddressValidationError{
@@ -268,6 +287,8 @@ func (m *IPAddress) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
