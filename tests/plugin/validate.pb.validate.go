@@ -82,7 +82,7 @@ func (m *Interface) validate(all bool) error {
 	if _, ok := _Interface_Status_NotInLookup[m.GetStatus()]; ok {
 		err := InterfaceValidationError{
 			field:  "Status",
-			reason: "value must not be in list [0]",
+			reason: "value must not be in list [UNKNOWN]",
 		}
 		if !all {
 			return err
