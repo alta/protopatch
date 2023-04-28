@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.5.2] — 2023-04-28
 
 ### Updated
 - google.golang.org/protobuf v1.28.1 → v1.30.0
@@ -92,7 +92,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [#21](https://github.com/alta/protopatch/issues/21) — Running `protoc` plugins other than `go` breaks on missing symbols.
 - [#15](https://github.com/alta/protopatch/pull/15) — It’s not currently possible to mix or replace existing generated struct tags.
 
-[Unreleased]: <https://github.com/alta/protopatch/compare/v0.5.1...HEAD>
+[Unreleased]: <https://github.com/alta/protopatch/compare/v0.5.2...HEAD>
+[v0.5.2]: <https://github.com/alta/protopatch/compare/v0.5.1...v0.5.2>
 [v0.5.1]: <https://github.com/alta/protopatch/compare/v0.5.0...v0.5.1>
 [v0.5.0]: <https://github.com/alta/protopatch/compare/v0.4.0...v0.5.0>
 [v0.4.0]: <https://github.com/alta/protopatch/compare/v0.3.4...v0.4.0>
