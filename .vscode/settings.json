@@ -68,7 +68,8 @@
 		"MD010": false,
 		"MD022": false,
 		"MD024": false,
-		"MD032": false
+		"MD032": false,
+		"MD053": false,
 	},
 	//
 	// Protos
