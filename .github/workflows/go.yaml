@@ -18,7 +18,7 @@ jobs:
           submodules: recursive
 
       - name: Install protoc
-        uses: arduino/setup-protoc@HEAD
+        uses: arduino/setup-protoc@v2
         with:
           version: "3.14"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
