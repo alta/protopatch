@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Updated
 - github.com/envoyproxy/protoc-gen-validate v1.0.0 → v1.0.1
+- github.com/stretchr/testify v1.8.3 → v1.8.4
 
 ## [v0.5.2] — 2023-04-28
 
