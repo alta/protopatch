@@ -5,9 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Updated
-- github.com/envoyproxy/protoc-gen-validate v1.0.0 → v1.0.1
+- google.golang.org/protobuf v1.30.0 → v1.31.0
+- github.com/envoyproxy/protoc-gen-validate v1.0.0 → v1.0.2
 - github.com/stretchr/testify v1.8.3 → v1.8.4
-- golang.org/x/tools v0.9.1 → v0.10.0
+- golang.org/x/tools v0.9.1 → v0.12.0
 
 ## [v0.5.2] — 2023-04-28
 
