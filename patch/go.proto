@@ -29,6 +29,9 @@ message Options {
 	// so a custom getter can be implemented in its place.
 	optional string getter = 10; // TODO: implement this
 
+	// The no_getter option removes the generated getter methods.
+	optional bool no_getters = 15;
+
 	// The tags option specifies additional struct tags which are appended a generated Go struct field.
 	// This option may be specified on a message field or a oneof field.
 	// The value should omit the enclosing backticks.
