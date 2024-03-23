@@ -6,17 +6,6 @@ install:
 tools: internal/tools/*.go
 	go generate --tags tools ./internal/tools
 
-vet:
-	go vet ./...
-
-test: test-go test-cgo-disabled
-
-test-go:
-	go test -mod=readonly -v -race ./...
-
-test-cgo-disabled:
-	CGO_ENABLED=0 go test -mod=readonly -v ./...
-
 go_module = $(shell go list -m)
 proto_files = $(sort $(shell find . -name '*.proto'))
 proto_includes = \
