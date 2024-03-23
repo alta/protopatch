@@ -14,12 +14,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Set up Go
-        uses: actions/setup-go@v5.0.0
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
 
@@ -36,7 +36,7 @@ jobs:
         go-version: ["1.20", "1.21", "1.22"]
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -47,7 +47,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
-        uses: actions/setup-go@v5.0.0
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
