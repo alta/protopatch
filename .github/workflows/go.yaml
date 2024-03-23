@@ -7,26 +7,50 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Test Go
+  # Vet Go code
+  vet-go:
+    name: Vet Go code
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.2
+        with:
+          submodules: recursive
+
+      - name: Set up Go
+        uses: actions/setup-go@v5.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Vet Go code
+        run: go vet ./...
+
+  # Test with Go
+  test-go:
+    name: Test with Go
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        go-version: ["1.20", "1.21", "1.22"]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4.1.2
         with:
           submodules: recursive
 
       - name: Install protoc
         uses: arduino/setup-protoc@v3
         with:
-          version: "21.12"
+          version: "25.3"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.0.0
         with:
-          go-version: ^1
+          go-version: ${{ matrix.go-version }}
+          check-latest: true
 
       - name: Install Go tools
         run: make tools
@@ -35,10 +59,15 @@ jobs:
         run: make protos
 
       - name: Vet Go code
-        run: make vet
+        run: go vet ./...
 
       - name: Run Go tests
-        run: make test
+        run: go test -v -race ./...
+
+      - name: Test Go without cgo
+        env:
+          CGO_ENABLED: 0
+        run: go test -v ./...
 
       - name: Verify repo is unchanged
         run: git diff --exit-code HEAD -w -G'(^[^# /])|(^#\w)|(^\s+[^#/])' # Ignore whitespace and comments
