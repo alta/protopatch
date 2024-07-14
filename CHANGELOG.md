@@ -4,7 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-Changelog from here forward will only include major dependency updates.
+This module now requires [Go 1.21](https://go.dev/doc/go1.21) or higher.
+
+### Notes
+- Changelog from here forward will only include major dependency updates.
 
 ## [v0.5.3] — 2023-08-08
 
