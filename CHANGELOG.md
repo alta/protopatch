@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 This module now requires [Go 1.21](https://go.dev/doc/go1.21) or higher.
 
+### Added
+- Added support for [buf.build](https://buf.build/alta/protopatch).
+
 ### Notes
 - Changelog from here forward will only include major dependency updates.
 

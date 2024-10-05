@@ -6,6 +6,12 @@ install:
 tools: internal/tools/*.go
 	go generate --tags tools ./internal/tools
 
+buf-login:
+	buf registry login buf.build
+
+buf-push:
+	buf push
+
 go_module = $(shell go list -m)
 proto_files = $(sort $(shell find . -name '*.proto'))
 proto_includes = \
