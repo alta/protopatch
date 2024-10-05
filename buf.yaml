@@ -1,0 +1,6 @@
+version: v2
+modules:
+  - path: .
+    name: buf.build/landeed/protopatch
+deps:
+  - buf.build/envoyproxy/protoc-gen-validate
