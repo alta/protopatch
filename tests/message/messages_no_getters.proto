@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tests.message;
+
+import "patch/go.proto";
+
+option go_package = "github.com/alta/protopatch/tests/message";
+
+message NoGetters {
+  option (go.message) = {no_getters: true};
+  string string_field = 1;
+  int32 int32_field = 2;
+  int64 int64_field = 3;
+  uint32 uint32_field = 4;
+  uint64 uint64_field = 5;
+  bool bool_field = 6;
+  float float_field = 7;
+  double double_field = 8;
+  bytes bytes_field = 9;
+  Nested nested_field = 10;
+}
+
+message Nested {
+  string string_field = 1;
+}

@@ -52,6 +52,7 @@ type Patcher struct {
 	fieldEmbeds    map[types.Object]string
 	types          map[protogen.GoIdent]string
 	fieldTypes     map[types.Object]string
+	noGetters      map[protogen.GoIdent]types.Object
 }
 
 // NewPatcher returns an initialized Patcher for gen.
@@ -72,6 +73,7 @@ func NewPatcher(gen *protogen.Plugin) (*Patcher, error) {
 		fieldEmbeds:    make(map[types.Object]string),
 		types:          make(map[protogen.GoIdent]string),
 		fieldTypes:     make(map[types.Object]string),
+		noGetters:      make(map[protogen.GoIdent]types.Object),
 	}
 	return p, p.scan()
 }
@@ -204,6 +206,10 @@ func (p *Patcher) scanMessage(m *protogen.Message, parent *protogen.Message) {
 	}
 	if newName != "" {
 		p.RenameType(m.GoIdent, newName) // Message struct
+	}
+
+	if opts.GetNoGetters() {
+		p.noGetters[m.GoIdent] = nil
 	}
 
 	// Scan message oneof fields.
@@ -591,6 +597,14 @@ func (p *Patcher) checkGoFiles() error {
 		p.fieldTags[obj] = tags
 	}
 
+	for id := range p.noGetters {
+		obj, _ := p.find(id)
+		if obj == nil {
+			continue
+		}
+		p.noGetters[id] = obj
+	}
+
 	return nil
 }
 
@@ -721,6 +735,7 @@ func (p *Patcher) patchGoFiles() error {
 		p.patchTypeDef(id, obj)
 		p.patchIdent(id, obj, true)
 		p.patchTags(id, obj)
+		p.patchNoGetters(id, obj)
 		// if id.IsExported() {
 		// 	f := p.fset.File(id.NamePos)
 		// 	log.Printf("Ident %s:\t%s @ %s", typeString(obj), id.Name, f.Name())
