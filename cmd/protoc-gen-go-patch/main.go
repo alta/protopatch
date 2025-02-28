@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/alta/protopatch/patch"
@@ -36,12 +37,18 @@ func run() error {
 	}
 
 	var plugin string
+	var useGoTool bool
 
 	opts := protogen.Options{
 		ParamFunc: func(name, value string) error {
 			switch name {
 			case "plugin":
 				plugin = value
+			case "use_go_tool":
+				useGoTool, err = strconv.ParseBool(value)
+				if err != nil {
+					return err
+				}
 			}
 			return nil // Ignore unknown params.
 		},
@@ -58,14 +65,14 @@ func run() error {
 	}
 
 	if os.Getenv("PROTO_PATCH_DEBUG_LOGGING") == "" {
-		log.SetOutput(ioutil.Discard)
+		log.SetOutput(io.Discard)
 	}
 
 	// Strip our custom param(s).
-	patch.StripParam(gen.Request, "plugin")
+	patch.StripParams(gen.Request, []string{"plugin", "use_go_tool"})
 
 	// Run the specified plugin and unmarshal the CodeGeneratorResponse.
-	res, err := patch.RunPlugin(plugin, gen.Request, nil)
+	res, err := patch.RunPlugin(plugin, gen.Request, nil, useGoTool)
 	if err != nil {
 		return err
 	}
