@@ -44,7 +44,7 @@ func run() error {
 			switch name {
 			case "plugin":
 				plugin = value
-			case "use_go_tool":
+			case "tool":
 				useGoTool, err = strconv.ParseBool(value)
 				if err != nil {
 					return err
@@ -69,7 +69,7 @@ func run() error {
 	}
 
 	// Strip our custom param(s).
-	patch.StripParams(gen.Request, []string{"plugin", "use_go_tool"})
+	patch.StripParams(gen.Request, []string{"plugin", "tool"})
 
 	// Run the specified plugin and unmarshal the CodeGeneratorResponse.
 	res, err := patch.RunPlugin(plugin, gen.Request, nil, useGoTool)
