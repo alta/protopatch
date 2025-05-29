@@ -3,29 +3,29 @@ package patch
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
-// StripParam strips a named param from req.
-func StripParam(req *pluginpb.CodeGeneratorRequest, p string) {
+// StripParams strips a named param from req.
+func StripParams(req *pluginpb.CodeGeneratorRequest, p []string) {
 	if req.Parameter == nil {
 		return
 	}
-	v := stripParam(*req.Parameter, p)
+	v := stripParams(*req.Parameter, p)
 	req.Parameter = &v
 
 }
 
-func stripParam(s, p string) string {
+func stripParams(s string, p []string) string {
 	var b strings.Builder
 	for _, param := range strings.Split(s, ",") {
-		if strings.SplitN(param, "=", 2)[0] != p {
+		if !slices.Contains(p, strings.SplitN(param, "=", 2)[0]) {
 			if b.Len() > 0 {
 				b.WriteString(",")
 			}
@@ -38,7 +38,7 @@ func stripParam(s, p string) string {
 // RunPlugin runs a protoc plugin named "protoc-gen-$plugin"
 // and returns the generated CodeGeneratorResponse or an error.
 // Supply a non-nil stderr to override stderr on the called plugin.
-func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writer) (*pluginpb.CodeGeneratorResponse, error) {
+func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writer, useGoTool bool) (*pluginpb.CodeGeneratorResponse, error) {
 	if stderr == nil {
 		stderr = os.Stderr
 	}
@@ -50,8 +50,16 @@ func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writ
 	}
 
 	// Call the plugin with the modified CodeGeneratorRequest.
+	cmdName := "protoc-gen-" + plugin
+	var args []string
+
+	if useGoTool {
+		args = []string{"tool", cmdName}
+		cmdName = "go"
+	}
+
 	var buf bytes.Buffer
-	cmd := exec.Command("protoc-gen-" + plugin)
+	cmd := exec.Command(cmdName, args...)
 	cmd.Stdin = bytes.NewReader(b)
 	cmd.Stdout = &buf
 	cmd.Stderr = stderr
@@ -71,7 +79,7 @@ func RunPlugin(plugin string, req *pluginpb.CodeGeneratorRequest, stderr io.Writ
 
 // ReadRequest reads and unmarshals a CodeGeneratorRequest.
 func ReadRequest(r io.Reader) (*pluginpb.CodeGeneratorRequest, error) {
-	in, err := ioutil.ReadAll(os.Stdin)
+	in, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}

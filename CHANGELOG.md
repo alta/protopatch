@@ -8,6 +8,7 @@ This module now requires [Go 1.21](https://go.dev/doc/go1.21) or higher.
 
 ### Added
 - Added support for [buf.build](https://buf.build/alta/protopatch).
+- Added support for running tools with Go1.24's `go tool` by specifying tool=true
 
 ### Notes
 - Changelog from here forward will only include major dependency updates.
