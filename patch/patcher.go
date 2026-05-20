@@ -316,6 +316,8 @@ func (p *Patcher) scanField(f *protogen.Field) {
 			p.RenameField(ident.WithChild(m.GoIdent, f.GoName), newName, embed) // Field
 		}
 		p.RenameMethod(ident.WithChild(m.GoIdent, "Get"+f.GoName), "Get"+newName) // Getter
+		p.RenameMethod(ident.WithChild(m.GoIdent, "Set"+f.GoName), "Set"+newName) // Setter
+		p.RenameMethod(ident.WithChild(m.GoIdent, "Has"+f.GoName), "Has"+newName) // Hasser
 	}
 
 	// check type
